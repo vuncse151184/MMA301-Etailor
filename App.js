@@ -1,25 +1,59 @@
-import { Text, SafeAreaView, StyleSheet } from 'react-native';
+import { Text, SafeAreaView, StyleSheet, View, StatusBar, Platform } from 'react-native';
+import AppLoading from 'expo-app-loading';
+import 'react-native-gesture-handler';
+import { PaperProvider } from 'react-native-paper';
 
-// You can import supported modules from npm
-import { Card } from 'react-native-paper';
-
-import AssetExample from './components/AssetExample';
-import Login from './components/login';
+import {
+  useFonts,
+  LexendDeca_100Thin,
+  LexendDeca_200ExtraLight,
+  LexendDeca_300Light,
+  LexendDeca_400Regular,
+  LexendDeca_500Medium,
+  LexendDeca_600SemiBold,
+  LexendDeca_700Bold,
+  LexendDeca_800ExtraBold,
+  LexendDeca_900Black,
+} from '@expo-google-fonts/lexend-deca';
+import Navigation from './Navigation';
 
 export default function App() {
-  return (
-    <SafeAreaView style={styles.container}>
-      <Login/>
-    </SafeAreaView>
-  );
+  let [fontsLoaded] = useFonts({
+    LexendDeca_100Thin,
+    LexendDeca_200ExtraLight,
+    LexendDeca_300Light,
+    LexendDeca_400Regular,
+    LexendDeca_500Medium,
+    LexendDeca_600SemiBold,
+    LexendDeca_700Bold,
+    LexendDeca_800ExtraBold,
+    LexendDeca_900Black,
+  });
+
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  } else {
+    return (
+      <PaperProvider>
+        <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+          <View style={styles.container}>
+            <Navigation />
+          </View>
+        </SafeAreaView>
+      </PaperProvider>
+
+
+    );
+  }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     backgroundColor: '#ecf0f1',
-    padding: 8,
+    fontFamily: 'LexendDeca_400Regular',
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
   },
   paragraph: {
     margin: 24,
