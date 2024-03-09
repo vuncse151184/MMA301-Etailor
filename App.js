@@ -49,12 +49,11 @@ export default function App() {
       <PaperProvider theme={theme}>
         <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
           <View style={styles.container}>
+            {/* <Onboarding /> */}
             <Navigation />
           </View>
         </SafeAreaView>
       </PaperProvider>
-
-
     );
   }
 }
@@ -64,11 +63,5 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: 'LexendDeca_400Regular',
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
-  },
-  paragraph: {
-    margin: 24,
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
   },
 });
