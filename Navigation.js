@@ -6,7 +6,7 @@ import StaffHome from "./components/Staff/StaffHome";
 import StaffTask from "./components/Staff/StaffTask";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import StaffProfile from "./components/StaffLogin";
+import StaffProfile from "./components/Staff/StaffProfile";
 import { Button } from "react-native-paper";
 import Icon from "react-native-vector-icons/Ionicons";
 import Order from "./components/Staff/OrderScreen";
@@ -130,12 +130,13 @@ function StaffHomeTabNavigator() {
 
 function StackGroup() {
   return (
-    <Stack.Navigator initialRouteName="Staff-Login">
-      <Stack.Screen
+    <Stack.Navigator>
+      {/* initialRouteName="Staff-Login" */}
+      {/* <Stack.Screen
         name="Staff-Login"
         component={StaffLogin}
         options={{ headerShown: false }}
-      />
+      /> */}
       <Stack.Screen
         name="Staff-Home"
         component={StaffHomeTabNavigator}

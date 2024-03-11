@@ -114,38 +114,24 @@ export default function StaffTask() {
   const [selectedId, setSelectedId] = useState();
 
   const renderItem = ({ item }) => {
-    let borderColor;
-    switch (item.status) {
-      case 1:
-        borderColor = "green";
-        break;
-      case 2:
-        borderColor = "red";
-        break;
-      case 3:
-        borderColor = "yellow";
-        break;
-      default:
-        borderColor = "none";
-        break;
-    }
-
     return (
-      <View
-        style={{
-          paddingVertical: 10,
-          paddingHorizontal: 30,
-          minHeight: 100,
-          backgroundColor: "#fff",
-          marginHorizontal: 30,
-          marginVertical: 10,
-          borderRadius: 14,
-          borderWidth: 2,
-          borderColor: borderColor,
-        }}
-      >
-        <Item item={item} onPress={() => setSelectedId(item.id)} />
-      </View>
+      <>
+        <View style={{ backgroundColor: "" }}></View>
+        <View
+          style={{
+            paddingVertical: 10,
+            paddingHorizontal: 30,
+            minHeight: 100,
+            backgroundColor: "#fff",
+            marginHorizontal: 30,
+            marginVertical: 10,
+            borderRadius: 14,
+            borderWidth: 2,
+          }}
+        >
+          <Item item={item} onPress={() => setSelectedId(item.id)} />
+        </View>
+      </>
     );
   };
   return (
@@ -195,7 +181,7 @@ export default function StaffTask() {
             ]}
             onPress={() => handleButtonPress("all")}
           >
-            Tất cả &nbsp;
+            Tất cả&nbsp;
             <Text
               styles={{
                 backgroundColor: "#585457",
@@ -203,7 +189,7 @@ export default function StaffTask() {
                 minWidht: 10,
               }}
             >
-              3
+              (3)
             </Text>
           </Button>
           <Button
@@ -220,7 +206,16 @@ export default function StaffTask() {
             ]}
             onPress={() => handleButtonPress("incomplete")}
           >
-            Chưa hoàn thành
+            Chưa hoàn thành{" "}
+            <Text
+              styles={{
+                backgroundColor: "#585457",
+                minHeight: 10,
+                minWidht: 10,
+              }}
+            >
+              (3)
+            </Text>
           </Button>
           <Button
             mode="contained"
@@ -236,7 +231,16 @@ export default function StaffTask() {
             ]}
             onPress={() => handleButtonPress("completed")}
           >
-            Hoàn thành
+            Hoàn thành{" "}
+            <Text
+              styles={{
+                backgroundColor: "#585457",
+                minHeight: 10,
+                minWidht: 10,
+              }}
+            >
+              (3)
+            </Text>
           </Button>
         </View>
       </View>
@@ -257,9 +261,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   buttonContainer: {
+    width: 400,
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
+    marginHorizontal: 30,
   },
   button: {
     flex: 1,
