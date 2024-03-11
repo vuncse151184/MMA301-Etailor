@@ -6,11 +6,12 @@ import StaffHome from "./components/Staff/StaffHome";
 import StaffTask from "./components/Staff/StaffTask";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import StaffProfile from "./components/StaffLogin";
+import StaffProfile from "./components/Staff/StaffProfile";
 import { Button } from "react-native-paper";
 import Icon from "react-native-vector-icons/Ionicons";
 import Order from "./components/Staff/OrderScreen";
 import OrderProduct from "./components/Staff/OrderProduct";
+import StaffTaskDetail from "./components/Staff/StaffTaskDetail";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -132,26 +133,28 @@ function StaffHomeTabNavigator() {
 }
 
 function StackGroup() {
-    return (
-        <Stack.Navigator >
-            {/* <Stack.Screen
-                name="Staff-Login"
-                component={StaffLogin}
-                options={{ headerShown: false }}
-            /> */}
-            <Stack.Screen
-                name="Staff-Home"
-                component={StaffHomeTabNavigator}
-                options={{ headerShown: false }}
-
-            />
-            <Stack.Screen
-                name="Staff-Order-Product"
-                component={OrderProduct}
-                options={{ headerShown: false }}
-            />
-        </Stack.Navigator>
-    );
+  return (
+    <Stack.Navigator>
+      {/* initialRouteName="Staff-Login" */}
+      {/* <Stack.Screen
+        name="Staff-Login"
+        component={StaffLogin}
+        options={{ headerShown: false }}
+      /> */}
+      <Stack.Screen
+        name="Staff-Home"
+        component={StaffHomeTabNavigator}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Staff-Task-Detail"
+        component={StaffTaskDetail}
+        options={{
+          headerTitleAlign: "center",
+        }}
+      />
+    </Stack.Navigator>
+  );
 }
 
 export default function Navigation() {
