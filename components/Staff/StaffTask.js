@@ -127,7 +127,7 @@ export default function StaffTask() {
   };
   return (
     <>
-      <Appbar.Header mode='small' style={{ marginTop: 20, }}>
+      <Appbar.Header mode='small'>
         <Appbar.Content title={
           <>
             <Text style={{ marginLeft: 10, fontSize: 18 }}>
