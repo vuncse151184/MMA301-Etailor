@@ -22,7 +22,7 @@ export default function StaffLogin({ navigation }) {
     };
     const handleLogin = async () => {
         setLoading(true);
-        const staffLogin_Url = `https://etailorapi.azurewebsites.net/api/auth/staff/login`;
+        const staffLogin_Url = `https://e-tailorapi.azurewebsites.net/api/auth/mma/login`;
 
         try {
             const response = await fetch(staffLogin_Url, {
