@@ -1,8 +1,18 @@
 import * as React from "react";
 import { useState } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
-import { Appbar, Banner, Avatar, Button } from "react-native-paper";
+import { Image, StyleSheet, View } from "react-native";
+import {
+  Appbar,
+  Banner,
+  Avatar,
+  Button,
+  Card,
+  IconButton,
+  Text,
+  Chip,
+} from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Icon from "react-native-vector-icons/Ionicons";
 import {
   FlatList,
   SafeAreaView,
@@ -10,6 +20,30 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+const CustomTabIcon = ({ name, onPress, status }) => {
+  let iconColor = "";
+
+  switch (status) {
+    case 1:
+      iconColor = "rgb(48, 176, 166)";
+      break;
+    case 2:
+      iconColor = "rgb(171, 167, 43)";
+      break;
+    case 3:
+      iconColor = "rgb(194, 44, 41)";
+      break;
+    case 4:
+      iconColor = "rgb(44, 176, 77)";
+      break;
+  }
+
+  return (
+    <TouchableOpacity onPress={onPress}>
+      <Icon name={name} size={30} color={iconColor} />
+    </TouchableOpacity>
+  );
+};
 const DATA = [
   {
     id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
@@ -28,6 +62,12 @@ const DATA = [
     title: "Cắt vải",
     dueDate: "24/1/2024",
     status: 3,
+  },
+  {
+    id: "58694a0f-3da1-471f-bd96-145571e29d73",
+    title: "Cắt vải",
+    dueDate: "24/1/2024",
+    status: 4,
   },
 ];
 
@@ -85,7 +125,7 @@ const Item = ({ item, onPress, backgroundColor, textColor }) => (
     </View>
   </TouchableOpacity>
 );
-export default function StaffTask() {
+export default function StaffTask({ navigation }) {
   const [staffInfo, setStaffInfo] = React.useState("");
   const [selectedButton, setSelectedButton] = useState("all");
   const handleButtonPress = (buttonName) => {
@@ -116,20 +156,133 @@ export default function StaffTask() {
   const renderItem = ({ item }) => {
     return (
       <>
-        <View style={{ backgroundColor: "" }}></View>
         <View
           style={{
-            paddingVertical: 10,
-            paddingHorizontal: 30,
-            minHeight: 100,
-            backgroundColor: "#fff",
-            marginHorizontal: 30,
+            backgroundColor: "white",
             marginVertical: 10,
-            borderRadius: 14,
-            borderWidth: 2,
+            width: 390,
+            alignSelf: "center",
+            borderRadius: 10,
+            borderWidth: 1,
+            borderColor: "#9F78FF",
           }}
         >
-          <Item item={item} onPress={() => setSelectedId(item.id)} />
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Staff-Task-Detail")}
+          >
+            <Card.Title
+              title={item.title}
+              subtitle={`Thời hạn: ${item.dueDate}`}
+              left={(props) => (
+                <View
+                  style={{
+                    backgroundColor: "#9F78FF",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: 45,
+                    height: 45,
+                    borderRadius: 10,
+                  }}
+                >
+                  <Icon
+                    name="receipt-outline"
+                    onPress={() => setSelectedId(item.id)}
+                    size={30}
+                    style={{ color: "white" }}
+                  />
+                </View>
+              )}
+              right={(props) => {
+                switch (item.status) {
+                  case 1:
+                    return (
+                      <Chip
+                        icon={() => (
+                          <CustomTabIcon
+                            name={"sync-circle-outline"}
+                            onPress={() => setSelectedId(item.id)}
+                            status={item.status}
+                          />
+                        )}
+                        style={{
+                          marginRight: 10,
+                          backgroundColor: "rgba(25, 224, 208, 0.5)",
+                        }}
+                        textStyle={{
+                          color: "rgb(48, 176, 166)",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Chưa bắt đầu
+                      </Chip>
+                    );
+                  case 2:
+                    return (
+                      <Chip
+                        icon={() => (
+                          <CustomTabIcon
+                            name={"ellipsis-horizontal-outline"}
+                            onPress={() => setSelectedId(item.id)}
+                            status={item.status}
+                          />
+                        )}
+                        style={{
+                          marginRight: 10,
+                          backgroundColor: "rgba(242, 235, 34, 0.5)",
+                        }}
+                        textStyle={{
+                          color: "rgb(171, 167, 43)",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Trong quá trình
+                      </Chip>
+                    );
+                  case 3:
+                    return (
+                      <Chip
+                        icon={() => (
+                          <CustomTabIcon
+                            name={"stop-outline"}
+                            onPress={() => setSelectedId(item.id)}
+                            status={item.status}
+                          />
+                        )}
+                        style={{
+                          marginRight: 10,
+                          backgroundColor: "rgba(252, 49, 45, 0.5)",
+                        }}
+                        textStyle={{
+                          color: "rgb(194, 44, 41)",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Tạm dừng
+                      </Chip>
+                    );
+                  case 4:
+                    return (
+                      <Chip
+                        icon={() => (
+                          <CustomTabIcon
+                            name={"checkmark-outline"}
+                            onPress={() => setSelectedId(item.id)}
+                            status={item.status}
+                          />
+                        )}
+                        style={{
+                          marginRight: 10,
+                          backgroundColor: "rgba(34, 240, 85, 0.5)",
+                        }}
+                        textStyle={{ color: "rgb(44, 176, 77)" }}
+                      >
+                        Hoàn thành
+                      </Chip>
+                    );
+                }
+              }}
+            />
+          </TouchableOpacity>
         </View>
       </>
     );
@@ -140,17 +293,28 @@ export default function StaffTask() {
         <Appbar.Content
           title={
             <>
-              <Text style={{ marginLeft: 10, fontSize: 18 }}>
+              <Text style={{ marginLeft: 10, fontSize: 18, marginBottom: 2 }}>
                 Xin chào,{" "}
                 <Text style={{ fontWeight: "bold", color: "#9572f3" }}>
                   {staffInfo ? staffInfo.name : ""}
                 </Text>
               </Text>
+              <Text style={{ marginLeft: 10, fontSize: 15, marginBottom: 2 }}>
+                Role: &nbsp;
+                <Text style={{ fontWeight: "bold", color: "#9572f3" }}>
+                  {staffInfo.role}
+                </Text>
+              </Text>
               {formattedDate ? (
                 <Text
-                  style={{ marginLeft: 10, fontSize: 14, fontWeight: "300" }}
+                  style={{
+                    marginLeft: 10,
+                    fontSize: 14,
+                    fontWeight: "300",
+                    marginBottom: 30,
+                  }}
                 >
-                  {formattedDate}
+                  Ngày: {formattedDate}
                 </Text>
               ) : (
                 ""
@@ -160,11 +324,13 @@ export default function StaffTask() {
         />
         <Avatar.Image
           size={40}
-          style={{ marginRight: 20 }}
+          style={{ marginRight: 30, marginBottom: 30 }}
           source={{ uri: staffInfo?.avatar }}
         />
       </Appbar.Header>
-
+      <Text variant="titleLarge" style={{ marginLeft: 10, marginTop: 20 }}>
+        Công việc:
+      </Text>
       <View style={styles.container}>
         <View style={styles.buttonContainer}>
           <Button
@@ -182,15 +348,6 @@ export default function StaffTask() {
             onPress={() => handleButtonPress("all")}
           >
             Tất cả&nbsp;
-            <Text
-              styles={{
-                backgroundColor: "#585457",
-                minHeight: 10,
-                minWidht: 10,
-              }}
-            >
-              (3)
-            </Text>
           </Button>
           <Button
             mode="contained"
@@ -207,15 +364,6 @@ export default function StaffTask() {
             onPress={() => handleButtonPress("incomplete")}
           >
             Chưa hoàn thành{" "}
-            <Text
-              styles={{
-                backgroundColor: "#585457",
-                minHeight: 10,
-                minWidht: 10,
-              }}
-            >
-              (3)
-            </Text>
           </Button>
           <Button
             mode="contained"
@@ -232,18 +380,12 @@ export default function StaffTask() {
             onPress={() => handleButtonPress("completed")}
           >
             Hoàn thành{" "}
-            <Text
-              styles={{
-                backgroundColor: "#585457",
-                minHeight: 10,
-                minWidht: 10,
-              }}
-            >
-              (3)
-            </Text>
           </Button>
         </View>
       </View>
+      <Text variant="titleLarge" style={{ marginLeft: 10 }}>
+        Mới cập nhật:
+      </Text>
       <FlatList
         data={DATA}
         renderItem={renderItem}
@@ -255,7 +397,7 @@ export default function StaffTask() {
 }
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
+    marginTop: 20,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 20,

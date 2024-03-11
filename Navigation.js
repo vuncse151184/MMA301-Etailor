@@ -10,6 +10,7 @@ import StaffProfile from "./components/Staff/StaffProfile";
 import { Button } from "react-native-paper";
 import Icon from "react-native-vector-icons/Ionicons";
 import Order from "./components/Staff/OrderScreen";
+import StaffTaskDetail from "./components/Staff/StaffTaskDetail";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -141,6 +142,13 @@ function StackGroup() {
         name="Staff-Home"
         component={StaffHomeTabNavigator}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Staff-Task-Detail"
+        component={StaffTaskDetail}
+        options={{
+          headerTitleAlign: "center",
+        }}
       />
     </Stack.Navigator>
   );
