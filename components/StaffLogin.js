@@ -80,10 +80,7 @@ export default function StaffLogin({ navigation }) {
       ) : (
         <TouchableWithoutFeedback onPress={dismissKeyboard}>
           <View style={styles.container}>
-            <Image
-              style={styles.logo}
-              source={require("../../assets/logo.png")}
-            />
+            <Image style={styles.logo} source={require("../assets/logo.png")} />
             {/* <Image style={styles.backGroundImage} source={require('../../assets/images/26785.jpg')} /> */}
 
             <TextInput
