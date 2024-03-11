@@ -9,7 +9,7 @@ const OrderScreen = ({ navigation }) => {
     const [text, setText] = React.useState('');
     const GET_ALL_CUS_URL = 'https://etailorapi.azurewebsites.net/api/customer-management'
     const [email, setEmail] = useState('');
-    const [np, setAllCusData] = useState('')
+    const [allCusData, setAllCusData] = useState('')
 
     const handleInputChange = (text) => {
         setEmail(text);
@@ -45,7 +45,7 @@ const OrderScreen = ({ navigation }) => {
         fetchAllCustomers();
     }, [navigation]);
 
-    const ViewCustomer = () => {
+    const ViewCustomer = ({data}) => {
         return (
             <View>
                 <Card>
@@ -80,7 +80,7 @@ const OrderScreen = ({ navigation }) => {
                         mode="outlined"
                         placeholder="Nhập email"
                         right={<TextInput.Affix text="/100" />}
-                        style={{ width: 350, boderRadius: 10}}
+                        style={{ width: 350, boderRadius: 10 }}
                         dense={true}
                         value={email}
                         onChangeText={handleInputChange}
@@ -88,7 +88,7 @@ const OrderScreen = ({ navigation }) => {
                 </View>
 
                 <View>
-                    <ViewCustomer />
+                    <ViewCustomer data={data} />
                 </View>
             </View>
 
