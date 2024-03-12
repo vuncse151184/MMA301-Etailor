@@ -147,7 +147,7 @@ function StackGroup() {
         name="Staff-Task-Detail"
         component={StaffTaskDetail}
         options={{
-          headerTitleAlign: "center",
+          headerShown: false,
         }}
       />
     </Stack.Navigator>
