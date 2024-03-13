@@ -87,6 +87,7 @@ export default function StaffLogin({ navigation }) {
               style={styles.input}
               placeholder="Tên đăng nhập"
               onChangeText={handleLoginValuesChange("username")}
+              autoCapitalize="none"
               value={loginValues.username}
             />
             <TextInput
@@ -94,6 +95,7 @@ export default function StaffLogin({ navigation }) {
               placeholder="Mật khẩu"
               onChangeText={handleLoginValuesChange("password")}
               value={loginValues.password}
+              autoCapitalize="none"
               secureTextEntry
             />
             {error.login_err.length > 0 && (

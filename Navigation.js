@@ -131,13 +131,12 @@ function StaffHomeTabNavigator() {
 
 function StackGroup() {
   return (
-    <Stack.Navigator>
-      {/* initialRouteName="Staff-Login" */}
-      {/* <Stack.Screen
+    <Stack.Navigator initialRouteName="Staff-Login">
+      <Stack.Screen
         name="Staff-Login"
         component={StaffLogin}
         options={{ headerShown: false }}
-      /> */}
+      />
       <Stack.Screen
         name="Staff-Home"
         component={StaffHomeTabNavigator}

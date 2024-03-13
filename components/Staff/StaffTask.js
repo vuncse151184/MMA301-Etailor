@@ -71,60 +71,6 @@ const DATA = [
   },
 ];
 
-const Item = ({ item, onPress, backgroundColor, textColor }) => (
-  <TouchableOpacity
-    onPress={onPress}
-    style={[styles.item, { backgroundColor }]}
-  >
-    <View
-      style={{ display: "flex", flexDirection: "row", alignItems: "center" }}
-    >
-      <View>
-        <Text style={{ color: textColor, fontSize: 30, fontWeight: "bold" }}>
-          {item.title}
-        </Text>
-        <View
-          style={{
-            backgroundColor: "#F7F7FA",
-            width: 200,
-            minHeight: 20,
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
-          <Image
-            style={styles.tinyLogo}
-            source={require("../../assets/images/reminder.png")}
-          />
-          <Text style={{ fontSize: 18, color: "#AEB0C6", marginLeft: 10 }}>
-            {item.dueDate}
-          </Text>
-        </View>
-      </View>
-      <View style={{ flex: 1, alignItems: "center" }}>
-        {item.status === 1 && (
-          <Image
-            style={{ marginLeft: 40 }}
-            source={require("../../assets/images/check.png")}
-          />
-        )}
-        {item.status === 2 && (
-          <Image
-            style={{ marginLeft: 40 }}
-            source={require("../../assets/images/due-date.png")}
-          />
-        )}
-        {item.status === 3 && (
-          <Image
-            style={{ marginLeft: 40 }}
-            source={require("../../assets/images/circular.png")}
-          />
-        )}
-      </View>
-    </View>
-  </TouchableOpacity>
-);
 export default function StaffTask({ navigation }) {
   const [staffInfo, setStaffInfo] = React.useState("");
   const [selectedButton, setSelectedButton] = useState("all");
@@ -363,10 +309,9 @@ export default function StaffTask({ navigation }) {
             ]}
             onPress={() => handleButtonPress("incomplete")}
           >
-            Chưa hoàn thành{" "}
+            Chưa hoàn thành
           </Button>
           <Button
-            mode="contained"
             labelStyle={{
               color: selectedButton === "completed" ? "white" : "#9572f3",
             }}
@@ -379,7 +324,7 @@ export default function StaffTask({ navigation }) {
             ]}
             onPress={() => handleButtonPress("completed")}
           >
-            Hoàn thành{" "}
+            Hoàn thành
           </Button>
         </View>
       </View>
@@ -397,16 +342,14 @@ export default function StaffTask({ navigation }) {
 }
 const styles = StyleSheet.create({
   container: {
+    width: "auto",
     marginTop: 20,
-    alignItems: "center",
-    justifyContent: "center",
+    alignSelf: "center",
     marginBottom: 20,
   },
   buttonContainer: {
-    width: 400,
+    width: "100%",
     flexDirection: "row",
-    justifyContent: "space-between",
-    marginHorizontal: 30,
   },
   button: {
     flex: 1,
