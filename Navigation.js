@@ -146,9 +146,9 @@ function StackGroup() {
 }
 
 export default function Navigation() {
-    return (
-        <NavigationContainer>
-            <StackGroup />
-        </NavigationContainer>
-    )
+  return (
+    <NavigationContainer>
+      <StackGroup />
+    </NavigationContainer>
+  );
 }

@@ -1,223 +1,298 @@
-import * as React from 'react';
-import { useState } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
-import { Appbar, Banner, Avatar, Button } from 'react-native-paper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as React from "react";
+import { useState } from "react";
+import { Image, StyleSheet, View } from "react-native";
+
+import {
+  Appbar,
+  Banner,
+  Avatar,
+  Button,
+  Card,
+  IconButton,
+  Text,
+  Chip,
+  ActivityIndicator,
+  SegmentedButtons,
+} from "react-native-paper";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Icon from "react-native-vector-icons/Ionicons";
 import {
   FlatList,
   SafeAreaView,
   StatusBar,
   TouchableOpacity,
-} from 'react-native';
+} from "react-native";
 
-const DATA = [
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    title: 'Tay áo sơ mi',
-    dueDate: '24/1/2024',
-    status: 1
-  },
-  {
-    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-    title: 'Ống quần tây',
-    dueDate: '24/1/2024',
-    status: 2
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    title: 'Cắt vải',
-    dueDate: '24/1/2024',
-    status: 3
-  },
-];
+const CustomTabIcon = ({ name, onPress, status }) => {
+  let iconColor = "";
 
-const Item = ({ item, onPress, backgroundColor, textColor }) => (
-  <TouchableOpacity onPress={onPress} style={[styles.item, { backgroundColor }]}>
-    <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-      <View>
-        <Text style={{ color: textColor, fontSize: 30, fontWeight: "bold" }}>{item.title}</Text>
-        <View style={{ backgroundColor: "#F7F7FA", width: 200, minHeight: 20, display: 'flex', flexDirection: 'row', alignItems: "center" }}>
-          <Image
-            style={styles.tinyLogo}
-            source={require('../../assets/images/reminder.png')}
-          />
-          <Text style={{ fontSize: 18, color: "#AEB0C6", marginLeft: 10 }}>{item.dueDate}</Text>
-        </View>
-      </View>
-      <View style={{ flex: 1, alignItems: "center" }}>
-        {item.status === 1 && (
-          <Image
-            style={{ marginLeft: 40 }}
-            source={require('../../assets/images/check.png')}
-          />
-        )}
-        {item.status === 2 && (
-          <Image
-            style={{ marginLeft: 40 }}
-            source={require('../../assets/images/due-date.png')}
-          />
-        )}
-        {item.status === 3 && (
-          <Image
-            style={{ marginLeft: 40 }}
-            source={require('../../assets/images/circular.png')}
-          />
-        )}
-      </View>
-    </View>
+  switch (status) {
+    case 1:
+      iconColor = "rgb(48, 176, 166)";
+      break;
+    case 2:
+      iconColor = "rgb(171, 167, 43)";
+      break;
+    case 3:
+      iconColor = "rgb(194, 44, 41)";
+      break;
+    case 4:
+      iconColor = "rgb(44, 176, 77)";
+      break;
+  }
 
-  </TouchableOpacity>
-);
-export default function StaffTask() {
-  const [staffInfo, setStaffInfo] = React.useState('');
-  const [selectedButton, setSelectedButton] = useState('all');
-  const handleButtonPress = (buttonName) => {
-    setSelectedButton(buttonName);
-  };
-  const currentDate = new Date().toLocaleDateString('vi', { day: 'numeric', month: 'long', year: 'numeric' });
-  const formattedDate = currentDate.replace(',', '');
+  return (
+    <TouchableOpacity onPress={onPress}>
+      <Icon name={name} size={30} color={iconColor} />
+    </TouchableOpacity>
+  );
+};
 
-  console.log("date:", formattedDate);
+export default function StaffTask({ navigation }) {
+  const [staffInfo, setStaffInfo] = React.useState("");
+
+  const [loading, setLoading] = useState(false);
+
+  const [dataTask, setDataTask] = useState(null);
+
+  const [value, setValue] = useState("all");
+
+  const currentDate = new Date().toLocaleDateString("vi", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  const formattedDate = currentDate.replace(",", "");
+
   React.useEffect(() => {
     const retrieveStaffItem = async () => {
-      AsyncStorage.getItem('staff').then(user => {
-        setStaffInfo(JSON.parse(user));
-      }).catch(error => {
-        console.error("Error retrieving staff data:", error);
-      });
+      AsyncStorage.getItem("staff")
+        .then((user) => {
+          setStaffInfo(JSON.parse(user));
+        })
+        .catch((error) => {
+          console.error("Error retrieving staff data:", error);
+        });
     };
     retrieveStaffItem();
   }, []);
 
-
+  React.useEffect(() => {
+    const fetchDataTask = async () => {
+      if (staffInfo !== null) {
+        setLoading(true);
+        try {
+          const taskUrl = "https://e-tailorapi.azurewebsites.net/staff/get-all";
+          const response = await fetch(taskUrl, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${staffInfo.token}`,
+            },
+          });
+          if (response.ok && response.status === 200) {
+            const responseData = await response.json();
+            setDataTask(responseData);
+          }
+        } catch (error) {
+          console.error("Error calling API:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    fetchDataTask();
+  }, [staffInfo]);
 
   const [selectedId, setSelectedId] = useState();
 
   const renderItem = ({ item }) => {
-    let borderColor;
-    switch (item.status) {
-      case 1:
-        borderColor = "green";
-        break;
-      case 2:
-        borderColor = "red";
-        break;
-      case 3:
-        borderColor = "yellow";
-        break;
-      default:
-        borderColor = "none";
-        break;
+    if (
+      value === "all" ||
+      (value === "not-start" && item.status === 1) ||
+      (value === "on-going" && item.status === 2)
+    ) {
+      return (
+        <>
+          <View
+            style={{
+              backgroundColor: "white",
+              marginVertical: 10,
+              width: "90%",
+              alignSelf: "center",
+              borderRadius: 10,
+              borderWidth: 1,
+              borderColor: "#9F78FF",
+            }}
+          >
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("Staff-Task-Detail", {
+                  id: item.id,
+                  staffInfo: staffInfo,
+                })
+              }
+            >
+              <Card.Title
+                title={item.name}
+                subtitle={`Thời hạn: ${item.dueDate}`}
+                left={(props) => (
+                  <View
+                    style={{
+                      backgroundColor: "#9F78FF",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      width: 45,
+                      height: 45,
+                      borderRadius: 10,
+                    }}
+                  >
+                    <Icon
+                      name="receipt-outline"
+                      onPress={() => setSelectedId(item.id)}
+                      size={30}
+                      style={{ color: "white" }}
+                    />
+                  </View>
+                )}
+                right={(props) => {
+                  switch (item.status) {
+                    case 1:
+                      return (
+                        <View
+                          style={{
+                            marginRight: 10,
+                            backgroundColor: "rgba(25, 224, 208, 0.5)",
+                            padding: 5,
+                            borderRadius: 10,
+                          }}
+                        >
+                          <CustomTabIcon
+                            name={"sync-circle-outline"}
+                            onPress={() => setSelectedId(item.id)}
+                            status={item.status}
+                          />
+                        </View>
+                      );
+                    case 2:
+                      return (
+                        <View
+                          style={{
+                            marginRight: 10,
+                            backgroundColor: "rgba(242, 235, 34, 0.5)",
+                            padding: 5,
+                            borderRadius: 10,
+                          }}
+                        >
+                          <CustomTabIcon
+                            name={"ellipsis-horizontal-outline"}
+                            onPress={() => setSelectedId(item.id)}
+                            status={item.status}
+                          />
+                        </View>
+                      );
+                  }
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+        </>
+      );
+    } else {
+      return null;
     }
-
-
-    return (
-      < View style={{
-        paddingVertical: 10, paddingHorizontal: 30, minHeight: 100, backgroundColor: '#fff', marginHorizontal: 30, marginVertical: 10, borderRadius: 14, borderWidth: 2, borderColor: borderColor
-      }
-      } >
-        <Item
-          item={item}
-          onPress={() => setSelectedId(item.id)}
-        />
-      </View >
-
-
-    );
   };
   return (
     <>
-      <Appbar.Header mode='small'>
-        <Appbar.Content title={
-          <>
-            <Text style={{ marginLeft: 10, fontSize: 18 }}>
-              Xin chào,{' '}
-              <Text style={{ fontWeight: 'bold', color: '#9572f3' }}>
-                {staffInfo ? staffInfo.name : ''}
+      <Appbar.Header mode="small">
+        <Appbar.Content
+          title={
+            <>
+              <Text style={{ marginLeft: 10, fontSize: 18, marginBottom: 2 }}>
+                Xin chào,{" "}
+                <Text style={{ fontWeight: "bold", color: "#9572f3" }}>
+                  {staffInfo ? staffInfo.name : ""}
+                </Text>
               </Text>
-
-            </Text>
-            {formattedDate ? (
-              <Text style={{ marginLeft: 10, fontSize: 14, fontWeight: "300" }}>
-                {formattedDate}
+              <Text style={{ marginLeft: 10, fontSize: 15, marginBottom: 2 }}>
+                Role: &nbsp;
+                <Text style={{ fontWeight: "bold", color: "#9572f3" }}>
+                  {staffInfo.role}
+                </Text>
               </Text>
-            ) : ''}
-
-          </>
-        }
+              {formattedDate ? (
+                <Text
+                  style={{
+                    marginLeft: 10,
+                    fontSize: 14,
+                    fontWeight: "300",
+                    marginBottom: 30,
+                  }}
+                >
+                  Ngày: {formattedDate}
+                </Text>
+              ) : (
+                ""
+              )}
+            </>
+          }
         />
-        {/* <Avatar.Image size={40} style={{ marginRight: 20 }} source={{ uri: staffInfo.avatar }} /> */}
+        <Avatar.Image
+          size={40}
+          style={{ marginRight: 30, marginBottom: 30 }}
+          source={{ uri: staffInfo?.avatar }}
+        />
       </Appbar.Header>
-
-      <View style={styles.container}>
-        <View style={styles.buttonContainer}>
-          <Button
-            mode="contained"
-            labelStyle={{ color: selectedButton === 'all' ? 'white' : '#9572f3' }}
-            style={[
-              styles.button,
-              selectedButton === 'all' && { backgroundColor: '#9572f3', color: 'white' }
+      <Text variant="titleLarge" style={{ marginLeft: 10, marginTop: 20 }}>
+        Công việc:
+      </Text>
+      <View>
+        <SafeAreaView
+          style={{ alignItems: "center", marginTop: 5, marginBottom: 5 }}
+        >
+          <SegmentedButtons
+            value={value}
+            onValueChange={setValue}
+            buttons={[
+              {
+                value: "all",
+                label: "Tất cả",
+              },
+              {
+                value: "not-start",
+                label: "Chưa bắt đầu",
+              },
+              { value: "on-going", label: "Trong quá trình" },
             ]}
-            onPress={() => handleButtonPress('all')}
-          >
-            Tất cả &nbsp;
-            <Text styles={{ backgroundColor: '#585457', minHeight: 10, minWidht: 10 }}>
-              3
-            </Text>
-          </Button>
-          <Button
-            mode="contained"
-            labelStyle={{ color: selectedButton === 'incomplete' ? 'white' : '#9572f3' }}
-            style={[
-              styles.button,
-              selectedButton === 'incomplete' && { backgroundColor: '#9572f3', color: 'white' }
-            ]}
-            onPress={() => handleButtonPress('incomplete')}
-          >
-            Chưa hoàn thành
-          </Button>
-          <Button
-            mode="contained"
-            labelStyle={{ color: selectedButton === 'completed' ? 'white' : '#9572f3' }}
-            style={[
-              styles.button,
-              selectedButton === 'completed' && { backgroundColor: '#9572f3', color: 'white' }
-            ]}
-            onPress={() => handleButtonPress('completed')}
-          >
-            Hoàn thành
-          </Button>
-        </View>
+          />
+        </SafeAreaView>
       </View>
-      <FlatList
-        data={DATA}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        extraData={selectedId}
-
-      />
+      <Text variant="titleLarge" style={{ marginLeft: 10 }}>
+        Mới cập nhật:
+      </Text>
+      {!loading ? (
+        <FlatList
+          data={dataTask}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          extraData={selectedId}
+        />
+      ) : (
+        <View
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+        >
+          <ActivityIndicator animating={true} color={"#9F78FF"} />
+        </View>
+      )}
     </>
   );
-};
+}
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-  },
-  button: {
-    flex: 1,
-    marginHorizontal: 5,
-    backgroundColor: 'white',
-    color: '#9572f3',
-    borderRadius: 10
+    width: "auto",
+    marginTop: 20,
+    alignSelf: "center",
+    marginBottom: 20,
   },
 });
-
-
