@@ -1,10 +1,15 @@
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
-import { NavigationContainer } from '@react-navigation/native';
+import { Platform, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Appbar, TextInput, Button, Card, Title, Paragraph } from 'react-native-paper';
+import { Appbar, TextInput, Searchbar, Button, Card, Title, Paragraph, ActivityIndicator, } from 'react-native-paper';
 import Icon from "react-native-vector-icons/Ionicons";
 import ProfileIcon from '../../assets/profile.png';
+import { Keyboard } from 'react-native'
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+
+const DismissKeyboard = () => (
+    Keyboard.dismiss()
+);
 
 const OrderScreen = ({ navigation }) => {
     const _goBack = () => navigation.navigate('Staff-Tasks');
@@ -12,18 +17,23 @@ const OrderScreen = ({ navigation }) => {
     const GET_ALL_CUS_URL = 'https://e-tailorapi.azurewebsites.net/api/customer-management'
     const [email, setEmail] = useState('');
     const [allCusData, setAllCusData] = useState('')
-    const [filteredData, setFilteredData] = useState('')
+    const [filteredData, setFilteredData] = useState([])
+    const [loading, setLoading] = useState(false);
     const handleInputChange = (text) => {
         setEmail(text);
         console.log("TEXT CHANGE:", text)
-        const filteredData = allCusData.filter((item) => {
-            return item.email && item.email.toLowerCase().includes(text.toLowerCase());
-        })
-        setFilteredData(filteredData)
+        if (text.trim() != '' && loading == false) {
+            const filteredData = allCusData?.filter((item) => {
+                return item.email && item.email.toLowerCase().includes(text.toLowerCase());
+            })
+            setFilteredData(filteredData)
+        }
+
     };
 
     useEffect(() => {
         const fetchAllCustomers = async () => {
+            setLoading(true);
             try {
                 const staffInfo = await AsyncStorage.getItem('staff');
                 const token = staffInfo ? JSON.parse(staffInfo).token : '';
@@ -36,80 +46,170 @@ const OrderScreen = ({ navigation }) => {
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    await AsyncStorage.setItem('staff', JSON.stringify(data));
+
                     navigation.navigate('Staff-Home');
                     setAllCusData(data)
+                    setLoading(false);
                 } else {
                     const errorText = await response.text();
+                    setLoading(false);
                     console.error('Fetch error:', errorText);
                 }
             } catch (error) {
+                setLoading(false);
                 console.error('Error:', error);
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchAllCustomers();
-    }, [navigation]);
-    const handleChoseCustomer = () => {
-        navigation.navigate('Staff-Order-Product');
+    }, []);
+    const [orderId, setOrderId] = useState('');
+    const handleChoseCustomer = async (customer) => {
+        console.log('Chose customer', customer);
+
+        const fetchCustomerProfile = async () => {
+            const CREATE_ORDER_URL = `https://e-tailorapi.azurewebsites.net/api/order`
+            setLoading(true);
+            try {
+                const staffInfo = await AsyncStorage.getItem('staff');
+                const token = staffInfo ? JSON.parse(staffInfo).token : '';
+                const id = await AsyncStorage.getItem('orderId');
+                console.log('Token:', JSON.parse(id).token);
+                if (JSON.parse(id).customerID !== customer.id) {
+                    await AsyncStorage.removeItem("orderId");
+                }
+                const payload = JSON.stringify({
+                    id: JSON.parse(id).token ? JSON.parse(id).token : null,
+                    customerId: customer.id,
+                })
+                const response = await fetch(CREATE_ORDER_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: payload
+                });
+                if (response.ok) {
+                    const data = await response.text();
+                    setOrderId(data);
+                    const newOrderID = { customerID: customer.id, token: data }
+                    console.log('order:', newOrderID)
+                    setLoading(false);
+                    await AsyncStorage.setItem("orderId", JSON.stringify(newOrderID));
+                    const id = await AsyncStorage.getItem('orderId');
+                    console.log('Token:', id);
+                    navigation.navigate('Staff-Order-Detail', { id: customer.id, fullname: customer.fullname, orderId: data });
+
+                    console.log('Customer profile:', data);
+                } else {
+                    setLoading(false);
+                    const errorText = await response.text();
+                    console.error('Fetch error:', errorText);
+                }
+            } catch (error) {
+                setLoading(false);
+                console.error('Error:');
+            } finally {
+                setLoading(false);
+            }
+        };
+        await fetchCustomerProfile();
+    }
+    const handleCreateNewCus = () => {
+        console.log('Create new customer');
+        navigation.navigate('Staff-Create-Customer');
     }
 
     const ViewCustomer = ({ data }) => {
-
         return (
-            data.length != 0 ? (
+            data.length != 0 && (
                 data.map((item) => (
                     <Card style={styles.cardContent} key={item.id} >
+                        <Title style={{ ...styles.cardTitle, textAlign: 'center' }}>Thông tin khách hàng :</Title>
                         <View style={{ flexDirection: 'row', alignItems: "center" }}>
                             <Card.Cover source={ProfileIcon} style={styles.cardImg} />
-                            <Card.Content style={{ width: 280 }}>
-                                <Title style={styles.cardTitle}>Thông tin khách hàng :</Title>
-                                <Paragraph numberOfLines={1} ellipsizeMode="tail" style={styles.cardParagraph}>Email: {item.email}</Paragraph>
-                                <Paragraph numberOfLines={1} ellipsizeMode="tail" style={styles.cardParagraph}>SĐT: {item.email}</Paragraph>
-                                <Button mode="contained" style={{ marginTop: 7, alignItems: "center", fontSize: 12, width: 180, height: 40 }} onPress={(handleChoseCustomer)}>
-                                    Chọn sản phẩm <Icon name="arrow-forward-outline" size={18} />
+                            <Card.Content style={{ width: 280, alignItems: "center", marginTop: 10 }}>
+                                <Paragraph numberOfLines={1} ellipsizeMode="tail" style={{ ...styles.cardParagraph, fontWeight: 'bold' }}>Email: {item.email}</Paragraph>
+                                <Paragraph numberOfLines={1} ellipsizeMode="tail" style={{ ...styles.cardParagraph, fontWeight: 'bold' }}>SĐT: {item.email}</Paragraph>
+                                <Button mode="contained" style={{ marginTop: 7, alignItems: "center", fontSize: 12, width: 120, height: 40 }} onPress={() => handleChoseCustomer(item)}>
+                                    Chọn <Icon name="arrow-forward-outline" size={18} />
                                 </Button>
                             </Card.Content>
-
                         </View>
                     </Card>
                 ))
-            ) : (
-                <Text>Không có dữ liệu</Text>
             )
         );
     }
 
     return (
+        <>
 
-        <SafeAreaView style={styles.container}>
-            <Appbar.Header mode={'small'}>
-                <View style={styles.headerContent}>
-                    <Appbar.BackAction onPress={_goBack} style={styles.backAction} />
-                    <Appbar.Content title="Tạo đơn" style={styles.title} />
-                </View>
-            </Appbar.Header>
-            <View style={{ alignItems: "center" }}>
-                <View style={{ alignItems: 'center', marginTop: 10 }}>
-                    <TextInput
-                        mode="outlined"
-                        placeholder="Nhập email"
-                        right={<TextInput.Icon name="search" onPress={() => console.log('Icon pressed')} />}
-                        style={{ width: 350, boderRadius: 10 }}
-                        dense={true}
-                        value={email}
-                        onChangeText={handleInputChange}
-                    />
-                </View>
+            <SafeAreaView style={styles.container} >
+                <Appbar.Header style={{ height: 60 }} statusBarHeight={0}>
+                    <View style={styles.headerContent}>
+                        <Appbar.BackAction onPress={_goBack} style={styles.backAction} />
+                        <Appbar.Content title="Tạo đơn" style={styles.title} />
+                    </View>
+                </Appbar.Header>
+                <ScrollView>
+                    <TouchableWithoutFeedback onPress={() => { DismissKeyboard() }}>
+                        <View style={{ alignItems: "center" }}>
+                            <View style={styles.inputWrapper}>
+                                {/* <TextInput
+                                    placeholder="Nhập email"
+                                    right={<TextInput.Icon name="search" />}
+                                    style={styles.input}
+                                    dense={true}
+                                    forceTextInputFocus={false}
+                                    value={email}
+                                    color="#9f78ff"
+                                    onChangeText={handleInputChange}
+                                    rippleColor="#9f78ff"
+                                /> */}
+                                <Searchbar
+                                    placeholder="Nhập email"
+                                    onChangeText={handleInputChange}
+                                    value={email}
+                                    style={styles.input}
+                                />
+                            </View>
+                        </View>
+                    </TouchableWithoutFeedback>
+                    {
+                        loading ? (<ActivityIndicator
+                            animating={loading}
+                            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+                            color={"#999999"}
+                        />
+                        ) : (
+                            filteredData.length != 0 ? (
+                                <View style={{ alignItems: 'center' }}>
+                                    <ViewCustomer data={filteredData} />
+                                </View>
 
-                <View>
-                    <ViewCustomer data={filteredData} />
-                </View>
+                            ) : (
+                                <View style={{ alignItems: 'center' }}>
+                                    <Text style={{ fontSize: 20, marginTop: 10 }}>Không tìm thấy</Text>
+                                    <Button
+                                        mode="contained-tonal"
+                                        style={{ marginTop: 7, alignItems: "center", fontSize: 20 }}
+                                        onPress={handleCreateNewCus}>
+                                        <Text style={{ fontSize: 20, marginTop: 20 }}>Tạo mới</Text>
+                                    </Button>
+                                </View>
+
+                            )
+                        )
+                    }
+                </ScrollView>
+            </SafeAreaView >
 
 
-            </View>
-
-        </SafeAreaView>
+        </>
     )
 }
 
@@ -123,6 +223,19 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         elevation: 0,
     },
+    inputWrapper: {
+        marginTop: 20,
+        marginBottom: 20,
+    },
+    input: {
+        width: 350,
+        borderWidth: 1.5,
+        borderColor: '#9f78ff',
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20,
+    },
     cardImg: {
         width: 64,
         height: 64,
@@ -132,16 +245,19 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+        paddingBottom: 0,
+        paddingTop: 0,
     },
     cardContent: {
-        width: 350,
-        marginTop: 10,
-        marginBottom: 10,
-        height: 150,
+        width: 380,
+        marginTop: 20,
+        height: 170,
         textAlign: 'center',
-        paddingTop: 5,
+        alignItems: 'center',
+        paddingBottom: Platform.OS === 'ios' ? 10 : 0,
         paddingHorizontal: 20,
-        border: '1px solid #9f78ff'
+        borderWidth: 2,
+        borderColor: '#9f78ff',
     },
     cardTitle: {
         fontWeight: 'bold',
