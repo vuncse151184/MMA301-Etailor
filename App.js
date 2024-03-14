@@ -1,8 +1,7 @@
 import { Text, SafeAreaView, StyleSheet, View, StatusBar, Platform } from 'react-native';
 import AppLoading from 'expo-app-loading';
 import 'react-native-gesture-handler';
-import { PaperProvider } from 'react-native-paper';
-
+import { MD3LightTheme as DefaultTheme, PaperProvider } from 'react-native-paper';
 import {
   useFonts,
   LexendDeca_100Thin,
@@ -16,6 +15,18 @@ import {
   LexendDeca_900Black,
 } from '@expo-google-fonts/lexend-deca';
 import Navigation from './Navigation';
+
+const theme = {
+  ...DefaultTheme,
+  myOwnProperty: true,
+  colors: {
+    ...DefaultTheme.colors,
+    myOwnColor: '#BADA55',
+  },
+};
+
+
+
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -35,15 +46,14 @@ export default function App() {
     return <AppLoading />;
   } else {
     return (
-      <PaperProvider>
+      <PaperProvider theme={theme}>
         <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
           <View style={styles.container}>
+            {/* <Onboarding /> */}
             <Navigation />
           </View>
         </SafeAreaView>
       </PaperProvider>
-
-
     );
   }
 }
@@ -51,14 +61,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ecf0f1',
     fontFamily: 'LexendDeca_400Regular',
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
-  },
-  paragraph: {
-    margin: 24,
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
   },
 });

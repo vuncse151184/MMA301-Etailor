@@ -1,32 +1,31 @@
 import React, { useState } from 'react';
 import { Text, View, StyleSheet, Image, TextInput, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ActivityIndicator } from 'react-native-paper';
-
-export default function CustomerLogin({ navigation }) {
+import BackGroundImg from '../../assets/images/4891599.jpg';
+import { ActivityIndicator, MD2Colors } from 'react-native-paper';
+export default function StaffLogin({ navigation }) {
     const [loginValues, setLoginValues] = useState({
         username: "",
         password: ""
-    });
-    const [loading, setLoading] = useState(false);
+    })
+    const [loading, setLoading] = useState(false)
 
     const [error, setError] = useState({
         login_err: "",
         otp_err: "",
         regis_username_err: "",
         regis_password_err: ""
-    });
+    })
 
     const handleLoginValuesChange = (prop) => (text) => {
         setLoginValues({ ...loginValues, [prop]: text });
     };
-
     const handleLogin = async () => {
         setLoading(true);
-        const customerLogin_Url = `https://etailorapi.azurewebsites.net/api/auth/customer/login`;
+        const staffLogin_Url = `https://etailorapi.azurewebsites.net/api/auth/staff/login`;
 
         try {
-            const response = await fetch(customerLogin_Url, {
+            const response = await fetch(staffLogin_Url, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -39,15 +38,14 @@ export default function CustomerLogin({ navigation }) {
 
             if (response.ok) {
                 const data = await response.json();
-                await AsyncStorage.setItem('customer', JSON.stringify(data));
-                navigation.navigate('Customer-Home');
+                await AsyncStorage.setItem('staff', JSON.stringify(data));
+                navigation.navigate('Staff-Home');
             } else {
                 const errorText = await response.text();
-                setError({ ...error, login_err: errorText });
+                setError({ ...error, otp_err: errorText });
             }
         } catch (error) {
             console.error("Error:", error);
-            setError({ ...error, login_err: "An unexpected error occurred." });
         } finally {
             setLoading(false);
         }
@@ -62,9 +60,11 @@ export default function CustomerLogin({ navigation }) {
             {loading ? (
                 <ActivityIndicator animating={loading} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} color={'#999999'} />
             ) : (
-                <TouchableWithoutFeedback onPress={dismissKeyboard}>
-                    <View style={styles.container}>
+                < TouchableWithoutFeedback onPress={dismissKeyboard} >
+                    <View style={styles.container} >
                         <Image style={styles.logo} source={require('../../assets/logo.png')} />
+                        {/* <Image style={styles.backGroundImage} source={require('../../assets/images/26785.jpg')} /> */}
+                     
                         <TextInput
                             style={styles.input}
                             placeholder="Tên đăng nhập"
@@ -78,14 +78,18 @@ export default function CustomerLogin({ navigation }) {
                             value={loginValues.password}
                             secureTextEntry
                         />
-                        {error.login_err.length > 0 && <Text style={styles.errorText}>{error.login_err}</Text>}
+                        {error.login_err.length > 0 && <span style={{ color: "red", fontSize: "12px", paddingLeft: "5px" }}>{error.login_err}</span>}
                         <TouchableOpacity style={styles.button} onPress={handleLogin}>
                             <Text style={styles.buttonText}>Đăng nhập</Text>
                         </TouchableOpacity>
-                    </View>
-                </TouchableWithoutFeedback>
-            )}
+                    </View >
+                </TouchableWithoutFeedback >
+            )
+            }
+
         </>
+
+
     );
 }
 
@@ -94,6 +98,16 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         padding: 24,
+    },
+    backGroundImage: {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        resizeMode: 'cover', // to cover the entire container
+    },
+    heading: {
+        fontSize: 24,
+        marginBottom: 24,
     },
     logo: {
         height: 128,
@@ -108,7 +122,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginBottom: 16,
         paddingLeft: 10,
-        borderRadius: 10
+        borderRadius:10
     },
     button: {
         backgroundColor: 'blue',
@@ -120,11 +134,5 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 16,
         textAlign: 'center',
-    },
-    errorText: {
-        color: "red",
-        fontSize: 12,
-        paddingLeft: 5,
-        marginBottom: 5,
     },
 });
