@@ -168,7 +168,7 @@ export default function OrderDetail({ navigation, route }) {
                     </Dialog.Actions>
                 </Dialog>
             </Portal>
-            <View style={{ flexDirection: "row", position: "absolute", bottom: 0, right: 10, left: 10 }}>
+            <View style={{ flexDirection: "row", position: "absolute", bottom: 30, right: 10, left: 10 }}>
                 <View style={{ flexDirection: "row", backgroundColor: '#ffffff', paddingLeft: 50, height: 60, width: "100%", alignItems: "center", borderRadius: 40 }}>
                     <Text style={styles.infoLabel}>Giá:</Text>
                     <Text style={styles.infoValue}>{formatCurrency(orderDetails.totalPrice)} đ</Text>

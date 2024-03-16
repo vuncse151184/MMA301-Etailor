@@ -75,47 +75,47 @@ const OrderScreen = ({ navigation }) => {
             try {
                 const staffInfo = await AsyncStorage.getItem('staff');
                 const token = staffInfo ? JSON.parse(staffInfo).token : '';
-                const id = await AsyncStorage.getItem('orderId');
-                console.log('Token:', JSON.parse(id).token);
-                if (JSON.parse(id).customerID !== customer.id) {
-                    await AsyncStorage.removeItem("orderId");
-                }
-                const payload = JSON.stringify({
-                    id: JSON.parse(id).token ? JSON.parse(id).token : null,
-                    customerId: customer.id,
-                })
-                const response = await fetch(CREATE_ORDER_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
-                    body: payload
-                });
-                if (response.ok) {
-                    const data = await response.text();
-                    setOrderId(data);
-                    const newOrderID = { customerID: customer.id, token: data }
-                    console.log('order:', newOrderID)
-                    setLoading(false);
-                    await AsyncStorage.setItem("orderId", JSON.stringify(newOrderID));
-                    const id = await AsyncStorage.getItem('orderId');
-                    console.log('Token:', id);
-                    navigation.navigate('Staff-Order-Detail', { id: customer.id, fullname: customer.fullname, orderId: data });
 
-                    console.log('Customer profile:', data);
-                } else {
-                    setLoading(false);
-                    const errorText = await response.text();
-                    console.error('Fetch error:', errorText);
+                let id = await AsyncStorage.getItem('orderId');
+                if (!id) {
+                    // If orderId doesn't exist, create it
+                    const payload = JSON.stringify({
+                        customerId: customer?.id,
+                    })
+                    console.log("PAYLOAD:", payload)
+                    const response = await fetch(CREATE_ORDER_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${token}`,
+                        },
+                        body: payload
+                    });
+
+                    if (response.ok) {
+                        const data = await response.text();
+                        id = data;
+                        await AsyncStorage.setItem("orderId", id);
+                    } else {
+                        setLoading(false);
+                        const errorText = await response.text();
+                        console.error('Fetch error:', errorText);
+                        return; // Exit early if there's an error
+                    }
                 }
+
+                console.log("ORDER ID:", id);
+
+                // Proceed with your logic using the orderId
+                navigation.navigate('Staff-Order-Detail', { id: customer.id, fullname: customer.fullname, orderId: id });
             } catch (error) {
                 setLoading(false);
-                console.error('Error:');
+                console.error('Error:', error);
             } finally {
                 setLoading(false);
             }
         };
+
         await fetchCustomerProfile();
     }
     const handleCreateNewCus = () => {
