@@ -14,8 +14,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ActivityIndicator, MD2Colors } from "react-native-paper";
 export default function StaffLogin({ navigation }) {
   const [loginValues, setLoginValues] = useState({
-    username: "",
-    password: "",
+    username: "tu_staff",
+    password: "1",
   });
   const [loading, setLoading] = useState(false);
 
@@ -87,6 +87,7 @@ export default function StaffLogin({ navigation }) {
               style={styles.input}
               placeholder="Tên đăng nhập"
               onChangeText={handleLoginValuesChange("username")}
+              autoCapitalize="none"
               value={loginValues.username}
             />
             <TextInput
@@ -94,6 +95,7 @@ export default function StaffLogin({ navigation }) {
               placeholder="Mật khẩu"
               onChangeText={handleLoginValuesChange("password")}
               value={loginValues.password}
+              autoCapitalize="none"
               secureTextEntry
             />
             {error.login_err.length > 0 && (
