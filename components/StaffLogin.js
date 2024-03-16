@@ -47,13 +47,8 @@ export default function StaffLogin({ navigation }) {
 
       if (response.ok) {
         const data = await response.json();
-        if (data.role === "Customer") {
-          await AsyncStorage.setItem("customer", JSON.stringify(data));
-          navigation.navigate("Customer-Home");
-        } else if (data.role === "Staff") {
-          await AsyncStorage.setItem("staff", JSON.stringify(data));
-          navigation.navigate("Staff-Home");
-        }
+        await AsyncStorage.setItem("staff", JSON.stringify(data));
+        navigation.navigate(data.role === "Staff" ? "Staff-Home" : "Customer-Home");
       } else {
         const errorText = await response.text();
         setError({ ...error, otp_err: errorText });

@@ -62,6 +62,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     fontFamily: 'LexendDeca_400Regular',
+    position: "relative",
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
   },
 });
