@@ -83,7 +83,8 @@ export default function StaffTask({ navigation }) {
       if (staffInfo !== null) {
         setLoading(true);
         try {
-          const taskUrl = "https://e-tailorapi.azurewebsites.net/staff/get-all";
+          const taskUrl =
+            "https://e-tailorapi.azurewebsites.net/api/task/staff/get-all";
           const response = await fetch(taskUrl, {
             method: "GET",
             headers: {
@@ -136,7 +137,7 @@ export default function StaffTask({ navigation }) {
             >
               <Card.Title
                 title={item.name}
-                subtitle={`Thời hạn: ${item.dueDate}`}
+                subtitle={`Thời hạn: ${item.deadline}`}
                 left={(props) => (
                   <View
                     style={{

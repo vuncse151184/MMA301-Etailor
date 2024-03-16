@@ -15,6 +15,7 @@ import {
   Dialog,
   Portal,
   SegmentedButtons,
+  Divider,
 } from "react-native-paper";
 import { TouchableOpacity } from "react-native";
 
@@ -88,7 +89,7 @@ const StaffTaskDetail = ({ navigation, route }) => {
           elevation: 10,
         }}
       >
-        {item.name}: {item.value}
+        {item.bodySize.name}: {item.value}
       </Text>
     </View>
   );
@@ -112,7 +113,7 @@ const StaffTaskDetail = ({ navigation, route }) => {
               />
             </View>
           </Appbar.Header>
-          <View style={{ backgroundColor: "white", flex: 1 }}>
+          <View style={{ backgroundColor: "white", flex: 1, paddingTop: 10 }}>
             <ScrollView>
               <List.AccordionGroup>
                 <List.Accordion
@@ -166,7 +167,9 @@ const StaffTaskDetail = ({ navigation, route }) => {
                     }}
                   >
                     <Image
-                      source={{ uri: dataTaskDetail?.thumbnailProductTemplate }}
+                      source={{
+                        uri: dataTaskDetail?.productTemplate?.thumbnailImage,
+                      }}
                       style={{
                         width: 200,
                         height: 200,
@@ -181,7 +184,7 @@ const StaffTaskDetail = ({ navigation, route }) => {
                       variant="titleMedium"
                       style={{ marginTop: 10, marginLeft: 15 }}
                     >
-                      Bản mẫu: {dataTaskDetail?.productTemplateName}
+                      Bản mẫu: {dataTaskDetail?.productTemplate?.name}
                     </Text>
                     <Text
                       variant="titleMedium"
@@ -191,6 +194,80 @@ const StaffTaskDetail = ({ navigation, route }) => {
                       {dataTaskDetail?.note === ""
                         ? "Chưa có ghi chú!!!"
                         : dataTaskDetail?.note}
+                    </Text>
+                  </View>
+                </List.Accordion>
+              </List.AccordionGroup>
+              <List.AccordionGroup>
+                <List.Accordion
+                  expanded="false"
+                  title={
+                    <Text
+                      variant="titleLarge"
+                      style={{
+                        marginTop: 10,
+                        marginLeft: 15,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Vải sử dụng
+                    </Text>
+                  }
+                  id={"1"}
+                  style={{
+                    backgroundColor: "#f2f2f2",
+                    marginBottom: 10,
+                    marginTop: 10,
+                    marginLeft: "5%",
+                    marginRight: "5%",
+                    borderRadius: 15,
+                    shadowColor: "#000",
+                    shadowOffset: {
+                      width: 0,
+                      height: 2,
+                    },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 3.84,
+                    elevation: 5,
+                  }}
+                >
+                  <View
+                    style={{
+                      backgroundColor: "#f2f2f2",
+                      marginBottom: 10,
+                      marginLeft: "5%",
+                      marginRight: "5%",
+                      borderBottomLeftRadius: 15,
+                      borderBottomRightRadius: 15,
+                      shadowColor: "#000",
+                      shadowOffset: {
+                        width: 0,
+                        height: 2,
+                      },
+                      shadowOpacity: 0.25,
+                      shadowRadius: 3.84,
+                      elevation: 5,
+                    }}
+                  >
+                    <Image
+                      source={{
+                        uri: dataTaskDetail?.fabricMaterial?.image,
+                      }}
+                      style={{
+                        width: 200,
+                        height: 200,
+                        alignSelf: "center",
+                        borderRadius: 10,
+                        marginTop: 5,
+                      }}
+                      resizeMode="contain"
+                    />
+
+                    <Text
+                      variant="titleMedium"
+                      style={{ marginTop: 10, marginLeft: 15 }}
+                    >
+                      Tên vải sử dụng: {dataTaskDetail?.fabricMaterial?.name}
                     </Text>
                   </View>
                 </List.Accordion>
@@ -250,12 +327,12 @@ const StaffTaskDetail = ({ navigation, route }) => {
                       variant="titleMedium"
                       style={{ marginTop: 10, marginLeft: 10 }}
                     >
-                      Số đo cơ thể: {dataTaskDetail?.profileBodyName}
+                      Số đo cơ thể:
                     </Text>
                     <View style={{ maxHeight: "100%", marginBottom: 10 }}>
                       <FlatList
                         numColumns={2}
-                        data={dataTaskDetail?.profileBodyValue}
+                        data={dataTaskDetail?.productBodySizes}
                         renderItem={({ item }) => <Item item={item} />}
                         keyExtractor={(item) => item.id}
                       />
@@ -305,21 +382,92 @@ const StaffTaskDetail = ({ navigation, route }) => {
                   >
                     <List.AccordionGroup>
                       {dataTaskDetail.productStages?.map((stage) => {
+                        let iconComponent;
+
+                        switch (stage.status) {
+                          case 1:
+                            iconComponent = (
+                              <Icon
+                                name="sync-circle-outline"
+                                size={30}
+                                style={{
+                                  color: "rgb(48, 176, 166)",
+                                  marginLeft: 10,
+                                }}
+                              />
+                            );
+                            break;
+                          case 2:
+                            iconComponent = (
+                              <Icon
+                                name="ellipsis-horizontal-outline"
+                                size={30}
+                                style={{
+                                  color: "rgb(171, 167, 43)",
+                                  marginLeft: 10,
+                                }}
+                              />
+                            );
+                            break;
+                          case 3:
+                            iconComponent = (
+                              <Icon
+                                name="ellipsis-horizontal-circle-outline"
+                                size={30}
+                                style={{
+                                  color: "rgb(194, 44, 41)",
+                                  marginLeft: 10,
+                                }}
+                              />
+                            );
+                            break;
+                          case 4:
+                            iconComponent = (
+                              <Icon
+                                name="checkmark-circle-outline"
+                                size={30}
+                                style={{
+                                  color: "rgb(44, 176, 77)",
+                                  marginLeft: 10,
+                                }}
+                              />
+                            );
+                            break;
+                          default:
+                            iconComponent = (
+                              <Icon
+                                name="close-circle-outline"
+                                size={30}
+                                style={{ color: "red", marginLeft: 10 }}
+                              />
+                            );
+                            break;
+                        }
                         return (
                           <List.Accordion
                             expanded="false"
                             title={
-                              <Text
-                                variant="titleLarge"
+                              <View
                                 style={{
-                                  marginTop: 10,
-                                  marginLeft: 15,
-                                  fontWeight: "bold",
+                                  flexDirection: "row",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
                                 }}
                               >
-                                Bước {stage?.stageNum}:{" "}
-                                {stage?.templateStageName}
-                              </Text>
+                                <Text
+                                  variant="titleLarge"
+                                  style={{
+                                    marginLeft: 15,
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  Bước {stage?.stageNum}:{" "}
+                                  {stage?.templateStageName}
+                                </Text>
+                                <View style={{ marginLeft: 150 }}>
+                                  {iconComponent}
+                                </View>
+                              </View>
                             }
                             id={stage?.stageNum}
                             style={{
@@ -341,6 +489,7 @@ const StaffTaskDetail = ({ navigation, route }) => {
                           >
                             <View
                               style={{
+                                flex: 1,
                                 backgroundColor: "#f2f2f2",
                                 marginBottom: 10,
                                 marginLeft: "5%",
@@ -357,44 +506,86 @@ const StaffTaskDetail = ({ navigation, route }) => {
                                 elevation: 5,
                               }}
                             >
-                              <View>
-                                <Text
-                                  variant="titleLarge"
-                                  style={{ marginLeft: 40, marginTop: 10 }}
-                                >
-                                  Tên vải: Tên vải 1
-                                </Text>
-                                <Text
-                                  variant="titleLarge"
-                                  style={{ marginLeft: 40, marginTop: 10 }}
-                                >
-                                  Hình ảnh vải:
-                                </Text>
-                                <Image
-                                  source={{ uri: "https://picsum.photos/700" }}
-                                  style={{
-                                    width: "60%",
-                                    height: 150,
-                                    alignSelf: "center",
-                                    borderRadius: 10,
-                                    marginTop: 15,
-                                    marginBottom: 5,
-                                    marginLeft: 5,
-                                  }}
-                                  resizeMode="cover"
-                                />
-                                <Text
-                                  variant="titleLarge"
-                                  style={{ marginLeft: 40, marginTop: 10 }}
-                                >
-                                  Thời hạn: {stage?.deadline}
-                                </Text>
+                              <View style={{ flex: 1 }}>
+                                <View style={{ flexDirection: "row" }}>
+                                  <View
+                                    style={{
+                                      flex: 1,
+                                      marginTop: 15,
+                                      padding: 10,
+                                    }}
+                                  >
+                                    <Text
+                                      variant="headlineSmall"
+                                      style={{ marginTop: 10 }}
+                                    >
+                                      Thời hạn:{" "}
+                                      {stage?.deadline === null
+                                        ? "Chưa có deadline!!!"
+                                        : stage?.deadline}
+                                    </Text>
+                                    {startWork === 1 ? (
+                                      <Button
+                                        icon={() => (
+                                          <Icon
+                                            name="alert-circle-outline"
+                                            size={20}
+                                            color="rgb(154, 163, 59)"
+                                          />
+                                        )}
+                                        textColor="rgb(154, 163, 59)"
+                                        onPress={() => setStartWork(0)}
+                                        style={{
+                                          width: "100%",
+                                          marginTop: 25,
+                                          alignSelf: "center",
+                                          alignSelf: "center",
+                                          backgroundColor:
+                                            "rgba(235, 250, 75, 0.6)",
+                                          color: "rgb(154, 163, 59)",
+                                          borderRadius: 5,
+                                          borderWidth: 1,
+                                          borderColor: "rgb(154, 163, 59)",
+                                        }}
+                                      >
+                                        Tạm dừng
+                                      </Button>
+                                    ) : (
+                                      <Button
+                                        icon={() => (
+                                          <Icon
+                                            name="flag"
+                                            size={20}
+                                            color="rgb(63, 155, 158)"
+                                          />
+                                        )}
+                                        textColor="rgb(63, 155, 158)"
+                                        onPress={() => setStartWork(1)}
+                                        style={{
+                                          width: "100%",
+                                          marginTop: 25,
+                                          alignSelf: "center",
+                                          backgroundColor:
+                                            "rgba(113, 240, 245, 0.6)",
+                                          color: "rgb(63, 155, 158)",
+                                          borderRadius: 5,
+                                          borderWidth: 1,
+                                          borderColor: "rgb(63, 155, 158)",
+                                        }}
+                                      >
+                                        Bắt đầu
+                                      </Button>
+                                    )}
+                                  </View>
+                                </View>
                               </View>
+                              <Divider bold="true" />
                               <View>
                                 <View
                                   style={{
+                                    flex: 1,
                                     flexDirection: "row",
-                                    justifyContent: "space-evenly",
+                                    justifyContent: "space-around",
                                   }}
                                 >
                                   <Button
@@ -402,61 +593,50 @@ const StaffTaskDetail = ({ navigation, route }) => {
                                       <Icon
                                         name="eye"
                                         size={20}
-                                        color="white"
+                                        color="rgb(51, 86, 150)"
                                       />
                                     )}
-                                    mode="contained"
+                                    textColor="rgb(51, 86, 150)"
                                     onPress={() => setVisible(true)}
                                     style={{
-                                      width: "30%",
+                                      width: "40%",
                                       marginTop: 15,
                                       marginBottom: 15,
                                       alignSelf: "center",
+                                      backgroundColor:
+                                        "rgba(61, 118, 224, 0.6)",
+                                      color: "rgb(51, 86, 150)",
+                                      borderRadius: 5,
+                                      borderWidth: 1,
+                                      borderColor: "rgb(51, 86, 150)",
                                     }}
                                   >
                                     Chi tiết
                                   </Button>
-                                  {startWork === 1 ? (
-                                    <Button
-                                      icon={() => (
-                                        <Icon
-                                          name="happy-outline"
-                                          size={20}
-                                          color="white"
-                                        />
-                                      )}
-                                      mode="contained"
-                                      onPress={() => setStartWork(0)}
-                                      style={{
-                                        width: "30%",
-                                        marginTop: 15,
-                                        marginBottom: 15,
-                                        alignSelf: "center",
-                                      }}
-                                    >
-                                      Kết thúc
-                                    </Button>
-                                  ) : (
-                                    <Button
-                                      icon={() => (
-                                        <Icon
-                                          name="flag"
-                                          size={20}
-                                          color="white"
-                                        />
-                                      )}
-                                      mode="contained"
-                                      onPress={() => setStartWork(1)}
-                                      style={{
-                                        width: "30%",
-                                        marginTop: 15,
-                                        marginBottom: 15,
-                                        alignSelf: "center",
-                                      }}
-                                    >
-                                      Bắt đầu
-                                    </Button>
-                                  )}
+                                  <Button
+                                    icon={() => (
+                                      <Icon
+                                        name="checkmark-outline"
+                                        size={20}
+                                        color="rgb(66, 150, 86)"
+                                      />
+                                    )}
+                                    textColor="rgb(66, 150, 86)"
+                                    style={{
+                                      width: "40%",
+                                      marginTop: 15,
+                                      marginBottom: 15,
+                                      alignSelf: "center",
+                                      backgroundColor:
+                                        "rgba(82, 247, 120, 0.6)",
+                                      color: "rgb(66, 150, 86)",
+                                      borderRadius: 5,
+                                      borderWidth: 1,
+                                      borderColor: "rgb(66, 150, 86)",
+                                    }}
+                                  >
+                                    Hoàn thành
+                                  </Button>
                                 </View>
                                 <Portal>
                                   <Dialog
@@ -478,348 +658,195 @@ const StaffTaskDetail = ({ navigation, route }) => {
                                       <ScrollView>
                                         <List.AccordionGroup>
                                           <View>
-                                            <List.Accordion
-                                              expanded="false"
-                                              title={
-                                                <View
-                                                  style={{
-                                                    flexDirection: "row",
-                                                    alignItems: "center",
-                                                  }}
-                                                >
-                                                  <Image
-                                                    source={{
-                                                      uri: "https://picsum.photos/700",
-                                                    }}
+                                            {stage?.productComponents?.map(
+                                              (component) => {
+                                                return (
+                                                  <List.Accordion
+                                                    expanded="false"
+                                                    title={
+                                                      <View
+                                                        style={{
+                                                          flexDirection: "row",
+                                                          alignItems: "center",
+                                                        }}
+                                                      >
+                                                        <Image
+                                                          source={{
+                                                            uri:
+                                                              component?.image ===
+                                                                null ||
+                                                              component?.image ===
+                                                                ""
+                                                                ? "Không có hình ảnh!!!"
+                                                                : component?.image,
+                                                          }}
+                                                          style={{
+                                                            width: 40,
+                                                            height: 40,
+                                                            alignSelf: "center",
+                                                            borderRadius: 5,
+                                                            marginLeft: 5,
+                                                          }}
+                                                          resizeMode="cover"
+                                                        />
+                                                        <Text
+                                                          variant="titleLarge"
+                                                          style={{
+                                                            marginLeft: 15,
+                                                            fontWeight: "bold",
+                                                          }}
+                                                        >
+                                                          {component?.name}
+                                                        </Text>
+                                                      </View>
+                                                    }
+                                                    id={component?.id}
                                                     style={{
-                                                      width: 40,
-                                                      height: 40,
-                                                      alignSelf: "center",
-                                                      borderRadius: 5,
-                                                      marginLeft: 5,
-                                                    }}
-                                                    resizeMode="cover"
-                                                  />
-                                                  <Text
-                                                    variant="titleLarge"
-                                                    style={{
-                                                      marginLeft: 15,
-                                                      fontWeight: "bold",
+                                                      width: "100%",
+                                                      marginBottom: 5,
+                                                      marginTop: 10,
+                                                      borderRadius: 15,
+                                                      borderWidth: 1,
+                                                      borderColor: "#9F78FF",
                                                     }}
                                                   >
-                                                    Tên sản phẩm
-                                                  </Text>
-                                                </View>
+                                                    <View
+                                                      style={{
+                                                        marginBottom: 10,
+                                                        borderBottomLeftRadius: 15,
+                                                        borderBottomRightRadius: 15,
+                                                        borderWidth: 1,
+                                                        borderColor: "#9F78FF",
+                                                        padding: 10,
+                                                      }}
+                                                    >
+                                                      <View
+                                                        style={{
+                                                          flex: 1,
+                                                          flexDirection: "row",
+                                                        }}
+                                                      >
+                                                        <Image
+                                                          source={{
+                                                            uri: "https://picsum.photos/700",
+                                                          }}
+                                                          style={{
+                                                            width: "50%",
+                                                            height: 100,
+                                                            alignSelf: "center",
+                                                            borderRadius: 10,
+                                                            marginTop: 5,
+                                                            marginBottom: 5,
+                                                            marginLeft: 5,
+                                                          }}
+                                                          resizeMode="cover"
+                                                        />
+                                                        <Text
+                                                          variant="labelSmall"
+                                                          style={{
+                                                            marginTop: 10,
+                                                            padding: 10,
+                                                          }}
+                                                        >
+                                                          Tên kiểu: Tên kiểu 1
+                                                        </Text>
+                                                      </View>
+                                                      <View
+                                                        style={{
+                                                          marginTop: 5,
+                                                          flex: 1,
+                                                        }}
+                                                      >
+                                                        <Text
+                                                          variant="titleSmall"
+                                                          style={{
+                                                            marginLeft: 5,
+                                                          }}
+                                                        >
+                                                          Hình ảnh bổ sung
+                                                        </Text>
+                                                        <View
+                                                          style={{
+                                                            marginTop: 5,
+                                                            flexDirection:
+                                                              "row",
+                                                            flex: 1,
+                                                            justifyContent:
+                                                              "space-between",
+                                                          }}
+                                                        >
+                                                          <Image
+                                                            source={{
+                                                              uri: "https://picsum.photos/700",
+                                                            }}
+                                                            style={{
+                                                              width: "40%",
+                                                              height: 100,
+                                                              alignSelf:
+                                                                "center",
+                                                              borderRadius: 10,
+                                                              marginTop: 5,
+                                                              marginBottom: 5,
+                                                              marginLeft: 5,
+                                                            }}
+                                                            resizeMode="cover"
+                                                          />
+                                                          <Text
+                                                            variant="labelSmall"
+                                                            style={{
+                                                              flex: 1,
+                                                              marginTop: 5,
+                                                              padding: 10,
+                                                            }}
+                                                          >
+                                                            Ghi chú: Đính hột
+                                                            xoang kim cương
+                                                          </Text>
+                                                        </View>
+                                                        <View
+                                                          style={{
+                                                            marginTop: 5,
+                                                            flexDirection:
+                                                              "row",
+                                                            flex: 1,
+                                                            justifyContent:
+                                                              "space-between",
+                                                          }}
+                                                        >
+                                                          <Image
+                                                            source={{
+                                                              uri: "https://picsum.photos/700",
+                                                            }}
+                                                            style={{
+                                                              width: "40%",
+                                                              height: 100,
+                                                              alignSelf:
+                                                                "center",
+                                                              borderRadius: 10,
+                                                              marginTop: 5,
+                                                              marginBottom: 5,
+                                                              marginLeft: 5,
+                                                            }}
+                                                            resizeMode="cover"
+                                                          />
+                                                          <Text
+                                                            variant="labelSmall"
+                                                            style={{
+                                                              flex: 1,
+                                                              marginTop: 5,
+                                                              padding: 10,
+                                                            }}
+                                                          >
+                                                            Ghi chú: Đính hột
+                                                            xoang kim cương
+                                                          </Text>
+                                                        </View>
+                                                      </View>
+                                                    </View>
+                                                  </List.Accordion>
+                                                );
                                               }
-                                              id="1"
-                                              style={{
-                                                width: "100%",
-                                                marginBottom: 5,
-                                                marginTop: 10,
-                                                borderRadius: 15,
-                                                borderWidth: 1,
-                                                borderColor: "#9F78FF",
-                                              }}
-                                            >
-                                              <View
-                                                style={{
-                                                  marginBottom: 10,
-                                                  borderBottomLeftRadius: 15,
-                                                  borderBottomRightRadius: 15,
-                                                  borderWidth: 1,
-                                                  borderColor: "#9F78FF",
-                                                  padding: 10,
-                                                }}
-                                              >
-                                                <View>
-                                                  <Text variant="headlineSmall">
-                                                    Kiểu
-                                                  </Text>
-                                                  <Image
-                                                    source={{
-                                                      uri: "https://picsum.photos/700",
-                                                    }}
-                                                    style={{
-                                                      width: 150,
-                                                      height: 100,
-                                                      alignSelf: "center",
-                                                      borderRadius: 10,
-                                                      marginTop: 5,
-                                                      marginBottom: 5,
-                                                      marginLeft: 5,
-                                                    }}
-                                                    resizeMode="cover"
-                                                  />
-                                                </View>
-                                                <View style={{ marginTop: 5 }}>
-                                                  <Text variant="headlineSmall">
-                                                    Hình ảnh bổ sung
-                                                  </Text>
-                                                  <Image
-                                                    source={{
-                                                      uri: "https://picsum.photos/700",
-                                                    }}
-                                                    style={{
-                                                      width: 150,
-                                                      height: 100,
-                                                      alignSelf: "center",
-                                                      borderRadius: 10,
-                                                      marginTop: 5,
-                                                      marginBottom: 5,
-                                                      marginLeft: 5,
-                                                    }}
-                                                    resizeMode="cover"
-                                                  />
-                                                </View>
-                                                <View style={{ marginTop: 5 }}>
-                                                  <Text variant="headlineSmall">
-                                                    Ghi chú
-                                                  </Text>
-                                                  <TextInput
-                                                    multiline={true}
-                                                    numberOfLines={4}
-                                                    placeholder="Nhập ghi chú của bạn..."
-                                                    style={{
-                                                      borderWidth: 1,
-                                                      borderColor: "gray",
-                                                      borderRadius: 5,
-                                                      padding: 10,
-                                                      marginTop: 5,
-                                                    }}
-                                                    editable={false}
-                                                    value="Thêm hột xoàng đinh nút kim cương"
-                                                  />
-                                                </View>
-                                              </View>
-                                            </List.Accordion>
-                                            <List.Accordion
-                                              expanded="false"
-                                              title={
-                                                <View
-                                                  style={{
-                                                    flexDirection: "row",
-                                                    alignItems: "center",
-                                                  }}
-                                                >
-                                                  <Image
-                                                    source={{
-                                                      uri: "https://picsum.photos/700",
-                                                    }}
-                                                    style={{
-                                                      width: 40,
-                                                      height: 40,
-                                                      alignSelf: "center",
-                                                      borderRadius: 5,
-                                                      marginLeft: 5,
-                                                    }}
-                                                    resizeMode="cover"
-                                                  />
-                                                  <Text
-                                                    variant="titleLarge"
-                                                    style={{
-                                                      marginLeft: 15,
-                                                      fontWeight: "bold",
-                                                    }}
-                                                  >
-                                                    Tên sản phẩm
-                                                  </Text>
-                                                </View>
-                                              }
-                                              id="2"
-                                              style={{
-                                                width: "100%",
-                                                marginBottom: 5,
-                                                marginTop: 10,
-                                                borderRadius: 15,
-                                                borderWidth: 1,
-                                                borderColor: "#9F78FF",
-                                              }}
-                                            >
-                                              <View
-                                                style={{
-                                                  marginBottom: 10,
-                                                  borderBottomLeftRadius: 15,
-                                                  borderBottomRightRadius: 15,
-                                                  borderWidth: 1,
-                                                  borderColor: "#9F78FF",
-                                                  padding: 10,
-                                                }}
-                                              >
-                                                <View>
-                                                  <Text variant="headlineSmall">
-                                                    Kiểu
-                                                  </Text>
-                                                  <Image
-                                                    source={{
-                                                      uri: "https://picsum.photos/700",
-                                                    }}
-                                                    style={{
-                                                      width: 150,
-                                                      height: 100,
-                                                      alignSelf: "center",
-                                                      borderRadius: 10,
-                                                      marginTop: 5,
-                                                      marginBottom: 5,
-                                                      marginLeft: 5,
-                                                    }}
-                                                    resizeMode="cover"
-                                                  />
-                                                </View>
-                                                <View style={{ marginTop: 5 }}>
-                                                  <Text variant="headlineSmall">
-                                                    Hình ảnh bổ sung
-                                                  </Text>
-                                                  <Image
-                                                    source={{
-                                                      uri: "https://picsum.photos/700",
-                                                    }}
-                                                    style={{
-                                                      width: 150,
-                                                      height: 100,
-                                                      alignSelf: "center",
-                                                      borderRadius: 10,
-                                                      marginTop: 5,
-                                                      marginBottom: 5,
-                                                      marginLeft: 5,
-                                                    }}
-                                                    resizeMode="cover"
-                                                  />
-                                                </View>
-                                                <View style={{ marginTop: 5 }}>
-                                                  <Text variant="headlineSmall">
-                                                    Ghi chú
-                                                  </Text>
-                                                  <TextInput
-                                                    multiline={true}
-                                                    numberOfLines={4}
-                                                    placeholder="Nhập ghi chú của bạn..."
-                                                    style={{
-                                                      borderWidth: 1,
-                                                      borderColor: "gray",
-                                                      borderRadius: 5,
-                                                      padding: 10,
-                                                      marginTop: 5,
-                                                    }}
-                                                    editable={false}
-                                                    value="Thêm hột xoàng đinh nút kim cương"
-                                                  />
-                                                </View>
-                                              </View>
-                                            </List.Accordion>
-                                            <List.Accordion
-                                              expanded="false"
-                                              title={
-                                                <View
-                                                  style={{
-                                                    flexDirection: "row",
-                                                    alignItems: "center",
-                                                  }}
-                                                >
-                                                  <Image
-                                                    source={{
-                                                      uri: "https://picsum.photos/700",
-                                                    }}
-                                                    style={{
-                                                      width: 40,
-                                                      height: 40,
-                                                      alignSelf: "center",
-                                                      borderRadius: 5,
-                                                      marginLeft: 5,
-                                                    }}
-                                                    resizeMode="cover"
-                                                  />
-                                                  <Text
-                                                    variant="titleLarge"
-                                                    style={{
-                                                      marginLeft: 15,
-                                                      fontWeight: "bold",
-                                                    }}
-                                                  >
-                                                    Tên sản phẩm
-                                                  </Text>
-                                                </View>
-                                              }
-                                              id="3"
-                                              style={{
-                                                width: "100%",
-                                                marginBottom: 5,
-                                                marginTop: 10,
-                                                borderRadius: 15,
-                                                borderWidth: 1,
-                                                borderColor: "#9F78FF",
-                                              }}
-                                            >
-                                              <View
-                                                style={{
-                                                  marginBottom: 10,
-                                                  borderBottomLeftRadius: 15,
-                                                  borderBottomRightRadius: 15,
-                                                  borderWidth: 1,
-                                                  borderColor: "#9F78FF",
-                                                  padding: 10,
-                                                }}
-                                              >
-                                                <View>
-                                                  <Text variant="headlineSmall">
-                                                    Kiểu
-                                                  </Text>
-                                                  <Image
-                                                    source={{
-                                                      uri: "https://picsum.photos/700",
-                                                    }}
-                                                    style={{
-                                                      width: 150,
-                                                      height: 100,
-                                                      alignSelf: "center",
-                                                      borderRadius: 10,
-                                                      marginTop: 5,
-                                                      marginBottom: 5,
-                                                      marginLeft: 5,
-                                                    }}
-                                                    resizeMode="cover"
-                                                  />
-                                                </View>
-                                                <View style={{ marginTop: 5 }}>
-                                                  <Text variant="headlineSmall">
-                                                    Hình ảnh bổ sung
-                                                  </Text>
-                                                  <Image
-                                                    source={{
-                                                      uri: "https://picsum.photos/700",
-                                                    }}
-                                                    style={{
-                                                      width: 150,
-                                                      height: 100,
-                                                      alignSelf: "center",
-                                                      borderRadius: 10,
-                                                      marginTop: 5,
-                                                      marginBottom: 5,
-                                                      marginLeft: 5,
-                                                    }}
-                                                    resizeMode="cover"
-                                                  />
-                                                </View>
-                                                <View style={{ marginTop: 5 }}>
-                                                  <Text variant="headlineSmall">
-                                                    Ghi chú
-                                                  </Text>
-                                                  <TextInput
-                                                    multiline={true}
-                                                    numberOfLines={4}
-                                                    placeholder="Nhập ghi chú của bạn..."
-                                                    style={{
-                                                      borderWidth: 1,
-                                                      borderColor: "gray",
-                                                      borderRadius: 5,
-                                                      padding: 10,
-                                                      marginTop: 5,
-                                                    }}
-                                                    editable={false}
-                                                    value="Thêm hột xoàng đinh nút kim cương"
-                                                  />
-                                                </View>
-                                              </View>
-                                            </List.Accordion>
+                                            )}
                                           </View>
                                         </List.AccordionGroup>
                                       </ScrollView>
