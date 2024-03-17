@@ -31,8 +31,12 @@ export default function StaffLogin({ navigation }) {
   };
   const handleLogin = async () => {
     setLoading(true);
-    const staffLogin_Url = `https://e-tailorapi.azurewebsites.net/api/auth/mma/login`;
 
+    const staffLogin_Url = `https://e-tailorapi.azurewebsites.net/api/auth/mma/login`;
+    const staffInfo = await AsyncStorage.getItem("Staff");
+    if (staffInfo) {
+      await AsyncStorage.removeItem("Staff");
+    }
     try {
       const response = await fetch(staffLogin_Url, {
         method: "POST",
@@ -48,10 +52,11 @@ export default function StaffLogin({ navigation }) {
       if (response.ok) {
         const data = await response.json();
         await AsyncStorage.setItem("staff", JSON.stringify(data));
-        navigation.navigate(data.role === "Staff" ? "Staff-Home" : "Customer-Home");
+        navigation.navigate(data?.role === "Staff" ? "Staff-Home" : "Customer-Home");
       } else {
         const errorText = await response.text();
         setError({ ...error, otp_err: errorText });
+        console.log("Login ERROR:", errorText);
       }
     } catch (error) {
       console.error("Error:", error);

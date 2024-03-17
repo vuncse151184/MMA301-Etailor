@@ -285,30 +285,20 @@ function StaffHomeTabNavigator() {
 
 
 function StackGroup({ user }) {
-    console.log("USER:", user)
     return (
-        user?.role === "Staff" ? (
-            <Stack.Navigator
-                initialRouteName="Staff-Login"
-            >
-                <Stack.Screen name="Staff-Login" component={StaffLogin} options={{ headerShown: false }} />
-                <Stack.Screen name="Staff-Home" component={StaffNavigator} options={{ headerShown: false }} />
-            </Stack.Navigator >
-        ) : (
-            (
-                <>
-                    <Stack.Navigator
-                        initialRouteName="Staff-Login"
-                    >
-                        <Stack.Screen name="Staff-Login" component={StaffLogin} options={{ headerShown: false }} />
-                        <Stack.Screen name="Customer-Home" component={StaffHomeTabNavigator} options={{ headerShown: false }} />
-                        <Stack.Screen name="Product-detail2" component={ProductDetail2} options={{ headerShown: false }} />
-                        <Stack.Screen name="ProductDetail" component={ProductDetail} options={{ headerShown: false }} />
-                    </Stack.Navigator >
-                </>
-            )
 
-        ))
+        <Stack.Navigator
+            initialRouteName="Staff-Login"
+        >
+            <Stack.Screen name="Staff-Login" component={StaffLogin} options={{ headerShown: false }} />
+            <Stack.Screen name="Staff-Home" component={StaffNavigator} options={{ headerShown: false }} />
+            <Stack.Screen name="Customer-Home" component={StaffHomeTabNavigator} options={{ headerShown: false }} />
+            <Stack.Screen name="Product-detail2" component={ProductDetail2} options={{ headerShown: false }} />
+            <Stack.Screen name="ProductDetail" component={ProductDetail} options={{ headerShown: false }} />
+        </Stack.Navigator >
+    )
+
+
 }
 
 export default function Navigation() {

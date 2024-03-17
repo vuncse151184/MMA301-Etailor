@@ -1,8 +1,9 @@
-import { Platform, SafeAreaView, ScrollView, StyleSheet, Text, View, Image } from 'react-native'
+import { StyleSheet, Text, View, Image, WebView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Appbar, TextInput, Button, HelperText, ActivityIndicator } from 'react-native-paper';
+import { Appbar, Button, ActivityIndicator } from 'react-native-paper';
 import { Realtime } from './Realtime';
+import ScanMePNG from '../../assets/images/vecteezy_scan-me-png_21462615.png'
 const OrderPayment = ({ navigation, route }) => {
     const { id, fullname, orderId, amount } = route.params;
     const [qrCode, setQrCode] = useState("");
@@ -10,20 +11,26 @@ const OrderPayment = ({ navigation, route }) => {
     const [data, setData] = useState('');
     const _goBack = () => navigation.navigate("Staff-Order-Detail", { id: id, fullname: fullname, orderId });
     const vnpayNotification = Realtime()
-
+    const handleOpenWebView = async (url) => {
+        console.log("URL:", url)
+        return (
+            <WebView
+                source={{ uri: url }}
+                style={{ marginTop: 20 }}
+            />
+        );
+    }
     useEffect(() => {
         if (
             vnpayNotification !== null &&
             vnpayNotification !== undefined &&
             vnpayNotification !== ""
         ) {
-            Swal.fire({
-                position: "top-center",
-                icon: "error",
-                title: vnpayNotification,
-                showConfirmButton: false,
-            });
+            console.log("Không có kết nối:")
+        } else {
+            console.log(" có kết nối:")
         }
+
     }, [vnpayNotification])
 
     const handlePayment = async (platform) => {
@@ -46,6 +53,7 @@ const OrderPayment = ({ navigation, route }) => {
                     setLoading(false);
                     setQrCode(responseData.qrImage)
                     setData(responseData);
+                    handleOpenWebView(responseData.link)
                     // window.open(responseData);
                     // handleDataOrderDetail();
                 } else {
@@ -72,8 +80,9 @@ const OrderPayment = ({ navigation, route }) => {
             <View style={styles.content}>
                 <Text style={styles.orderInfo}>Order ID: {orderId}</Text>
                 <Text style={styles.orderInfo}>Customer Name: {fullname}</Text>
+                <Image source={require('../../assets/images/vnpay.png')} style={{ width: 100, height: 100, resizeMode: "contain" }} />
                 <Button onPress={() => handlePayment('VN Pay')} >
-                    VnPay
+                    VNPAY
                 </Button>
                 {/* <View>
                     <Button
@@ -86,10 +95,14 @@ const OrderPayment = ({ navigation, route }) => {
                 </View> */}
 
                 {loading ? <ActivityIndicator animating={true} color="#000" /> : (
-                    <Image
-                        style={{ width: 200, height: 200 }}
-                        source={{ uri: `data:image/png;base64,${data.qrImage}` }}
-                    />
+                    <View style={{ alignItems: "center", marginTop: 40 }}>
+                        <Image source={require(`../../assets/images/vecteezy_scan-me-png_21462615.png`)} style={{ width: 340, height: 340, resizeMode: "contain", position: "relative" }} />
+                        <Image
+                            style={{ width: 140, height: 140, position: "absolute", right: 73, bottom: 102, margin: "auto" }}
+                            source={{ uri: `data:image/png;base64,${data.qrImage}` }}
+                        />
+                    </View>
+
 
                 )}
             </View>
