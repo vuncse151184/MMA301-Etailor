@@ -39,5 +39,11 @@
   "devDependencies": {
     "@babel/core": "^7.20.0"
   },
+  "overrides": {
+    "react-devtools-core": "~4.25.0"
+  },
+  "resolutions": {
+    "react-devtools-core": "~4.25.0"
+  },
   "private": true
 }
