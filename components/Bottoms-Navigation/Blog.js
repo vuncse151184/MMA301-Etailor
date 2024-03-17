@@ -1,17 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, View, StyleSheet, Image, TextInput, TouchableOpacity, TouchableWithoutFeedback, Keyboard, SafeAreaView } from 'react-native';
 import MenuItem from '../UI/MenuItem';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import dataBlog from '../data/dataBlog';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 
 
 export default function StaffProfile() {
+    const [data, setData] = useState([])
     const navigation = useNavigation();
     const navigateToProductDetail = (product) => {
         navigation.navigate('Product-detail2', { product });
     };
-
+    useEffect(() => {
+        axios.get(`https://e-tailorapi.azurewebsites.net/api/blog`)
+            .then(res => {
+                setData(res.data)
+            })
+            .catch(err => { })
+    }, [])
     return (
         <SafeAreaView styles={styles.container}>
             <View style={styles.container}>
@@ -34,8 +42,8 @@ export default function StaffProfile() {
 
             <Text style={{ fontSize: 25, marginLeft: 10, marginBottom: 10, fontWeight: "bold", top: 10 }}>Bài viết gần đây</Text>
             <FlatList
-                style={{ marginTop: 5, paddingBottom: 50 }}
-                data={dataBlog}
+                style={{ marginTop: 5, marginBottom: 370 }}
+                data={data}
                 keyExtractor={item => item.id}
                 numColumns={2}
                 renderItem={({ item }) => (

@@ -3,6 +3,10 @@ import { View, Image, Text } from 'react-native';
 
 export default function MenuItem({ item }) {
     // console.log(item)
+    const convertDate = (date) => {
+        let fDate = new Date(date)
+        return fDate.toLocaleString()
+    }
     return (
         <View
             style={{
@@ -29,14 +33,14 @@ export default function MenuItem({ item }) {
                         borderRadius: 3,
 
                     }}
-                    source={{ uri: item.url }}
+                    source={{ uri: item?.thumbnail }}
                 />
             </View>
             <Text style={{ fontWeight: 'bold', fontSize: 16 }}>
-                {item.productName}
+                {item?.title}
             </Text>
             <Text style={{ fontSize: 12, color: '#1e81b0' }}>
-                Ngày đăng: {item.price}
+                Ngày đăng: {convertDate(item?.createdTime)}
             </Text>
         </View>
     )
