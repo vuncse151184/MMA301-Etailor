@@ -91,7 +91,7 @@ const ProductDetail = ({ navigation, route }) => {
             paddingLeft: 10,
           }}
         >
-          Description
+          Mô tả
         </Text>
         <Text
           style={{
@@ -105,7 +105,7 @@ const ProductDetail = ({ navigation, route }) => {
         </Text>
 
         {/* btn */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={{
             position: "absolute",
             width: "100%",
@@ -122,7 +122,7 @@ const ProductDetail = ({ navigation, route }) => {
           <Text style={{ color: "#ffffff", fontSize: 30 }}>
             Liên hệ đặt may
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );

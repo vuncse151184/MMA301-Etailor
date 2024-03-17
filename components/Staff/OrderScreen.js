@@ -4,14 +4,14 @@ import React from 'react'
 import { Appbar, TextInput } from 'react-native-paper';
 
 const OrderScreen = ({ navigation }) => {
-    const _goBack = () => navigation.navigate('Staff-Tasks');
+    const _goBack = () => navigation.navigate('Sample-products');
     const [text, setText] = React.useState('');
     return (
         <SafeAreaView style={styles.container}>
             <Appbar.Header mode={Platform.OS === 'ios' ? 'center-aligned' : 'small'} style={styles.header}>
                 <View style={styles.headerContent}>
                     <Appbar.BackAction onPress={_goBack} style={styles.backAction} />
-                    <Appbar.Content title="Tạo đơn" style={styles.title} />
+                    <Appbar.Content title="Trở lại" style={styles.title} />
                 </View>
             </Appbar.Header>
             <View>
