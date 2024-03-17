@@ -1,4 +1,4 @@
-import { Platform, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Platform, SafeAreaView, ScrollView, StyleSheet, Image, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Appbar, TextInput, Searchbar, Button, Card, Title, Paragraph, ActivityIndicator, } from 'react-native-paper';
@@ -6,7 +6,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import ProfileIcon from '../../assets/profile.png';
 import { Keyboard } from 'react-native'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-
+import NoUser from '../../assets/images/6485292.jpg'
 const DismissKeyboard = () => (
     Keyboard.dismiss()
 );
@@ -18,6 +18,7 @@ const OrderScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [allCusData, setAllCusData] = useState('')
     const [filteredData, setFilteredData] = useState([])
+    const [currentCustomer, setCurrentCustomer] = useState('')
     const [loading, setLoading] = useState(false);
     const handleInputChange = (text) => {
         setEmail(text);
@@ -68,7 +69,6 @@ const OrderScreen = ({ navigation }) => {
     const [orderId, setOrderId] = useState('');
     const handleChoseCustomer = async (customer) => {
         console.log('Chose customer', customer);
-
         const fetchCustomerProfile = async () => {
             const CREATE_ORDER_URL = `https://e-tailorapi.azurewebsites.net/api/order`
             setLoading(true);
@@ -77,31 +77,46 @@ const OrderScreen = ({ navigation }) => {
                 const token = staffInfo ? JSON.parse(staffInfo).token : '';
 
                 let id = await AsyncStorage.getItem('orderId');
+                console.log("ORDER ID:", id)
+                let payload;
                 if (!id) {
-                    // If orderId doesn't exist, create it
-                    const payload = JSON.stringify({
+                    console.log("NO ORDER ID")
+                    payload = JSON.stringify({
                         customerId: customer?.id,
                     })
-                    console.log("PAYLOAD:", payload)
-                    const response = await fetch(CREATE_ORDER_URL, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Authorization: `Bearer ${token}`,
-                        },
-                        body: payload
-                    });
-
-                    if (response.ok) {
-                        const data = await response.text();
-                        id = data;
-                        await AsyncStorage.setItem("orderId", id);
-                    } else {
-                        setLoading(false);
-                        const errorText = await response.text();
-                        console.error('Fetch error:', errorText);
-                        return; // Exit early if there's an error
+                } else {
+                    console.log("HAS ORDER ID")
+                    let flag = "1";
+                    if (currentCustomer !== customer.id) {
+                        await AsyncStorage.removeItem("orderId");
+                        flag = "2";
                     }
+                    payload = JSON.stringify({
+                        id: flag === "2" ? null : JSON.parse(id).orderId,
+                        customerId: customer.id,
+                    })
+                }
+                const response = await fetch(CREATE_ORDER_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: payload
+                });
+
+                if (response.ok) {
+                    const data = await response.text();
+                    const order = {
+                        orderId: data,
+                        customerId: customer.id
+                    }
+                    await AsyncStorage.setItem("orderId", data);
+                } else {
+                    setLoading(false);
+                    const errorText = await response.text();
+                    console.error('Fetch error:', errorText);
+                    return;
                 }
 
                 console.log("ORDER ID:", id);
@@ -116,8 +131,9 @@ const OrderScreen = ({ navigation }) => {
             }
         };
 
-        await fetchCustomerProfile();
+        fetchCustomerProfile();
     }
+
     const handleCreateNewCus = () => {
         console.log('Create new customer');
         navigation.navigate('Staff-Create-Customer');
@@ -198,8 +214,9 @@ const OrderScreen = ({ navigation }) => {
                                         mode="contained-tonal"
                                         style={{ marginTop: 7, alignItems: "center", fontSize: 20 }}
                                         onPress={handleCreateNewCus}>
-                                        <Text style={{ fontSize: 20, marginTop: 20 }}>Tạo mới</Text>
+                                        <Text style={{ fontSize: 18, marginTop: 20 }}>Tạo mới</Text>
                                     </Button>
+                                    <Image source={require('../../assets/images/6485292.jpg')} style={{ resizeMode: "contain", width: 200, height: 200, marginTop: 120 }} />
                                 </View>
 
                             )
@@ -218,6 +235,7 @@ export default OrderScreen
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#fff',
     },
     header: {
         backgroundColor: "#fff",

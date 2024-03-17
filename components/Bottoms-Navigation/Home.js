@@ -43,7 +43,7 @@ const dataMau = [
 ]
 
 
-export default function StaffProfile() {
+export default function StaffProfile({ navigation }) {
     const [activeImg, setActiveImg] = useState(0);
     const [data, setData] = useState([]);
     const [selectedData, setSelectedData] = useState([]);
@@ -76,14 +76,21 @@ export default function StaffProfile() {
     const closeSidebar = () => {
         setIsShowSidebar(false);
     }
-
+    const [login, setLogin] = useState(true);
 
     const doNotHandleAnyAction = () => {
     }
-    const logout = async () => {
-        closeSidebar()
-        await AsyncStorage.removeItem("staff");
+    const handleLogin = () => {
+        navigation.navigate('Staff-Login')
     }
+    const logout = async () => {
+        setLogin(false);
+        closeSidebar()
+        const removeItemSuccess = await AsyncStorage.removeItem("Staff");
+        console.log("Remove item success:", removeItemSuccess);
+    }
+
+
     return (
         <>
             <View style={styles.container}>
@@ -92,19 +99,30 @@ export default function StaffProfile() {
                         <Appbar.Content
                             title={
                                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: -20 }}>
-                                    <TouchableOpacity onPress={openSidebar}>
-                                        <Avatar.Image size={50} source={require('../../assets/images/user-avatar.jpg')} />
-                                    </TouchableOpacity>
-                                    <View style={{ marginLeft: 10 }}>
-                                        <Text style={{ fontWeight: 'bold', color: '#fff', fontSize: 18 }}>
-                                            Tomlenek
-                                        </Text>
-                                        {formattedDate ? (
-                                            <Text style={{ fontSize: 14, fontWeight: "300", color: "#fff" }}>
-                                                {formattedDate}
-                                            </Text>
-                                        ) : ''}
-                                    </View>
+                                    {login ? (
+                                        <>
+
+                                            <TouchableOpacity onPress={openSidebar}>
+                                                <Avatar.Image size={50} source={require('../../assets/images/user-avatar.jpg')} />
+                                            </TouchableOpacity>
+                                            <View style={{ marginLeft: 10 }}>
+
+                                                <Text style={{ fontWeight: 'bold', color: '#fff', fontSize: 18 }}>
+                                                    Tomlenek
+                                                </Text>
+                                                {formattedDate ? (
+                                                    <Text style={{ fontSize: 14, fontWeight: "300", color: "#fff" }}>
+                                                        {formattedDate}
+                                                    </Text>
+                                                ) : ''}
+                                            </View>
+
+                                        </>
+                                    ) : (
+                                        <TouchableOpacity onPress={handleLogin}>
+                                            <Text style={{ color: "#fff", fontSize: 18, fontWeight: 'bold' }}>Đăng nhập</Text>
+                                        </TouchableOpacity >
+                                    )}
                                 </View>
                             }
                         />
@@ -211,7 +229,7 @@ export default function StaffProfile() {
                                 <AntDesign
                                     name="closecircleo" size={24} color="black" />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={logout} style={{ marginTop: 60, display: 'flex', flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderColor: '#000000', borderStyle: 'solid', paddingBottom: 5 }}>
+                            <TouchableOpacity onPress={() => logout()} style={{ marginTop: 60, display: 'flex', flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderColor: '#000000', borderStyle: 'solid', paddingBottom: 5 }}>
                                 <MaterialIcons name="logout" size={24} color="black" style={{ marginLeft: 10 }} />
                                 <Text style={{ fontSize: 20 }}> Logout</Text>
                             </TouchableOpacity>
