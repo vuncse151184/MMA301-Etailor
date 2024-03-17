@@ -108,6 +108,7 @@ function StaffNavigator() {
                 tabBarInactiveTintColor: "#000000",
                 tabBarActiveTintColor: "#9f78ff",
             }}
+
         >
 
             <StaffTab.Screen
@@ -115,9 +116,9 @@ function StaffNavigator() {
                 component={StaffStackNavigator}
                 options={{
                     tabBarIcon: ({ focused }) => (
-                        <View style={{ alignItems: "center", justifyContent: "center", top: 10 }}>
+                        <View style={{ alignItems: "center", justifyContent: "center" }}>
                             <CustomTabIcon name="calendar" color={"#FFFFFF"} focused={focused} />
-                            <Text style={{ color: focused ? "#9f78ff" : "#000000", fontSize: 12 }}>
+                            <Text style={{ color: focused ? "#FFFFFF" : "#D9D9D9", fontSize: 12 }}>
                                 Công Việc
                             </Text>
                         </View>
@@ -131,9 +132,9 @@ function StaffNavigator() {
                 component={StaffProfile}
                 options={{
                     tabBarIcon: ({ focused }) => (
-                        <View style={{ alignItems: "center", justifyContent: "center", top: 10 }}>
+                        <View style={{ alignItems: "center", justifyContent: "center" }}>
                             <CustomTabIcon name="person" color={"#FFFFFF"} focused={focused} />
-                            <Text style={{ color: focused ? "#9f78ff" : "#000000", fontSize: 12 }}>
+                            <Text style={{ color: focused ? "#FFFFFF" : "#D9D9D9", fontSize: 12 }}>
                                 Tài khoản
                             </Text>
                         </View>
@@ -151,12 +152,11 @@ function StaffNavigator() {
                             style={{
                                 alignItems: "center",
                                 justifyContent: "center",
-                                top: 5,
                             }}
                         >
                             <CustomTabIcon name="add-circle" color={"#FFFFFF"} focused={focused} />
                             <Text
-                                style={{ color: focused ? "#9f78ff" : "#000000", fontSize: 12 }}
+                                style={{ color: focused ? "#FFFFFF" : "#D9D9D9", fontSize: 12 }}
                             >
                                 Tạo đơn
                             </Text>

@@ -27,7 +27,6 @@ function formatCurrency(amount) {
 export default function OrderDetail({ navigation, route }) {
     const [isLoaded, setIsLoaded] = useState(false);
     const { id, fullname, orderId } = route.params;
-    console.log("ORDER ID", orderId)
     const GET_ORDER_DETAILS = `https://e-tailorapi.azurewebsites.net/api/order/${orderId}`
     const [orderDetails, setOrderDetails] = useState([]);
 
@@ -37,6 +36,7 @@ export default function OrderDetail({ navigation, route }) {
     }
     const fetchOrderDetails = async () => {
         try {
+            setIsLoaded(true);
             const staffInfo = await AsyncStorage.getItem('staff');
             const token = staffInfo ? JSON.parse(staffInfo).token : '';
             const response = await fetch((GET_ORDER_DETAILS), {
@@ -48,11 +48,10 @@ export default function OrderDetail({ navigation, route }) {
             });
             if (response.ok) {
                 const data = await response.json();
-
+                setIsLoaded(false);
                 data.products.push(undefined)
-                console.log("detail", data);
+                console.log("DATA:", data)
                 setOrderDetails(data);
-                console.log("orderDetails", typeof (data.products));
             }
         } catch (error) {
             console.error(error);
@@ -60,9 +59,15 @@ export default function OrderDetail({ navigation, route }) {
     }
     useFocusEffect(
         React.useCallback(() => {
-            fetchOrderDetails();
-        }, [fetchOrderDetails])
+            const fetchData = async () => {
+
+                await fetchOrderDetails();
+
+            };
+            fetchData();
+        }, [])
     );
+
     const CustomTabIcon = ({ name, onPress }) => (
         <TouchableOpacity
             onPress={() => {
@@ -74,7 +79,6 @@ export default function OrderDetail({ navigation, route }) {
         </TouchableOpacity>
     );
     const handleRemoveProduct = async (productId) => {
-        console.log("CLICKED", productId);
         setVisible(false);
         const staffInfo = await AsyncStorage.getItem('staff');
         const token = staffInfo ? JSON.parse(staffInfo).token : '';
@@ -88,7 +92,6 @@ export default function OrderDetail({ navigation, route }) {
         });
         if (response.ok) {
             const data = await response.text();
-            console.log("REMOVE", data);
             fetchOrderDetails();
         }
 
@@ -104,6 +107,7 @@ export default function OrderDetail({ navigation, route }) {
     const handlePayment = () => {
         navigation.navigate("Staff-Order-Payment", { orderId: orderId, fullname: fullname, id: id });
     }
+
     return (
         <View style={{ position: "relative" }}>
             <Appbar.Header style={{ height: 60 }} statusBarHeight={0}>
@@ -168,18 +172,21 @@ export default function OrderDetail({ navigation, route }) {
                     </Dialog.Actions>
                 </Dialog>
             </Portal>
-            <View style={{ flexDirection: "row", position: "absolute", bottom: 30, right: 10, left: 10 }}>
-                <View style={{ flexDirection: "row", backgroundColor: '#ffffff', paddingLeft: 50, height: 60, width: "100%", alignItems: "center", borderRadius: 40 }}>
-                    <Text style={styles.infoLabel}>Giá:</Text>
-                    <Text style={styles.infoValue}>{formatCurrency(orderDetails.totalPrice)} đ</Text>
-                    <TouchableOpacity style={{ backgroundColor: '#9f78ff', paddingLeft: 20, height: 60, width: 180, alignItems: "center", justifyContent: "center", borderRadius: 40 }}>
-                        <Text style={{ color: "#ffffff", fontWeight: "bold" }}>
-                            Thanh toán
-                        </Text>
-                    </TouchableOpacity>
+            {(orderDetails?.products && orderDetails.products.length !== 0) && (
+                <View style={{ flexDirection: "row", position: "absolute", bottom: 30, right: 10, left: 10 }}>
+                    <View style={{ flexDirection: "row", backgroundColor: '#ffffff', paddingLeft: 50, height: 60, width: "100%", alignItems: "center", borderRadius: 40 }}>
+                        <Text style={styles.infoLabel}>Giá:</Text>
+                        <Text style={styles.infoValue}>{formatCurrency(orderDetails.totalPrice)} đ</Text>
+                        <TouchableOpacity style={{ backgroundColor: '#9f78ff', paddingLeft: 20, height: 60, width: 180, alignItems: "center", justifyContent: "center", borderRadius: 40 }}>
+                            <Text style={{ color: "#ffffff", fontWeight: "bold" }}>
+                                Thanh toán
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
+            )}
 
-            </View>
+
         </View >
 
     )

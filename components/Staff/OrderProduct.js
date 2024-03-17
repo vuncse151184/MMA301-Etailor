@@ -33,6 +33,7 @@ const OrderProduct = ({ navigation, route }) => {
   const [allComponents, setAllComponents] = useState('');
   const [loading, setLoading] = useState(false);
   const [note, setNote] = useState()
+  const [hasTyped, setHasTyped] = useState(false);
   const [loadingAdd, setLoadingAdd] = useState(false);
   const hasErrors = () => {
 
@@ -63,6 +64,7 @@ const OrderProduct = ({ navigation, route }) => {
         });
         if (response.ok) {
           const data = await response.json();
+          console.log("profile", data)
           setProfileData(data)
           setLoading(false);
         } else {
@@ -138,7 +140,7 @@ const OrderProduct = ({ navigation, route }) => {
   const [text, setText] = useState('');
   const onChangeText = text => {
     setText(text);
-    // setHasTyped(true);
+    setHasTyped(true);
   };
   const [selectedTemplate, setSelectedTemplate] = useState('')
   const [selectedProfile, setSelectedProfile] = useState('')
@@ -213,7 +215,7 @@ const OrderProduct = ({ navigation, route }) => {
       id: Object.keys(obj)[0],
       componentId: obj[Object.keys(obj)[0]]
     }));
-    
+
     const payload = ({
       orderId: orderId,
       materialId: selectedMaterial,
@@ -223,13 +225,12 @@ const OrderProduct = ({ navigation, route }) => {
       note: note,
       productComponents: convertedArray
     })
-    console.log("Payload:",  JSON.stringify(payload))
+    console.log("Payload:", JSON.stringify(payload))
     setLoadingAdd(true)
     const ADD_PRODUCT_URL = `https://e-tailorapi.azurewebsites.net/api/product/${orderId}`
     const staff = await AsyncStorage.getItem('staff');
     const token = staff ? JSON.parse(staff).token : '';
     const response = await fetch(ADD_PRODUCT_URL, {
-
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -277,9 +278,12 @@ const OrderProduct = ({ navigation, route }) => {
                   onChangeText={onChangeText}
                   style={{ marginTop: 10, height: 50, color: '#000000', backgroundColor: '#ffffff' }}
                 />
-                <HelperText type="error" visible={hasErrors()} style={{ padding: 0, margin: 0 }}>
-                  Vui lòng nhập tên sản phẩm
-                </HelperText>
+                {hasTyped && hasErrors() && (
+                  <HelperText type="error" visible={hasErrors()} style={{ padding: 0, margin: 0 }}>
+                    Vui lòng nhập tên sản phẩm
+                  </HelperText>
+                )}
+
               </View>
               <View style={{ marginHorizontal: 10, marginTop: 0 }}>
                 <Text style={styles.text}>Chọn hồ sơ số đo</Text>
@@ -369,12 +373,12 @@ const OrderProduct = ({ navigation, route }) => {
                   numberOfLines={3}
                 />
               </View>
-              <View style={{ flexDirection: "row", paddingTop: 20, justifyContent: "flex-end" }}>
+              <View style={{ flexDirection: "row", paddingTop: 20, justifyContent: "flex-end", marginBottom: 90 }}>
                 <Button mode="contained" style={{ marginTop: 7, backgroundColor: "#D9D9D9D9", alignItems: "center", fontSize: 12, width: 120, height: 40 }} onPress={_goBack}>
                   <Text style={{ color: "#000000" }}>Huỷ</Text>
                 </Button>
                 <Button mode="contained" style={{ marginTop: 7, marginLeft: 10, alignItems: "center", fontSize: 12, width: 120, height: 40 }} onPress={() => handleAddProduct()}>
-                  {loadingAdd ? <ActivityIndicator animating={true} color="#fff" size="small" /> : "Thêm"}
+                  {loadingAdd ? <ActivityIndicator animating={true} color="#fff" size="10" /> : "Thêm"}
                 </Button>
               </View>
 
