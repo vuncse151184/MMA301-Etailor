@@ -13,6 +13,9 @@ import {
   Chip,
   ActivityIndicator,
   SegmentedButtons,
+  Drawer,
+  Portal,
+  Dialog,
 } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -107,6 +110,8 @@ export default function StaffTask({ navigation }) {
   }, [staffInfo]);
 
   const [selectedId, setSelectedId] = useState();
+
+  const [active, setActive] = React.useState("");
 
   const renderItem = ({ item }) => {
     if (
@@ -204,6 +209,20 @@ export default function StaffTask({ navigation }) {
       return null;
     }
   };
+
+  const [visible, setVisible] = React.useState(false);
+
+  const hideDialog = () => setVisible(false);
+
+  const logout = async () => {
+    try {
+      await AsyncStorage.removeItem("staff");
+      navigation.navigate("Staff-Login");
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
+
   return (
     <>
       <Appbar.Header mode="small">
@@ -239,12 +258,24 @@ export default function StaffTask({ navigation }) {
             </>
           }
         />
-        <Avatar.Image
-          size={40}
-          style={{ marginRight: 30, marginBottom: 30 }}
-          source={{ uri: staffInfo?.avatar }}
-        />
+        <TouchableOpacity onPress={() => setVisible(true)}>
+          <Avatar.Image
+            size={40}
+            style={{ marginRight: 30, marginBottom: 30 }}
+            source={{ uri: staffInfo?.avatar }}
+          />
+        </TouchableOpacity>
       </Appbar.Header>
+      <Portal>
+        <Dialog visible={visible} onDismiss={hideDialog}>
+          <Dialog.Icon icon="logout" />
+          <Dialog.Title style={{ textAlign: "center" }}>Logout</Dialog.Title>
+          <Dialog.Actions>
+            <Button onPress={() => setVisible(false)}>Cancel</Button>
+            <Button onPress={() => logout()}>Accept</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
       <Text variant="titleLarge" style={{ marginLeft: 10, marginTop: 20 }}>
         Công việc:
       </Text>

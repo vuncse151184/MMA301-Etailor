@@ -18,6 +18,7 @@ import {
   Divider,
 } from "react-native-paper";
 import { TouchableOpacity } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 
 const StaffTaskDetail = ({ navigation, route }) => {
   const { id, staffInfo } = route.params;
@@ -93,6 +94,33 @@ const StaffTaskDetail = ({ navigation, route }) => {
       </Text>
     </View>
   );
+
+  //----------------------------------------------------------------completed tasks--------------------------------------
+  const [openCheckTask, setOpenCheckTask] = useState(false);
+
+  const [image, setImage] = useState(null);
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchCameraAsync({
+      cameraType: ImagePicker.CameraType.front,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
+  // const ImageData = ({ imagSrc }) => (
+  //   <View>
+  //     <Text>{imagSrc}</Text>
+  //   </View>
+  // );
 
   return (
     <>
@@ -613,6 +641,7 @@ const StaffTaskDetail = ({ navigation, route }) => {
                                   >
                                     Chi tiết
                                   </Button>
+
                                   <Button
                                     icon={() => (
                                       <Icon
@@ -634,9 +663,55 @@ const StaffTaskDetail = ({ navigation, route }) => {
                                       borderWidth: 1,
                                       borderColor: "rgb(66, 150, 86)",
                                     }}
+                                    onPress={() => setOpenCheckTask(true)}
                                   >
                                     Hoàn thành
                                   </Button>
+                                  <Portal>
+                                    <Dialog
+                                      visible={openCheckTask}
+                                      onDismiss={() => setOpenCheckTask(false)}
+                                    >
+                                      <Dialog.Title>
+                                        Xác nhận công việc hiện tại
+                                      </Dialog.Title>
+                                      <Dialog.Content>
+                                        <Text variant="bodyMedium">
+                                          Hình ảnh xác thực:
+                                        </Text>
+                                        <Button onPress={pickImage}>
+                                          Upload ảnh
+                                        </Button>
+                                        {image && (
+                                          <Image
+                                            source={{ uri: image }}
+                                            style={{
+                                              width: 200,
+                                              height: 200,
+                                            }}
+                                          />
+                                        )}
+                                        {/* <FlatList
+                                          data={image}
+                                          renderItem={({ item }) => (
+                                            <ImageData imagSrc={item} />
+                                          )}
+                                          keyExtractor={(item, index) =>
+                                            index.toString()
+                                          }
+                                        /> */}
+                                      </Dialog.Content>
+                                      <Dialog.Actions>
+                                        <Button
+                                          onPress={() =>
+                                            setOpenCheckTask(false)
+                                          }
+                                        >
+                                          Hoàn thành
+                                        </Button>
+                                      </Dialog.Actions>
+                                    </Dialog>
+                                  </Portal>
                                 </View>
                                 <Portal>
                                   <Dialog
