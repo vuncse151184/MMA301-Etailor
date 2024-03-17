@@ -34,6 +34,7 @@ export default function OrderDetail({ navigation, route }) {
         navigation.navigate("Staff-Order-Product", { orderId: orderId, fullname: fullname, id: id });
 
     }
+    const [amount, setAmount] = useState(0);
     const fetchOrderDetails = async () => {
         try {
             setIsLoaded(true);
@@ -52,6 +53,7 @@ export default function OrderDetail({ navigation, route }) {
                 data.products.push(undefined)
                 console.log("DATA:", data)
                 setOrderDetails(data);
+                setAmount(data.totalPrice)
             }
         } catch (error) {
             console.error(error);
@@ -105,7 +107,7 @@ export default function OrderDetail({ navigation, route }) {
         setItem(productId);
     }
     const handlePayment = () => {
-        navigation.navigate("Staff-Order-Payment", { orderId: orderId, fullname: fullname, id: id });
+        navigation.navigate("Staff-Order-Payment", { orderId: orderId, fullname: fullname, id: id, amount: amount });
     }
 
     return (
@@ -177,7 +179,7 @@ export default function OrderDetail({ navigation, route }) {
                     <View style={{ flexDirection: "row", backgroundColor: '#ffffff', paddingLeft: 50, height: 60, width: "100%", alignItems: "center", borderRadius: 40 }}>
                         <Text style={styles.infoLabel}>Giá:</Text>
                         <Text style={styles.infoValue}>{formatCurrency(orderDetails.totalPrice)} đ</Text>
-                        <TouchableOpacity style={{ backgroundColor: '#9f78ff', paddingLeft: 20, height: 60, width: 180, alignItems: "center", justifyContent: "center", borderRadius: 40 }}>
+                        <TouchableOpacity onPress={handlePayment} style={{ backgroundColor: '#9f78ff', paddingLeft: 20, height: 60, width: 180, alignItems: "center", justifyContent: "center", borderRadius: 40 }}>
                             <Text style={{ color: "#ffffff", fontWeight: "bold" }}>
                                 Thanh toán
                             </Text>

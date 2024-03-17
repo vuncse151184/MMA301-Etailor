@@ -60,16 +60,20 @@ const ProductDetail2 = ({ route, navigation }) => {
             console.log('Error updating favorite products:', error);
         }
     };
+    const convertDate = (date) => {
+        let fDate = new Date(date)
+        return fDate.toLocaleString()
+    }
 
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
                 <Text style={styles.backText}>Back</Text>
             </TouchableOpacity>
-            <Image source={{ uri: product.url }} style={styles.image} />
-            <Text style={styles.name}>{product.productName}</Text>
-            <Text style={styles.price}>Ngày đăng: {product.price}</Text>
-            <Text style={styles.specification}>{product.description}</Text>
+            <Image source={{ uri: product.thumbnail }} style={styles.image} />
+            <Text style={styles.name}>{product.title}</Text>
+            <Text style={styles.price}>Ngày đăng: {convertDate(product?.createdTime)}</Text>
+            <Text style={styles.specification}>Hastag: {product.hastag}</Text>
         </View>
     );
 };
@@ -89,7 +93,7 @@ const styles = {
     },
     price: {
         fontSize: 16,
-        color: '#1e81b0',
+        // color: '#1e81b0',
     },
     name: {
         fontSize: 30,
@@ -101,6 +105,7 @@ const styles = {
         color: 'black',
         marginVertical: 2,
         top: 15,
+        color: '#1e81b0',
     },
     backButton: {
         position: 'absolute',

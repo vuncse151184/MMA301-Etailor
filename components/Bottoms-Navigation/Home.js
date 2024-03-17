@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, FlatList, StyleSheet, Image, Animated, Dimensions, SafeAreaView, ScrollView, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, Animated, Dimensions, SafeAreaView, ScrollView, TouchableWithoutFeedback, TouchableOpacity, TouchableHighlight, Button, Alert } from 'react-native';
 import banner from '../data/banner';
 import { Appbar, Avatar, Card, Title } from 'react-native-paper';
 import Icon from "react-native-vector-icons/Ionicons";
+import axios from 'axios';
 
-
-
+import { AntDesign } from '@expo/vector-icons';
+import { Drawer } from 'react-native-paper';
+import { MaterialIcons } from '@expo/vector-icons';
+import { AsyncStorage } from 'react-native';
 // const WIDTH = Dimensions.get('window').width;
 // const HEIGHT = Dimensions.get('window').width;
 
@@ -36,16 +39,17 @@ const dataMau = [
         image: 'https://e-tailor.vercel.app/static/media/vest.bb2ba1ee8bea8b2706ab.jpg'
     },
 
+
 ]
 
 
-export default function StaffProfile() {
+export default function StaffProfile({ navigation }) {
     const [activeImg, setActiveImg] = useState(0);
     const [data, setData] = useState([]);
     const [selectedData, setSelectedData] = useState([]);
     const [orchidsData, setOrchidsData] = useState([]);
     const [activeCate, setActiveCate] = useState(0)
-
+    const [isShowSidebar, setIsShowSidebar] = useState(false)
     const currentDate = new Date().toLocaleDateString('vi', { day: 'numeric', month: 'long', year: 'numeric' });
     const formattedDate = currentDate.replace(',', '');
     useEffect(() => {
@@ -66,6 +70,26 @@ export default function StaffProfile() {
     }
 
     const handleSelectCategory = () => { }
+    const openSidebar = () => {
+        setIsShowSidebar(true)
+    }
+    const closeSidebar = () => {
+        setIsShowSidebar(false);
+    }
+    const [login, setLogin] = useState(true);
+
+    const doNotHandleAnyAction = () => {
+    }
+    const handleLogin = () => {
+        navigation.navigate('Staff-Login')
+    }
+    const logout = async () => {
+        setLogin(false);
+        closeSidebar()
+        const removeItemSuccess = await AsyncStorage.removeItem("Staff");
+        console.log("Remove item success:", removeItemSuccess);
+    }
+
 
     return (
         <>
@@ -75,17 +99,30 @@ export default function StaffProfile() {
                         <Appbar.Content
                             title={
                                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: -20 }}>
-                                    <Avatar.Image size={50} source={require('../../assets/images/user-avatar.jpg')} />
-                                    <View style={{ marginLeft: 10 }}>
-                                        <Text style={{ fontWeight: 'bold', color: '#fff', fontSize: 18 }}>
-                                            Tomlenek
-                                        </Text>
-                                        {formattedDate ? (
-                                            <Text style={{ fontSize: 14, fontWeight: "300", color: "#fff" }}>
-                                                {formattedDate}
-                                            </Text>
-                                        ) : ''}
-                                    </View>
+                                    {login ? (
+                                        <>
+
+                                            <TouchableOpacity onPress={openSidebar}>
+                                                <Avatar.Image size={50} source={require('../../assets/images/user-avatar.jpg')} />
+                                            </TouchableOpacity>
+                                            <View style={{ marginLeft: 10 }}>
+
+                                                <Text style={{ fontWeight: 'bold', color: '#fff', fontSize: 18 }}>
+                                                    Tomlenek
+                                                </Text>
+                                                {formattedDate ? (
+                                                    <Text style={{ fontSize: 14, fontWeight: "300", color: "#fff" }}>
+                                                        {formattedDate}
+                                                    </Text>
+                                                ) : ''}
+                                            </View>
+
+                                        </>
+                                    ) : (
+                                        <TouchableOpacity onPress={handleLogin}>
+                                            <Text style={{ color: "#fff", fontSize: 18, fontWeight: 'bold' }}>Đăng nhập</Text>
+                                        </TouchableOpacity >
+                                    )}
                                 </View>
                             }
                         />
@@ -171,6 +208,36 @@ export default function StaffProfile() {
                         </View>
                     </View>
                 </ScrollView>
+
+                {/* Sidebar */}
+                {/* {isShowSidebar
+                    ?
+                    <Drawer.Section style={styles.drawerSection}>
+                        <Drawer.Item
+                            label="Logout"
+                            icon="exit-to-app"
+                            onPress={logout}
+                        />
+                    </Drawer.Section>
+                    : null} */}
+                {isShowSidebar && (
+                    <View style={styles.sidebarContainer}>
+                        <View style={{ backgroundColor: '#ffffff', width: '80%', height: '100%', position: 'absolute', top: 0, left: 0 }}>
+                            <TouchableOpacity
+                                onPress={closeSidebar}
+                                style={{ position: 'absolute', right: 10, top: 20 }} >
+                                <AntDesign
+                                    name="closecircleo" size={24} color="black" />
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => logout()} style={{ marginTop: 60, display: 'flex', flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderColor: '#000000', borderStyle: 'solid', paddingBottom: 5 }}>
+                                <MaterialIcons name="logout" size={24} color="black" style={{ marginLeft: 10 }} />
+                                <Text style={{ fontSize: 20 }}> Logout</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                )}
+
+
             </View>
         </>
     );
@@ -220,6 +287,26 @@ const styles = StyleSheet.create({
     },
     flatList: {
         height: 100,
-    }
+    },
+
+    sidebarContainer: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        bottom: 0,
+        right: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Adjust opacity as needed
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 2, // Ensure the sidebar is above other components
+    },
+    drawerSection: {
+        backgroundColor: 'white',
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        bottom: 0,
+        width: '80%',
+    },
 })
 

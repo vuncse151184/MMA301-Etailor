@@ -12,6 +12,7 @@
     "@expo-google-fonts/alumni-sans": "^0.2.3",
     "@expo-google-fonts/inter": "^0.2.3",
     "@expo-google-fonts/lexend-deca": "^0.2.3",
+    "@microsoft/signalr": "^8.0.0",
     "@react-native-async-storage/async-storage": "^1.18.2",
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/drawer": "^6.6.6",
@@ -31,7 +32,9 @@
     "react-native-image-view": "^2.1.9",
     "react-native-paper": "^5.12.3",
     "react-native-tab-view": "^3.5.2",
-    "react-native-vector-icons": "^10.0.3"
+    "react-native-vector-icons": "^10.0.3",
+    "react-signalr": "^0.2.19",
+    "socket.io-client": "^4.7.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
