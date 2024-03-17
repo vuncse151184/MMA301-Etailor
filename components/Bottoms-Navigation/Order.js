@@ -69,9 +69,9 @@ const Order = () => {
             <Text style={{ fontSize: 24, marginTop: 20, marginBottom: 20, paddingLeft: 10 }}>Đơn hàng</Text>
             {
                 data.length == 0
-                ?
-                <Text style={{textAlign: 'center', fontSize: 18}}>Hiện không có đơn hàng nào</Text>
-                : null
+                    ?
+                    <Text style={{ textAlign: 'center', fontSize: 18 }}>Hiện không có đơn hàng nào</Text>
+                    : null
             }
             <FlatList
                 data={data}

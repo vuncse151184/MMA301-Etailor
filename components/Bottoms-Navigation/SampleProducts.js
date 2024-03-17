@@ -5,7 +5,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 const numColumns = 2;
 const screenWidth = Dimensions.get('window').width;
 const size = Dimensions.get('window').width / numColumns;
-const SampleProducts = ({navigation, route}) => {
+const SampleProducts = ({ navigation, route }) => {
 
 
     const [data, setData] = useState([])
