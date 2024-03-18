@@ -8,7 +8,7 @@ const ProductDetail = ({ navigation, route }) => {
     navigation.navigate("Sample-products", {});
   };
 
-  const handleOrder = () => {};
+  const handleOrder = () => { };
   const convertVND = (price) => {
     if (price != null && price != undefined && price != "")
       return price.toLocaleString("it-IT", {
@@ -35,18 +35,12 @@ const ProductDetail = ({ navigation, route }) => {
             flexDirection: "row",
           }}
         >
-          <TouchableOpacity onPress={back}>
-            <Text
-              style={{
-                fontSize: 20,
-                marginTop: 5,
-                color: "#ffffff",
-                marginLeft: 5,
-              }}
-            >
-              Trở lại
-            </Text>
-          </TouchableOpacity>
+          <Appbar.Header style={{ height: 60 }} statusBarHeight={0}>
+            <View style={styles.headerContent}>
+              <Appbar.BackAction onPress={_goBack} style={styles.backAction} />
+              <Appbar.Content title="Chọn sản phẩm" style={styles.title} />
+            </View>
+          </Appbar.Header>
         </View>
         <Image
           style={{ width: "100%", height: "100%", zIndex: 10 }}

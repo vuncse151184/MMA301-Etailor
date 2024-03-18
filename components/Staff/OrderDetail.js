@@ -117,7 +117,7 @@ export default function OrderDetail({ navigation, route }) {
                 <Appbar.Content title="Danh sách sản phẩm" />
             </Appbar.Header>
             <View style={styles.orderContent}>
-                {isLoaded ? <ActivityIndicator animating={true} color={MD2Colors.pinkA200} /> : (
+                {isLoaded ? <ActivityIndicator style={{ marginTop: 200 }} animating={true} color={MD2Colors.pinkA200} /> : (
                     orderDetails?.products?.length === 0 ? (
                         <View style={{ alignItems: "center", marginTop: 100, textAlign: 'center', }}>
                             <Text style={{ fontSize: 18 }}>Chưa có sản phẩm nào</Text>

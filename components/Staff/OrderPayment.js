@@ -1,9 +1,10 @@
-import { StyleSheet, Text, View, Image, WebView } from 'react-native'
+import { StyleSheet, Text, View, Image, WebView, TouchableHighlight } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Appbar, Button, ActivityIndicator } from 'react-native-paper';
 import { Realtime } from './Realtime';
 import ScanMePNG from '../../assets/images/vecteezy_scan-me-png_21462615.png'
+import { TouchableWithoutFeedback } from 'react-native';
 const OrderPayment = ({ navigation, route }) => {
     const { id, fullname, orderId, amount } = route.params;
     const [qrCode, setQrCode] = useState("");
@@ -26,9 +27,9 @@ const OrderPayment = ({ navigation, route }) => {
             vnpayNotification !== undefined &&
             vnpayNotification !== ""
         ) {
-            console.log("Không có kết nối:")
+            console.log("Noti Có kết nối: ", vnpayNotification)
         } else {
-            console.log(" có kết nối:")
+            console.log("Noti có kết nối:", vnpayNotification)
         }
 
     }, [vnpayNotification])
@@ -69,7 +70,6 @@ const OrderPayment = ({ navigation, route }) => {
         }
 
     }
-    console.log("QR CODE:", qrCode)
     return (
         <View>
             <Appbar.Header style={{ height: 60 }} statusBarHeight={0}>
@@ -78,13 +78,21 @@ const OrderPayment = ({ navigation, route }) => {
             </Appbar.Header>
 
             <View style={styles.content}>
-                <Text style={styles.orderInfo}>Order ID: {orderId}</Text>
-                <Text style={styles.orderInfo}>Customer Name: {fullname}</Text>
-                <Image source={require('../../assets/images/vnpay.png')} style={{ width: 100, height: 100, resizeMode: "contain" }} />
-                <Button onPress={() => handlePayment('VN Pay')} >
-                    VNPAY
-                </Button>
-                {/* <View>
+                <View style={{ marginLeft: 20 }}>
+
+                    <Text style={styles.orderInfo}>Khách hàng: {fullname}</Text>
+                    <Text style={styles.orderInfo}>Mã đơn: {orderId}</Text>
+                    <Text style={[styles.orderInfo, { marginBottom: 20 }]}>Phương thức  thanh toán</Text>
+                    <View style={{ height: 200, flexDirection: "column", alignItems: "center" }}>
+                        <TouchableWithoutFeedback style={{ width: 200, height: 200, marginTop: 40 }} onPress={() => handlePayment('VN Pay')} >
+
+                            <Image source={require('../../assets/images/vnpay.png')} style={{ width: 200, height: 200, resizeMode: "contain" }} />
+                        </TouchableWithoutFeedback>
+
+                    </View>
+                    {/**/}
+
+                    {/* <View>
                     <Button
                         mode="contained"
                         onPress={handlePayment}
@@ -94,17 +102,18 @@ const OrderPayment = ({ navigation, route }) => {
                     </Button>
                 </View> */}
 
-                {loading ? <ActivityIndicator animating={true} color="#000" /> : (
-                    <View style={{ alignItems: "center", marginTop: 40 }}>
-                        <Image source={require(`../../assets/images/vecteezy_scan-me-png_21462615.png`)} style={{ width: 340, height: 340, resizeMode: "contain", position: "relative" }} />
-                        <Image
-                            style={{ width: 140, height: 140, position: "absolute", right: 73, bottom: 102, margin: "auto" }}
-                            source={{ uri: `data:image/png;base64,${data.qrImage}` }}
-                        />
-                    </View>
+                    {loading ? <ActivityIndicator style={{ marginTop: 150 }} animating={true} color="#000" /> : (
+                        <View style={{ alignItems: "center" }}>
+                            <Image source={require(`../../assets/images/vecteezy_scan-me-png_21462615.png`)} style={{ width: 340, height: 340, resizeMode: "contain", position: "relative" }} />
+                            <Image
+                                style={{ width: 140, height: 140, position: "absolute", right: 60, bottom: 102, margin: "auto" }}
+                                source={{ uri: `data:image/png;base64,${data.qrImage}` }}
+                            />
+                        </View>
 
 
-                )}
+                    )}
+                </View>
             </View>
         </View >
     )
@@ -112,4 +121,10 @@ const OrderPayment = ({ navigation, route }) => {
 
 export default OrderPayment
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    orderInfo: {
+        fontSize: 18,
+        fontWeight: "bold",
+        marginTop: 20,
+    },
+})

@@ -52,6 +52,7 @@ export default function StaffLogin({ navigation }) {
       if (response.ok) {
         const data = await response.json();
         await AsyncStorage.setItem("staff", JSON.stringify(data));
+        
         navigation.navigate(data?.role === "Staff" ? "Staff-Home" : "Customer-Home");
       } else {
         const errorText = await response.text();
