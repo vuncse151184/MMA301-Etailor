@@ -235,12 +235,6 @@ export default function StaffTask({ navigation }) {
                   {staffInfo ? staffInfo.name : ""}
                 </Text>
               </Text>
-              <Text style={{ marginLeft: 10, fontSize: 15, marginBottom: 2 }}>
-                Role: &nbsp;
-                <Text style={{ fontWeight: "bold", color: "#9572f3" }}>
-                  {staffInfo.role}
-                </Text>
-              </Text>
               {formattedDate ? (
                 <Text
                   style={{
