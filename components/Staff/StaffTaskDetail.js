@@ -1,4 +1,12 @@
-import { View, StyleSheet, Image, ScrollView, FlatList } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Image,
+  ScrollView,
+  FlatList,
+  Alert,
+  SafeAreaView,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import Icon from "react-native-vector-icons/Ionicons";
 import {
@@ -94,13 +102,50 @@ const StaffTaskDetail = ({ navigation, route }) => {
     </View>
   );
 
+  const ItemUpload = ({ image }) => {
+    {
+      console.log("Alo alo<", image);
+    }
+    return (
+      <View>
+        <Icon
+          name="close-circle-outline"
+          size={30}
+          style={{
+            color: "rgb(48, 176, 166)",
+            marginLeft: 10,
+            position: "absolute",
+            right: 20,
+            top: 10,
+            zIndex: 1000,
+          }}
+          onPress={() => {
+            const filteredImages = images?.filter((img) => img !== image);
+            setImages(filteredImages);
+          }}
+        />
+        <Image
+          source={{ uri: image }}
+          style={{
+            width: 140,
+            height: 140,
+            borderWidth: 1,
+            borderRadius: 10,
+            borderColor: "#9F78FF",
+            margin: "3%",
+          }}
+        />
+      </View>
+    );
+  };
+
   //----------------------------------------------------------------completed tasks--------------------------------------
   const [openCheckTask, setOpenCheckTask] = useState(false);
 
-  const [image, setImage] = useState(null);
+  const [images, setImages] = useState([]);
+  console.log("images", images);
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchCameraAsync({
       cameraType: ImagePicker.CameraType.front,
       allowsEditing: true,
@@ -108,16 +153,8 @@ const StaffTaskDetail = ({ navigation, route }) => {
       quality: 1,
     });
 
-    console.log(result);
-
     if (!result.canceled) {
-      setImage((prev) => {
-        if (prev) {
-          return [...prev, ...result.assets[0].uri];
-        } else {
-          return result.assets[0].uri;
-        }
-      });
+      setImages((prevImages) => [...prevImages, result.assets[0].uri]);
     }
   };
 
@@ -133,6 +170,11 @@ const StaffTaskDetail = ({ navigation, route }) => {
       if (response.ok && response.status === 200) {
         console.log("Thanh cong", taskId, stageId);
         fetchDataTask();
+      } else if (response.status === 400 || response.status === 500) {
+        const responseData = await response.text();
+        Alert.alert("Lỗi", responseData);
+      } else if (response.status === 401) {
+        navigation.navigate("Staff-Login");
       }
     } catch (error) {
       console.error("Error calling API:", error);
@@ -151,6 +193,11 @@ const StaffTaskDetail = ({ navigation, route }) => {
       if (response.ok && response.status === 200) {
         console.log("Tam dung");
         fetchDataTask();
+      } else if (response.status === 400 || response.status === 500) {
+        const responseData = await response.text();
+        Alert.alert("Lỗi", responseData);
+      } else if (response.status === 401) {
+        navigation.navigate("Staff-Login");
       }
     } catch (error) {
       console.error("Error calling API:", error);
@@ -159,8 +206,15 @@ const StaffTaskDetail = ({ navigation, route }) => {
   const handleTaskFinish = async (taskId, stageId) => {
     const url = `https://e-tailorapi.azurewebsites.net/api/task/staff/${taskId}/finish/${stageId}`;
     const formData = new FormData();
-    console.log("image, ", image);
-    formData.append("images", image);
+
+    images.forEach((images, index) => {
+      formData.append(`images[${index}]`, {
+        uri: images,
+        type: "image/jpeg",
+        name: `image${index}.jpg`,
+      });
+    });
+
     try {
       const response = await fetch(url, {
         method: "PUT",
@@ -171,7 +225,13 @@ const StaffTaskDetail = ({ navigation, route }) => {
       });
       if (response.ok && response.status === 200) {
         setOpenCheckTask(false);
+        setImages([]);
         fetchDataTask();
+      } else if (response.status === 400 || response.status === 500) {
+        const responseData = await response.text();
+        Alert.alert("Lỗi", responseData);
+      } else if (response.status === 401) {
+        navigation.navigate("Staff-Login");
       }
     } catch (error) {
       console.error("Error calling API:", error);
@@ -495,7 +555,7 @@ const StaffTaskDetail = ({ navigation, route }) => {
                           case 3:
                             iconComponent = (
                               <Icon
-                                name="ellipsis-horizontal-circle-outline"
+                                name="caret-forward-circle-outline"
                                 size={30}
                                 style={{
                                   color: "rgb(194, 44, 41)",
@@ -644,10 +704,10 @@ const StaffTaskDetail = ({ navigation, route }) => {
                                           <Icon
                                             name="alert-circle-outline"
                                             size={20}
-                                            color="rgb(154, 163, 59)"
+                                            color="rgb(194, 44, 41)"
                                           />
                                         )}
-                                        textColor="rgb(154, 163, 59)"
+                                        textColor="rgb(194, 44, 41)"
                                         onPress={() =>
                                           handleTaskPending(
                                             dataTaskDetail?.id,
@@ -659,38 +719,7 @@ const StaffTaskDetail = ({ navigation, route }) => {
                                           marginTop: 25,
                                           alignSelf: "center",
                                           backgroundColor:
-                                            "rgba(235, 250, 75, 0.6)",
-                                          color: "rgb(171, 167, 43)",
-                                          borderRadius: 5,
-                                          borderWidth: 1,
-                                          borderColor: "rgb(171, 167, 43)",
-                                        }}
-                                      >
-                                        Trong quá trình
-                                      </Button>
-                                    )}
-                                    {stage.status === 3 && (
-                                      <Button
-                                        icon={() => (
-                                          <Icon
-                                            name="alert-circle-outline"
-                                            size={20}
-                                            color="rgb(154, 163, 59)"
-                                          />
-                                        )}
-                                        textColor="rgb(154, 163, 59)"
-                                        onPress={() =>
-                                          handleTaskPending(
-                                            dataTaskDetail?.id,
-                                            stage?.id
-                                          )
-                                        }
-                                        style={{
-                                          width: "100%",
-                                          marginTop: 25,
-                                          alignSelf: "center",
-                                          backgroundColor:
-                                            "rgba(235, 250, 75, 0.6)",
+                                            "rgba(194, 44, 41, 0.4)",
                                           color: "rgb(194, 44, 41)",
                                           borderRadius: 5,
                                           borderWidth: 1,
@@ -698,6 +727,38 @@ const StaffTaskDetail = ({ navigation, route }) => {
                                         }}
                                       >
                                         Tạm dừng
+                                      </Button>
+                                    )}
+
+                                    {stage.status === 3 && (
+                                      <Button
+                                        icon={() => (
+                                          <Icon
+                                            name="caret-forward-circle-outline"
+                                            size={20}
+                                            color="rgb(171, 167, 43)"
+                                          />
+                                        )}
+                                        textColor="rgb(171, 167, 43)"
+                                        onPress={() =>
+                                          handleTaskStart(
+                                            dataTaskDetail?.id,
+                                            stage?.id
+                                          )
+                                        }
+                                        style={{
+                                          width: "100%",
+                                          marginTop: 25,
+                                          alignSelf: "center",
+                                          backgroundColor:
+                                            "rgba(171, 167, 43, 0.4)",
+                                          color: "rgb(171, 167, 43)",
+                                          borderRadius: 5,
+                                          borderWidth: 1,
+                                          borderColor: "rgb(171, 167, 43)",
+                                        }}
+                                      >
+                                        Tiếp tục
                                       </Button>
                                     )}
                                   </View>
@@ -767,7 +828,7 @@ const StaffTaskDetail = ({ navigation, route }) => {
                                       visible={openCheckTask}
                                       onDismiss={() => {
                                         setOpenCheckTask(false);
-                                        setImage(null);
+                                        setImages([]);
                                       }}
                                     >
                                       <Dialog.Title>
@@ -780,28 +841,71 @@ const StaffTaskDetail = ({ navigation, route }) => {
                                         <Button onPress={pickImage}>
                                           Upload ảnh
                                         </Button>
-                                        {image && (
-                                          <View
+                                        {images && images?.length > 1 ? (
+                                          <SafeAreaView
                                             style={{
-                                              alignItems: "center",
-                                              justifyContent: "center",
+                                              width: "100%",
+                                              height: 300,
                                             }}
                                           >
-                                            <Image
-                                              source={{ uri: image }}
-                                              style={{
-                                                width: 200,
-                                                height: 200,
-                                                borderWidth: 1,
-                                                borderRadius: 10,
-                                                borderColor: "#9F78FF",
-                                              }}
+                                            <FlatList
+                                              numColumns={2}
+                                              data={images}
+                                              renderItem={({ item }) => (
+                                                <ItemUpload image={item} />
+                                              )}
+                                              keyExtractor={(item, index) =>
+                                                index.toString()
+                                              }
                                             />
-                                          </View>
+                                          </SafeAreaView>
+                                        ) : (
+                                          images?.map((image, index) => {
+                                            return (
+                                              <View
+                                                key={index}
+                                                style={{
+                                                  alignItems: "center",
+                                                  justifyContent: "center",
+                                                }}
+                                              >
+                                                <Icon
+                                                  name="close-circle-outline"
+                                                  size={30}
+                                                  style={{
+                                                    color: "rgb(48, 176, 166)",
+                                                    marginLeft: 10,
+                                                    position: "absolute",
+                                                    right: 60,
+                                                    top: 10,
+                                                    zIndex: 1000,
+                                                  }}
+                                                  onPress={() => {
+                                                    const filteredImages =
+                                                      images?.filter(
+                                                        (img, idx) =>
+                                                          idx !== index
+                                                      );
+                                                    setImages(filteredImages);
+                                                  }}
+                                                />
+                                                <Image
+                                                  source={{ uri: image }}
+                                                  style={{
+                                                    width: 200,
+                                                    height: 200,
+                                                    borderWidth: 1,
+                                                    borderRadius: 10,
+                                                    borderColor: "#9F78FF",
+                                                  }}
+                                                />
+                                              </View>
+                                            );
+                                          })
                                         )}
                                       </Dialog.Content>
                                       <Dialog.Actions>
-                                        {image ? (
+                                        {images?.length !== 0 ? (
                                           <Button
                                             onPress={() =>
                                               handleTaskFinish(
