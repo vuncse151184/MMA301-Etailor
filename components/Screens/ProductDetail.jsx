@@ -1,10 +1,10 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
-
+import { Appbar, } from 'react-native-paper';
 const ProductDetail = ({ navigation, route }) => {
   const { product } = route.params;
 
-  const back = () => {
+  const _goBack = () => {
     navigation.navigate("Sample-products", {});
   };
 
@@ -126,10 +126,59 @@ export default ProductDetail;
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
-    backgroundColor: "#ffffff",
-    minHeight: "100%",
-    paddingBottom: 50,
-    paddingTop: 10,
+    flex: 1,
+    backgroundColor: '#fff',
   },
+  header: {
+    backgroundColor: "#fff",
+    elevation: 0,
+  },
+  inputWrapper: {
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  input: {
+    width: 350,
+    borderWidth: 1.5,
+    borderColor: '#9f78ff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+  },
+  cardImg: {
+    width: 64,
+    height: 64,
+    resizeMode: "contain"
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingBottom: 0,
+    paddingTop: 0,
+  },
+  cardContent: {
+    width: 380,
+    marginTop: 20,
+    height: 170,
+    textAlign: 'center',
+    alignItems: 'center',
+    paddingBottom: Platform.OS === 'ios' ? 10 : 0,
+    paddingHorizontal: 20,
+    borderWidth: 2,
+    borderColor: '#9f78ff',
+  },
+  cardTitle: {
+    fontWeight: 'bold',
+    color: '#9f78ff',
+  },
+  cardParagraph: {
+    fontSize: 14,
+    width: 200,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+
+  },
+
 });

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, FlatList, StyleSheet, Image, Animated, Dimensions, SafeAreaView, ScrollView, TouchableWithoutFeedback, TouchableOpacity, TouchableHighlight, Button, Alert } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, ScrollView, TouchableWithoutFeedback, TouchableOpacity, } from 'react-native';
 import banner from '../data/banner';
 import { Appbar, Avatar, Card, Title } from 'react-native-paper';
 import Icon from "react-native-vector-icons/Ionicons";
