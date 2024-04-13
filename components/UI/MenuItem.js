@@ -16,12 +16,13 @@ export default function MenuItem({ item }) {
                 width: 200,
                 height: 190,
                 alignItems: 'center',
-
+                marginBottom: 20,
             }}>
             <View
                 style={{
                     flexDirection: 'row',
                     marginBottom: 1,
+
                 }}
             >
                 <Image
@@ -29,8 +30,9 @@ export default function MenuItem({ item }) {
                         width: '100%',
                         height: 150,
                         resizeMode: 'cover',
-                        // padding: 1,
-                        borderRadius: 3,
+                        borderRadius: 10,
+                        boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+
 
                     }}
                     source={{ uri: item?.thumbnail }}

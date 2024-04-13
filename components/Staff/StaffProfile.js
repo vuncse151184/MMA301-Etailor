@@ -71,6 +71,14 @@ export default function StaffProfile({ navigation }) {
     fetchDataTask();
   }, [staffInfo]);
   console.log("data staff ma: ", dataStaff);
+  const logout = async () => {
+    try {
+      await AsyncStorage.removeItem("staff");
+      navigation.navigate("Staff-Login");
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
   return (
     <>
       <Appbar.Header style={{ height: 40 }} statusBarHeight={0}>
@@ -203,6 +211,16 @@ export default function StaffProfile({ navigation }) {
               </View>
             </View>
             <Divider bold="true" style={{ marginTop: 20 }} />
+          </View>
+          <View>
+            <Button
+              icon="logout"
+              mode="contained"
+              onPress={logout}
+              style={{ margin: 20 }}
+            >
+              Đăng xuất
+            </Button>
           </View>
         </View>
       )}

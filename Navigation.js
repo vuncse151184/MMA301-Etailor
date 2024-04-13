@@ -93,13 +93,14 @@ function StaffNavigator() {
                 headerShown: false,
                 tabBarStyle: {
                     position: "absolute",
-                    bottom: 5,
+                    bottom: 2,
                     left: 20,
                     right: 20,
                     elevation: 0,
                     backgroundColor: "rgb(29, 37, 71)",
                     borderRadius: 15,
-                    height: 70,
+                    height: Platform.OS === "ios" ? 80 : 70,
+
                 },
                 tabBarLabelStyle: {
                     color: "#000000",
@@ -116,7 +117,7 @@ function StaffNavigator() {
                 component={StaffStackNavigator}
                 options={{
                     tabBarIcon: ({ focused }) => (
-                        <View style={{ alignItems: "center", justifyContent: "center" }}>
+                        <View style={{ alignItems: "center", justifyContent: "center", paddingTop: Platform.OS === "ios" ? 25 : 0 }}>
                             <CustomTabIcon name="calendar" color={"#FFFFFF"} focused={focused} />
                             <Text style={{ color: focused ? "#FFFFFF" : "#D9D9D9", fontSize: 12 }}>
                                 Công Việc
@@ -132,7 +133,7 @@ function StaffNavigator() {
                 component={StaffProfile}
                 options={{
                     tabBarIcon: ({ focused }) => (
-                        <View style={{ alignItems: "center", justifyContent: "center" }}>
+                        <View style={{ alignItems: "center", justifyContent: "center", paddingTop: Platform.OS === "ios" ? 25 : 0 }}>
                             <CustomTabIcon name="person" color={"#FFFFFF"} focused={focused} />
                             <Text style={{ color: focused ? "#FFFFFF" : "#D9D9D9", fontSize: 12 }}>
                                 Tài khoản
@@ -152,6 +153,7 @@ function StaffNavigator() {
                             style={{
                                 alignItems: "center",
                                 justifyContent: "center",
+                                paddingTop: Platform.OS === "ios" ? 25 : 0
                             }}
                         >
                             <CustomTabIcon name="add-circle" color={"#FFFFFF"} focused={focused} />

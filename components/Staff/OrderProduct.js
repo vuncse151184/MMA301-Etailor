@@ -1,4 +1,4 @@
-import { Platform, SafeAreaView, ScrollView, StyleSheet, Text, View, Image } from 'react-native'
+import { Platform, SafeAreaView, ScrollView, StyleSheet, Text, View, Dimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Appbar, TextInput, Button, HelperText, ActivityIndicator } from 'react-native-paper';
@@ -9,6 +9,8 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { Dropdown } from 'react-native-element-dropdown';
 import Test from '../../assets/images/13741368_2011.i203.010..hobby cartoon set-06.jpg'
 
+const WIDTH = Dimensions.get('window').width;
+const HEIGHT = Dimensions.get('window').width;
 const parseImageURI = (data) => {
   if (data?.thumbnailImage) {
     const uri = data.thumbnailImage
@@ -276,7 +278,7 @@ const OrderProduct = ({ navigation, route }) => {
                 <TextInput
                   placeholder="Nhập tên sản phẩm"
                   onChangeText={onChangeText}
-                  style={{ marginTop: 10, height: 50, color: '#000000', backgroundColor: '#ffffff' }}
+                  style={{ marginTop: 10, height: 50, width: WIDTH * 0.85, color: '#000000', backgroundColor: '#ffffff' }}
                 />
                 {hasTyped && hasErrors() && (
                   <HelperText type="error" visible={hasErrors()} style={{ padding: 0, margin: 0 }}>
@@ -367,7 +369,7 @@ const OrderProduct = ({ navigation, route }) => {
                   placeholder="Thêm ghi chú"
                   onChangeText={onNoteChange}
                   value={note}
-                  style={{ marginTop: 10, color: '#000000', backgroundColor: '#ffffff' }}
+                  style={{ marginTop: 10, color: '#000000', backgroundColor: '#ffffff', width: WIDTH * 0.85 }}
                   maxLength={40}
                   multiline={true}
                   numberOfLines={3}
@@ -378,7 +380,7 @@ const OrderProduct = ({ navigation, route }) => {
                   <Text style={{ color: "#000000" }}>Huỷ</Text>
                 </Button>
                 <Button mode="contained" style={{ marginTop: 7, marginLeft: 10, alignItems: "center", fontSize: 12, width: 120, height: 40 }} onPress={() => handleAddProduct()}>
-                  {loadingAdd ? <ActivityIndicator animating={true} color="#fff" size="10" /> : "Thêm"}
+                  {loadingAdd ? <ActivityIndicator animating={true} color="#fff" size="5" /> : "Thêm"}
                 </Button>
               </View>
 
@@ -435,7 +437,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 5,
     height: 50,
-    width: 350,
+    width: WIDTH * 0.85,
     padding: 20,
     borderBottomColor: '#9f78ff',
     borderWidth: 0.5,

@@ -1,4 +1,4 @@
-import { Platform, SafeAreaView, ScrollView, StyleSheet, Image, Text, View } from 'react-native'
+import { Platform, SafeAreaView, ScrollView, StyleSheet, Image, Text, View, Dimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Appbar, TextInput, Searchbar, Button, Card, Title, Paragraph, ActivityIndicator, } from 'react-native-paper';
@@ -7,6 +7,9 @@ import ProfileIcon from '../../assets/profile.png';
 import { Keyboard } from 'react-native'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import NoUser from '../../assets/images/6485292.jpg'
+
+const WIDTH = Dimensions.get('window').width;
+const HEIGHT = Dimensions.get('window').width;
 const DismissKeyboard = () => (
     Keyboard.dismiss()
 );
@@ -149,6 +152,7 @@ const OrderScreen = ({ navigation }) => {
                             <Card.Cover source={ProfileIcon} style={styles.cardImg} />
                             <Card.Content style={{ width: 280, alignItems: "center", marginTop: 10 }}>
                                 <Paragraph numberOfLines={1} ellipsizeMode="tail" style={{ ...styles.cardParagraph, fontWeight: 'bold' }}>Email: {item.email}</Paragraph>
+                                <Paragraph numberOfLines={1} ellipsizeMode="tail" style={{ ...styles.cardParagraph, fontWeight: 'bold' }}>Email: {item.email}</Paragraph>
                                 <Paragraph numberOfLines={1} ellipsizeMode="tail" style={{ ...styles.cardParagraph, fontWeight: 'bold' }}>SĐT: {item.email}</Paragraph>
                                 <Button mode="contained" style={{ marginTop: 7, alignItems: "center", fontSize: 12, width: 120, height: 40 }} onPress={() => handleChoseCustomer(item)}>
                                     Chọn <Icon name="arrow-forward-outline" size={18} />
@@ -209,10 +213,10 @@ const OrderScreen = ({ navigation }) => {
 
                             ) : (
                                 <View style={{ alignItems: 'center' }}>
-                                    <Text style={{ fontSize: 20, marginTop: 10 }}>Không tìm thấy</Text>
+                                    <Text style={{ fontSize: 20, marginTop: 10 }}>Không tìm thấy khách hàng</Text>
                                     <Button
                                         mode="contained-tonal"
-                                        style={{ marginTop: 7, alignItems: "center", fontSize: 20 }}
+                                        style={{ marginTop: 10, alignItems: "center", fontSize: 20 }}
                                         onPress={handleCreateNewCus}>
                                         <Text style={{ fontSize: 18, marginTop: 20 }}>Tạo mới</Text>
                                     </Button>
@@ -255,9 +259,10 @@ const styles = StyleSheet.create({
         borderBottomRightRadius: 20,
     },
     cardImg: {
-        width: 64,
-        height: 64,
-        resizeMode: "contain"
+        width: WIDTH * 0.15,
+        height: HEIGHT * 0.15,
+        resizeMode: "contain",
+        marginLeft: Platform.OS === 'ios' ? WIDTH * 0.09 : WIDTH * 0.095,
     },
     headerContent: {
         flexDirection: 'row',
@@ -267,12 +272,12 @@ const styles = StyleSheet.create({
         paddingTop: 0,
     },
     cardContent: {
-        width: 380,
+        width: WIDTH * 0.85,
         marginTop: 20,
         height: 170,
         textAlign: 'center',
         alignItems: 'center',
-        paddingBottom: Platform.OS === 'ios' ? 10 : 0,
+        paddingBottom: Platform.OS === 'ios' ? WIDTH * 0.03 : 0,
         paddingHorizontal: 20,
         borderWidth: 2,
         borderColor: '#9f78ff',
