@@ -380,7 +380,7 @@ const OrderProduct = ({ navigation, route }) => {
                   <Text style={{ color: "#000000" }}>Huỷ</Text>
                 </Button>
                 <Button mode="contained" style={{ marginTop: 7, marginLeft: 10, alignItems: "center", fontSize: 12, width: 120, height: 40 }} onPress={() => handleAddProduct()}>
-                  {loadingAdd ? <ActivityIndicator animating={true} color="#fff" size="10" /> : "Thêm"}
+                  {loadingAdd ? <ActivityIndicator animating={true} color="#fff" size="5" /> : "Thêm"}
                 </Button>
               </View>
 

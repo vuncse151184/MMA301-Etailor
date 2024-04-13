@@ -70,6 +70,20 @@ const OrderPayment = ({ navigation, route }) => {
         }
 
     }
+    function formatCurrency(amount) {
+        if (amount) {
+            const strAmount = amount.toString();
+            const parts = [];
+            for (let i = strAmount.length - 1, j = 0; i >= 0; i--, j++) {
+                if (j > 0 && j % 3 === 0) {
+                    parts.unshift(".");
+                }
+                parts.unshift(strAmount[i]);
+            }
+            return parts.join("") + "đ";
+        }
+        return null;
+    }
     return (
         <View>
             <Appbar.Header style={{ height: 60 }} statusBarHeight={0}>
@@ -82,31 +96,25 @@ const OrderPayment = ({ navigation, route }) => {
 
                     <Text style={styles.orderInfo}>Khách hàng: {fullname}</Text>
                     <Text style={styles.orderInfo}>Mã đơn: {orderId}</Text>
+                    <Text style={styles.orderInfo}>Tổng cộng:<Text style={{
+                        fontSize: 18,
+                        fontWeight: "bold",
+                    }}> {formatCurrency(amount)}</Text></Text>
                     <Text style={[styles.orderInfo, { marginBottom: 20 }]}>Phương thức  thanh toán</Text>
                     <View style={{ height: 200, flexDirection: "column", alignItems: "center" }}>
-                        <TouchableWithoutFeedback style={{ width: 200, height: 200, marginTop: 40 }} onPress={() => handlePayment('VN Pay')} >
+                        <TouchableWithoutFeedback style={{ width: 150, height: 150, marginTop: 40 }} onPress={() => handlePayment('VN Pay')} >
 
-                            <Image source={require('../../assets/images/vnpay.png')} style={{ width: 200, height: 200, resizeMode: "contain" }} />
+                            <Image source={require('../../assets/images/vnpay.png')} style={{ width: 150, height: 150, resizeMode: "contain" }} />
                         </TouchableWithoutFeedback>
 
                     </View>
-                    {/**/}
 
-                    {/* <View>
-                    <Button
-                        mode="contained"
-                        onPress={handlePayment}
-                        style={styles.paymentButton}
-                    >
-                        Thanh toán
-                    </Button>
-                </View> */}
 
                     {loading ? <ActivityIndicator style={{ marginTop: 150 }} animating={true} color="#000" /> : (
                         <View style={{ alignItems: "center" }}>
-                            <Image source={require(`../../assets/images/vecteezy_scan-me-png_21462615.png`)} style={{ width: 340, height: 340, resizeMode: "contain", position: "relative" }} />
+
                             <Image
-                                style={{ width: 140, height: 140, position: "absolute", right: 60, bottom: 102, margin: "auto" }}
+                                style={{ width: 200, height: 200, resizeMode: "contain", margin: "auto" }}
                                 source={{ uri: `data:image/png;base64,${data.qrImage}` }}
                             />
                         </View>
@@ -124,7 +132,6 @@ export default OrderPayment
 const styles = StyleSheet.create({
     orderInfo: {
         fontSize: 18,
-        fontWeight: "bold",
         marginTop: 20,
     },
 })

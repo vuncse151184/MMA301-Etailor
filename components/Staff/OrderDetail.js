@@ -128,7 +128,8 @@ export default function OrderDetail({ navigation, route }) {
                         </View>
 
                     ) : (
-                        <ScrollView style={{ marginBottom: 55 }}>
+                        <ScrollView style={{ marginBottom: 55, position: "relative", flex: 1 }}>
+
                             <View >
                                 <FlatList
                                     style={styles.cardWrapper}
@@ -160,17 +161,7 @@ export default function OrderDetail({ navigation, route }) {
 
 
                             </View>
-                            <View style={{ flexDirection: "row", position: "absolute", bottom: 30, right: 10, left: 10 }}>
-                                <View style={{ flexDirection: "row", backgroundColor: '#ffffff', paddingLeft: 50, height: 60, width: "100%", alignItems: "center", borderRadius: 40 }}>
-                                    <Text style={styles.infoLabel}>Giá:</Text>
-                                    <Text style={styles.infoValue}>{formatCurrency(orderDetails.totalPrice)} đ</Text>
-                                    <TouchableOpacity onPress={handlePayment} style={{ backgroundColor: '#9f78ff', paddingLeft: 20, height: 60, width: 180, alignItems: "center", justifyContent: "center", borderRadius: 40 }}>
-                                        <Text style={{ color: "#ffffff", fontWeight: "bold" }}>
-                                            Thanh toán
-                                        </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
+
                         </ScrollView>
                     )
 
@@ -189,8 +180,19 @@ export default function OrderDetail({ navigation, route }) {
             {/* {(orderDetails?.products?.length !== 0 || orderDetails?.products[0] !== undefined) && (
                 
             )} */}
-
-
+            {orderDetails?.totalPrice !== 0 && (
+                <View style={{ flexDirection: "row", position: "absolute", bottom: 30, right: 10, left: 10 }}>
+                    <View style={{ flexDirection: "row", backgroundColor: '#ffffff', paddingLeft: 50, height: 60, width: "100%", alignItems: "center", borderRadius: 40 }}>
+                        <Text style={styles.infoLabel}>Giá:</Text>
+                        <Text style={styles.infoValue}>{formatCurrency(orderDetails.totalPrice)} đ</Text>
+                        <TouchableOpacity onPress={handlePayment} style={{ backgroundColor: '#9f78ff', paddingLeft: 20, height: 60, width: 180, alignItems: "center", justifyContent: "center", borderRadius: 40 }}>
+                            <Text style={{ color: "#ffffff", fontWeight: "bold" }}>
+                                Thanh toán
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            )}
         </View >
 
     )

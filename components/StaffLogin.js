@@ -14,8 +14,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ActivityIndicator, MD2Colors } from "react-native-paper";
 export default function StaffLogin({ navigation }) {
   const [loginValues, setLoginValues] = useState({
-    username: "tu_staff",
-    password: "1",
+    username: "",
+    password: "",
   });
   const [loading, setLoading] = useState(false);
 
