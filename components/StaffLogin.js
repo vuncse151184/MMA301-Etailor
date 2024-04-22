@@ -8,10 +8,16 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
+  ImageBackground,
+  Dimensions
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import Icon from "react-native-vector-icons/Ionicons";
 import { ActivityIndicator, MD2Colors } from "react-native-paper";
+
+const WIDTH = Dimensions.get('window').width;
+const HEIGHT = Dimensions.get('window').height;
+
 export default function StaffLogin({ navigation }) {
   const [loginValues, setLoginValues] = useState({
     username: "",
@@ -29,6 +35,7 @@ export default function StaffLogin({ navigation }) {
   const handleLoginValuesChange = (prop) => (text) => {
     setLoginValues({ ...loginValues, [prop]: text });
   };
+
   const handleLogin = async () => {
     setLoading(true);
 
@@ -52,17 +59,16 @@ export default function StaffLogin({ navigation }) {
       if (response.ok) {
         const data = await response.json();
         await AsyncStorage.setItem("staff", JSON.stringify(data));
-        
+        setLoading(false);
         navigation.navigate(data?.role === "Staff" ? "Staff-Home" : "Customer-Home");
       } else {
         const errorText = await response.text();
+        setLoading(false);
         setError({ ...error, otp_err: errorText });
         console.log("Login ERROR:", errorText);
       }
     } catch (error) {
       console.error("Error:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -71,91 +77,135 @@ export default function StaffLogin({ navigation }) {
   };
 
   return (
-    <>
-      {loading ? (
-        <ActivityIndicator
-          animating={loading}
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          color={"#999999"}
-        />
-      ) : (
+    <View style={styles.container}>
+      <ImageBackground
+        source={require("../assets/images/sewing-kit-with-cotton-threads-top-view.jpg")}
+        style={styles.backgroundImage}
+        resizeMode="cover"
+      >
         <TouchableWithoutFeedback onPress={dismissKeyboard}>
-          <View style={styles.container}>
-            <Image style={styles.logo} source={require("../assets/logo.png")} />
-            {/* <Image style={styles.backGroundImage} source={require('../../assets/images/26785.jpg')} /> */}
+          <View style={styles.overlay}>
+            <Image style={styles.logo} source={require("../assets/images/ıngoude-removebg-preview.png")} />
 
-            <TextInput
-              style={styles.input}
-              placeholder="Tên đăng nhập"
-              onChangeText={handleLoginValuesChange("username")}
-              autoCapitalize="none"
-              value={loginValues.username}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Mật khẩu"
-              onChangeText={handleLoginValuesChange("password")}
-              value={loginValues.password}
-              autoCapitalize="none"
-              secureTextEntry
-            />
-            {error.login_err.length > 0 && (
-              <span
-                style={{ color: "red", fontSize: "12px", paddingLeft: "5px" }}
-              >
-                {error.login_err}
-              </span>
+            <View style={styles.inputContainer}>
+              <Icon style={styles.prefix} name="person-outline" size={20} color="#fff" />
+              <TextInput
+                style={styles.input}
+                placeholder="Tên đăng nhập"
+                onChangeText={handleLoginValuesChange("username")}
+                autoCapitalize="none"
+                value={loginValues.username}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <Icon style={styles.prefix} size={20} color="#fff" name="lock-closed-outline" />
+              <TextInput
+                style={styles.input}
+                placeholder="Mật khẩu"
+                onChangeText={handleLoginValuesChange("password")}
+                value={loginValues.password}
+                autoCapitalize="none"
+                secureTextEntry
+              />
+            </View>
+
+            {error.login_err && (
+              <Text style={styles.errorText}>{error.login_err}</Text>
             )}
+            <TouchableOpacity>
+              <Text style={{ color: "white", marginBottom: 10 }}>Quên mật khẩu?</Text>
+            </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={handleLogin}>
-              <Text style={styles.buttonText}>Đăng nhập</Text>
+              <View style={styles.buttonWithLoading}>
+                <Text style={styles.buttonText}>Đăng nhập</Text>
+                {loading && <ActivityIndicator animating={loading} style={{ paddingLeft: 10 }} size="small" color="#fff" />}
+              </View>
             </TouchableOpacity>
           </View>
         </TouchableWithoutFeedback>
-      )}
-    </>
+      </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  backgroundImage: {
+    flex: 1,
+    width: WIDTH,
+    height: HEIGHT,
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     alignItems: "center",
     padding: 24,
   },
-  backGroundImage: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    resizeMode: "cover", // to cover the entire container
-  },
-  heading: {
-    fontSize: 24,
-    marginBottom: 24,
-  },
   logo: {
-    height: 128,
-    width: 128,
-    marginBottom: 24,
-    marginTop: 140,
+    height: 400,
+    width: 400,
+    marginTop: 20,
   },
-  input: {
-    height: 40,
-    width: "100%",
-    borderColor: "black",
-    borderWidth: 1,
-    marginBottom: 16,
-    paddingLeft: 10,
-    borderRadius: 10,
+  buttonWithLoading: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   button: {
-    backgroundColor: "blue",
+    backgroundColor: "#e13276",
     padding: 10,
-    borderRadius: 5,
-    marginTop: 10,
+    height: 40,
+    width: "40%",
+    borderRadius: 20,
+    marginTop: 40,
+    justifyContent: "center",
+    alignContent: "center",
+    alignItems: "center",
+    // Platform-specific shadow properties
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 5,
+      },
+    }),
   },
   buttonText: {
     color: "white",
     fontSize: 16,
     textAlign: "center",
+  },
+  inputContainer: {
+    height: 40,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "white",
+    marginHorizontal: 10,
+    borderRadius: 20,
+    width: "90%",
+    marginBottom: 15,
+  },
+  prefix: {
+    paddingHorizontal: 20,
+    fontWeight: "bold",
+    color: "black",
+  },
+  input: {
+    flex: 1,
+    height: "100%",
+    paddingHorizontal: 10,
+    color: "#000",
+  },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    paddingLeft: 5,
+    marginBottom: 10,
   },
 });
