@@ -1,14 +1,7 @@
 import * as React from "react";
 import { useState, useRef } from "react";
 import { Image, ScrollView, StyleSheet, View, Dimensions, RefreshControl } from "react-native";
-import {
-  LineChart,
-  BarChart,
-  PieChart,
-  ProgressChart,
-  ContributionGraph,
-  StackedBarChart
-} from "react-native-chart-kit";
+
 // import LinearGradient from 'react-native-linear-gradient';
 import {
   Appbar,
@@ -26,6 +19,7 @@ import {
   Searchbar,
   Dialog,
   Divider,
+  ProgressBar
 } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -39,24 +33,11 @@ import {
 const CustomTabIcon = ({ name, onPress, status }) => {
   let iconColor = "";
 
-  switch (status) {
-    case 1:
-      iconColor = "rgb(48, 176, 166)";
-      break;
-    case 2:
-      iconColor = "rgb(171, 167, 43)";
-      break;
-    case 3:
-      iconColor = "rgb(194, 44, 41)";
-      break;
-    case 4:
-      iconColor = "rgb(44, 176, 77)";
-      break;
-  }
+
 
   return (
     <TouchableOpacity onPress={onPress}>
-      <Icon name={name} size={30} color={iconColor} />
+      <Icon name={name} size={30} color={"#9F78FF"} />
     </TouchableOpacity>
   );
 };
@@ -228,7 +209,7 @@ export default function StaffTask({ navigation }) {
             >
               <Card.Title
                 title={item.name}
-                subtitle={`Thời hạn: ${item.deadline}? ${item.deadline} : "Không xác định"}`}
+                subtitle={<Text style={{ color: "#9F78FF" }}>Thời hạn: {item?.deadline ? item.deadline : "Không xác định"} </Text>}
                 left={(props) => (
                   <View
                     style={{
@@ -252,43 +233,52 @@ export default function StaffTask({ navigation }) {
                   switch (item.status) {
                     case 1:
                       return (
-                        <View
-                          style={{
-                            marginRight: 10,
-                            backgroundColor: "rgba(25, 224, 208, 0.5)",
-                            padding: 5,
-                            borderRadius: 10,
-                          }}
-                        >
-                          <CustomTabIcon
-                            name={"sync-circle-outline"}
-                            onPress={() => setSelectedId(item.id)}
-                            status={item.status}
-                          />
+                        <View style={{ display: "flex", flexDirection: "column", paddingRight: 10 }}>
+                          {/* <View
+                            style={{
+                              marginRight: 10,
+                              padding: 5,
+                              borderRadius: 10,
+                            }}
+                          >
+                            <ProgressBar progress={0.5} />
+                            <Text style={{ textAlign: 'center', color: '#000000', marginTop: 5 }}>Hoàn thiện</Text>
+
+                          </View> */}
+                          <View>
+                            <CustomTabIcon
+                              name={"arrow-forward-outline"}
+                              onPress={() => setSelectedId(item.id)}
+                              status={item.status}
+                              color={"#"}
+                            />
+                          </View>
                         </View>
+
                       );
                     case 2:
                       return (
                         <View
                           style={{
                             marginRight: 10,
-                            backgroundColor: "rgba(242, 235, 34, 0.5)",
                             padding: 5,
                             borderRadius: 10,
                           }}
                         >
-                          <CustomTabIcon
+                          <ProgressBar progress={0.5} />
+                          <Text style={{ textAlign: 'center', color: '#000000', marginTop: 5 }}>Hoàn thiện</Text>
+                          {/* <CustomTabIcon
                             name={"ellipsis-horizontal-outline"}
                             onPress={() => setSelectedId(item.id)}
                             status={item.status}
-                          />
+                          /> */}
                         </View>
                       );
                   }
                 }}
               />
-            </TouchableOpacity>
-          </View>
+            </TouchableOpacity >
+          </View >
         </>
       );
     } else {

@@ -23,6 +23,7 @@ import SampleProducts from './components/Bottoms-Navigation/SampleProducts'
 import Order from './components/Bottoms-Navigation/Order'
 import ProductDetail2 from './components/UI/ProductDetail';
 import ProductDetail from './components/Screens/ProductDetail';
+import Notification from "./components/Staff/Notification";
 
 
 const Stack = createStackNavigator();
@@ -30,6 +31,7 @@ const Tab = createBottomTabNavigator();
 const OrderStack = createStackNavigator();
 const StaffTab = createBottomTabNavigator();
 const StaffStack = createStackNavigator();
+const NotificationStack = createStackNavigator();
 const CustomTabIcon = ({ name, focused, color }) => {
     const outlineIconName = name + "-outline";
     const filledIconName = name;
@@ -54,6 +56,14 @@ function OrderStackNavigator() {
 
         </OrderStack.Navigator>
     );
+}
+function NotificationStackNavigator() {
+    return (
+        <NotificationStack.Navigator initialRouteName="Staff-Notification" screenOptions={{ headerShown: false }}>
+            <NotificationStack.Screen name="Staff-Notification" component={Notification} />
+        </NotificationStack.Navigator>
+
+    )
 }
 function StaffStackNavigator() {
     return (
@@ -129,22 +139,6 @@ function StaffNavigator() {
                 }}
             />
             <StaffTab.Screen
-                name="Staff-Profile"
-                component={StaffProfile}
-                options={{
-                    tabBarIcon: ({ focused }) => (
-                        <View style={{ alignItems: "center", justifyContent: "center", paddingTop: Platform.OS === "ios" ? 25 : 0 }}>
-                            <CustomTabIcon name="person" color={"#FFFFFF"} focused={focused} />
-                            <Text style={{ color: focused ? "#FFFFFF" : "#D9D9D9", fontSize: 12 }}>
-                                Tài khoản
-                            </Text>
-                        </View>
-                    ),
-                    tabBarLabel: () => null
-                }}
-            />
-
-            <StaffTab.Screen
                 name="Staff-Order-Stack"
                 component={OrderStackNavigator}
                 options={{
@@ -168,6 +162,38 @@ function StaffNavigator() {
                     headerShown: false,
                 }}
             />
+            <StaffTab.Screen
+                name="Staff-Notification-Stack"
+                component={NotificationStackNavigator}
+                options={{
+                    tabBarIcon: ({ focused }) => (
+                        <View style={{ alignItems: "center", justifyContent: "center", paddingTop: Platform.OS === "ios" ? 25 : 0 }}>
+                            <CustomTabIcon name="notifications" color={"#FFFFFF"} focused={focused} />
+                            <Text style={{ color: focused ? "#FFFFFF" : "#D9D9D9", fontSize: 12 }}>
+                                Thông báo
+                            </Text>
+                        </View>
+                    ),
+                    tabBarLabel: () => null,
+                    headerShown: false,
+                }}
+            />
+            <StaffTab.Screen
+                name="Staff-Profile"
+                component={StaffProfile}
+                options={{
+                    tabBarIcon: ({ focused }) => (
+                        <View style={{ alignItems: "center", justifyContent: "center", paddingTop: Platform.OS === "ios" ? 25 : 0 }}>
+                            <CustomTabIcon name="person" color={"#FFFFFF"} focused={focused} />
+                            <Text style={{ color: focused ? "#FFFFFF" : "#D9D9D9", fontSize: 12 }}>
+                                Tài khoản
+                            </Text>
+                        </View>
+                    ),
+                    tabBarLabel: () => null
+                }}
+            />
+
             {/* <StaffTab.Screen
                 name="Staff-Order"
                 component={OrderScreen}
@@ -286,7 +312,7 @@ function StaffHomeTabNavigator() {
 }
 
 
-function StackGroup({ user }) {
+function StackGroup() {
     return (
 
         <Stack.Navigator
