@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  ScrollView,
   Keyboard,
 } from "react-native";
 import {
@@ -27,7 +28,11 @@ import Icon from "react-native-vector-icons/Ionicons";
 export default function StaffProfile({ navigation }) {
   const [staffInfo, setStaffInfo] = React.useState("");
   const _goBack = () => navigation.navigate("Staff-Tasks");
-
+  const [categoryData, setCategoryData] = useState([]);
+  const getCategoryName = (id) => {
+    const category = categoryData.find((item) => item.id === id);
+    return category?.name;
+  }
   const [loading, setLoading] = useState(false);
   const [dataStaff, setDataStaff] = useState(null);
   React.useEffect(() => {
@@ -44,6 +49,31 @@ export default function StaffProfile({ navigation }) {
   }, []);
 
   React.useEffect(() => {
+    const fetchCategory = async () => {
+      if (staffInfo !== null) {
+        setLoading(true);
+        try {
+          const categoryUrl =
+            "https://e-tailorapi.azurewebsites.net/api/category-management";
+          const response = await fetch(categoryUrl, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${staffInfo.token}`,
+            },
+          });
+          if (response.ok && response.status === 200) {
+            const responseData = await response.json();
+            setCategoryData(responseData);
+          }
+        } catch (error) {
+          console.error("Error calling API:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    }
+    fetchCategory();
     const fetchDataTask = async () => {
       if (staffInfo !== null) {
         setLoading(true);
@@ -94,7 +124,7 @@ export default function StaffProfile({ navigation }) {
           <ActivityIndicator animating={true} color={"#9F78FF"} />
         </View>
       ) : (
-        <View style={{ flex: 1 }}>
+        <ScrollView style={{ flex: 1, marginBottom: 100 }}>
           <View style={{ alignSelf: "center", marginTop: 50 }}>
             <Avatar.Image size={120} source={{ uri: dataStaff?.avatar }} />
           </View>
@@ -211,6 +241,46 @@ export default function StaffProfile({ navigation }) {
               </View>
             </View>
             <Divider bold="true" style={{ marginTop: 20 }} />
+            <View
+              style={{
+                justifyContent: "space-between",
+                flexDirection: "row",
+                marginTop: 20,
+              }}
+            >
+              <Text
+                variant="bodyLarge"
+                style={{
+                  fontWeight: 200,
+                  textShadowColor: "rgba(0, 0, 0, 0.4)",
+                  textShadowOffset: { width: 0, height: 0 },
+                  textShadowRadius: 5,
+                }}
+              >
+                Chuyên môn:{" "}
+              </Text>
+              <View style={{ maxWidth: 200 }}>
+                {dataStaff?.masterySkills.map((skill, index) => (
+                  <View style={{ flexDirection: "row", flexWrap: "wrap", }}>
+                    <Text>{getCategoryName(skill)},</Text>
+                  </View>
+
+
+
+
+
+                ))}
+                {/* <Text
+                  variant="bodyLarge"
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {dataStaff?.address}
+                </Text> */}
+              </View>
+            </View>
+            <Divider bold="true" style={{ marginTop: 20 }} />
+
           </View>
           <View>
             <Button
@@ -222,8 +292,9 @@ export default function StaffProfile({ navigation }) {
               Đăng xuất
             </Button>
           </View>
-        </View>
-      )}
+        </ScrollView >
+      )
+      }
     </>
   );
 }
