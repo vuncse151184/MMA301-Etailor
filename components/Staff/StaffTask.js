@@ -369,6 +369,7 @@ export default function StaffTask({ navigation }) {
               renderItem={renderItem}
               keyExtractor={(item) => item.id}
               extraData={selectedId}
+              scrollEnabled={true}
               refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
               }
