@@ -1,0 +1,18 @@
+[
+    [
+        "images",
+        {
+            "name": "image0.jpg",
+            "type": "application/octet-stream",
+            "uri": "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540nguyenvu1001%252FETailorMobile/ImagePicker/51029cca-1f5f-4009-af1a-8094126592bc.jpeg"
+        }
+    ],
+    [
+        "images",
+        {
+            "name": "image1.jpg",
+            "type": "application/octet-stream",
+            "uri": "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540nguyenvu1001%252FETailorMobile/ImagePicker/5c958fdc-9168-4f41-8313-edaa0f69329f.jpeg"
+        }
+    ]
+]

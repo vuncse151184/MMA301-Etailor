@@ -115,7 +115,7 @@ export default function StaffLogin({ navigation }) {
             <TouchableOpacity>
               <Text style={{ color: "white", marginBottom: 10 }}>Quên mật khẩu?</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <TouchableOpacity style={[styles.button, { width: loading ? "50%" : "40%" }]} onPress={handleLogin}>
               <View style={styles.buttonWithLoading}>
                 <Text style={styles.buttonText}>Đăng nhập</Text>
                 {loading && <ActivityIndicator animating={loading} style={{ paddingLeft: 10 }} size="small" color="#fff" />}
@@ -133,7 +133,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   backgroundImage: {
-    flex: 1,
     width: WIDTH,
     height: HEIGHT,
   },
