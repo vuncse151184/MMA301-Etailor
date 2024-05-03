@@ -30,6 +30,18 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+function getHoursDifference(deadline) {
+  const currentDateUTC = new Date();
+
+  const startMillis = new Date(deadline).getTime();
+  const currentMillisUTC7 = currentDateUTC.getTime();
+
+  const millisDiff = startMillis - currentMillisUTC7;
+  const hoursDiff = millisDiff / (1000 * 60 * 60);
+
+  return hoursDiff < 0 ? "Quá hạn" : hoursDiff < 24 ? `${Math.floor(hoursDiff)} giờ ` : `${Math.floor(hoursDiff / 24)} ngày`;
+}
+
 const CustomTabIcon = ({ name, onPress, status }) => {
   let iconColor = "";
 
@@ -120,7 +132,7 @@ export default function StaffTask({ navigation }) {
   }, []);
   const [refreshing, setRefreshing] = useState(false);
 
-  const flatListRef = useRef(null);
+
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -169,17 +181,6 @@ export default function StaffTask({ navigation }) {
 
   const [selectedId, setSelectedId] = useState();
 
-  const [active, setActive] = React.useState("");
-  const chartConfig = {
-    backgroundGradientFrom: "#1E2923",
-    backgroundGradientFromOpacity: 0,
-    backgroundGradientTo: "#08130D",
-    backgroundGradientToOpacity: 0.5,
-    color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
-    strokeWidth: 2,
-    barPercentage: 0.5,
-    useShadowColorFromDataset: false // optional
-  };
   const renderItem = ({ item }) => {
     if (
       value === "all" ||
@@ -188,6 +189,7 @@ export default function StaffTask({ navigation }) {
     ) {
       return (
         <>
+
           <View
             style={{
               backgroundColor: "#fff",
@@ -209,7 +211,7 @@ export default function StaffTask({ navigation }) {
             >
               <Card.Title
                 title={item.name}
-                subtitle={<Text style={{ color: "#9F78FF" }}>Thời hạn: {item?.deadline ? item.deadline : "Không có thời hạn"} </Text>}
+                subtitle={<Text style={{ color: "#9F78FF" }}>Thời hạn: {item?.plannedTime ? getHoursDifference(item.plannedTime) : "Không có thời hạn"} </Text>}
                 left={(props) => (
                   <View
                     style={{
@@ -254,15 +256,26 @@ export default function StaffTask({ navigation }) {
                             borderRadius: 10,
                           }}
                         >
-                          <ProgressBar progress={0.5} />
-                          <Text style={{ textAlign: 'center', color: '#9F78FF', marginTop: 5 }}>Tiến hành</Text>
-                          {/* <CustomTabIcon
-                            name={"ellipsis-horizontal-outline"}
-                            onPress={() => setSelectedId(item.id)}
-                            status={item.status}
-                          /> */}
+                          <ProgressBar progress={0.5} style={{ width: 70 }} />
+                          <Text style={{ textAlign: 'center', color: '#9F78FF', marginTop: 5, }}>Tiến hành</Text>
+
                         </View>
                       );
+                    case 5:
+                      return (
+
+                        <View
+                          style={{
+                            marginRight: 10,
+                            padding: 5,
+                            borderRadius: 10,
+                          }}
+                        >
+                          <ProgressBar progress={1} style={{ width: 70 }} />
+                          <Text style={{ textAlign: 'center', color: '#9F78FF', marginTop: 5 }}>Hoàn thành</Text>
+
+                        </View>
+                      )
                   }
                 }}
               />
