@@ -1,12 +1,12 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { View, StyleSheet, Dimensions, TouchableOpacity, Image } from 'react-native';
-import { Text, Button } from 'react-native-paper'
+import { View, StyleSheet, Dimensions, TouchableOpacity, Image, SafeAreaView, FlatList } from 'react-native';
+import { Text, Button, Dialog, Portal, } from 'react-native-paper'
 import {
   BottomSheetModal,
   BottomSheetView,
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
-
+import * as ImagePicker from "expo-image-picker";
 import Icon from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ActivityIndicator, MD2Colors } from "react-native-paper";
@@ -27,7 +27,7 @@ const getStatusTextAndColor = (status) => {
       textColor = "white"
       iconName = "ellipse-outline";
       borderColor = "red";
-      text = "Bắt đầu";
+      text = "Chưa bắt đầu";
       break;
     case 2:
       color = "#d9467a";
@@ -93,7 +93,29 @@ const StepStageView = ({ stageData, taskId, fetchDataTask }) => {
   const [openCheckTask, setOpenCheckTask] = useState(false);
 
   const [images, setImages] = useState([]);
+  const pickImage = async () => {
 
+    let imageFromGallery = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsMultipleSelection: true,
+      quality: 1,
+    });
+    console.log("imageFromGallery", imageFromGallery);
+    // if (!result.canceled) {
+    //   setImage((prev) => {
+    //     if (prev) {
+    //       return [...prev, ...result.assets[0].uri];
+    //     } else {
+    //       return result.assets[0].uri;
+    //     }
+    //   });
+    // }
+
+    if (!imageFromGallery.canceled) {
+      setImages([...images, imageFromGallery.assets[0].uri]);
+    }
+  }
+  console.log("IMAGE URI", images)
   const ItemUpload = ({ image }) => {
 
     return (
@@ -129,18 +151,7 @@ const StepStageView = ({ stageData, taskId, fetchDataTask }) => {
     );
   };
 
-  const pickImage = async () => {
-    let result = await ImagePicker.launchCameraAsync({
-      cameraType: ImagePicker.CameraType.front,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
 
-    if (!result.canceled) {
-      setImages((prevImages) => [...prevImages, result.assets[0].uri]);
-    }
-  };
 
   const handleTaskStart = async (taskId, stageId) => {
     console.log("taskID", taskId, "stageID", stageId)
@@ -195,24 +206,26 @@ const StepStageView = ({ stageData, taskId, fetchDataTask }) => {
     }
   };
   const handleTaskFinish = async (taskId, stageId) => {
+    console.log("hoàn thành", taskId, stageId)
     const url = `https://e-tailorapi.azurewebsites.net/api/task/staff/${taskId}/finish/${stageId}`;
     const formData = new FormData();
 
-    images.forEach((images, index) => {
-      formData.append(`images[${index}]`, {
-        uri: images,
-        type: "image/jpeg",
+    images.forEach((image, index) => {
+      formData.append(`images`, {
+        uri: image,
+        type: "image/png",
         name: `image${index}.jpg`,
+        fileName: image.split("/").pop(),
       });
     });
-
+    console.log("formdata", formData._parts)
     try {
       const response = await fetch(url, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${staffInfo?.token}`,
         },
-        body: formData,
+        body: formData._parts,
       });
       if (response.ok && response.status === 200) {
         setOpenCheckTask(false);
@@ -220,7 +233,7 @@ const StepStageView = ({ stageData, taskId, fetchDataTask }) => {
         fetchDataTask();
       } else if (response.status === 400 || response.status === 500) {
         const responseData = await response.text();
-        Alert.alert("Lỗi", responseData);
+        console.log("Lỗi", responseData);
       } else if (response.status === 401) {
         navigation.navigate("Staff-Login");
       }
@@ -353,35 +366,164 @@ const StepStageView = ({ stageData, taskId, fetchDataTask }) => {
 
                 )}
                 {selectedStage?.status === 2 && (
-                  <Button
-                    icon={() => (
-                      <Icon
-                        name="alert-circle-outline"
-                        size={20}
-                        color="rgb(194, 44, 41)"
-                      />
-                    )}
-                    textColor="rgb(194, 44, 41)"
-                    onPress={() =>
-                      handleTaskPending(
-                        taskId,
-                        selectedStage?.id
-                      )
-                    }
-                    style={{
-                      width: "100%",
-                      marginTop: 25,
-                      alignSelf: "center",
-                      backgroundColor:
-                        "rgba(194, 44, 41, 0.4)",
-                      color: "rgb(194, 44, 41)",
-                      borderRadius: 5,
-                      borderWidth: 1,
-                      borderColor: "rgb(194, 44, 41)",
-                    }}
-                  >
-                    Tạm dừng
-                  </Button>
+                  <View style={{ flexDirection: "row", gap: 10, justifyContent: "center", marginBottom: 20 }}>
+                    {/* <Button
+                      icon={() => (
+                        <Icon
+                          name="alert-circle-outline"
+                          size={20}
+                          color="rgb(194, 44, 41)"
+                        />
+                      )}
+                      textColor="rgb(194, 44, 41)"
+                      onPress={() =>
+                        handleTaskPending(
+                          taskId,
+                          selectedStage?.id
+                        )
+                      }
+                      style={{
+                        width: "45%",
+                        marginTop: 25,
+                        alignSelf: "center",
+                        backgroundColor:
+                          "rgba(194, 44, 41, 0.4)",
+                        color: "rgb(194, 44, 41)",
+                        borderRadius: 5,
+                        borderWidth: 1,
+                        borderColor: "rgb(194, 44, 41)",
+                      }}
+                    >
+                      Tạm dừng
+                    </Button> */}
+                    <Button
+                      icon={() => (
+                        <Icon
+                          name="checkmark-outline"
+                          size={20}
+                          color="rgb(66, 150, 86)"
+                        />
+                      )}
+                      textColor="rgb(66, 150, 86)"
+                      style={{
+                        width: "45%",
+                        marginTop: 25,
+                        alignSelf: "center",
+                        backgroundColor:
+                          "rgba(82, 247, 120, 0.6)",
+                        color: "rgb(66, 150, 86)",
+                        borderRadius: 5,
+                        borderWidth: 1,
+                        borderColor: "rgb(66, 150, 86)",
+                      }}
+                      onPress={() => setOpenCheckTask(true)}
+                    >
+                      Hoàn thành
+                    </Button>
+                    <Portal>
+                      <Dialog
+                        visible={openCheckTask}
+                        onDismiss={() => {
+                          setOpenCheckTask(false);
+                          setImages([]);
+                        }}
+                      >
+                        <Dialog.Title>
+                          Xác nhận công việc hiện tại
+                        </Dialog.Title>
+                        <Dialog.Content>
+                          <Text variant="bodyMedium">
+                            Hình ảnh xác thực:
+                          </Text>
+                          <Button onPress={pickImage}>
+                            Upload ảnh
+                          </Button>
+                          {images && images?.length > 1 ? (
+                            <SafeAreaView
+                              style={{
+                                width: "100%",
+                                height: 300,
+                              }}
+                            >
+                              <FlatList
+                                numColumns={2}
+                                data={images}
+                                renderItem={({ item }) => (
+                                  <ItemUpload image={item} />
+                                )}
+                                keyExtractor={(item, index) =>
+                                  index.toString()
+                                }
+                              />
+                            </SafeAreaView>
+                          ) : (
+                            images?.map((image, index) => {
+                              return (
+                                <View
+                                  key={index}
+                                  style={{
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                  }}
+                                >
+                                  <Icon
+                                    name="close-circle-outline"
+                                    size={30}
+                                    style={{
+                                      color: "rgb(48, 176, 166)",
+                                      marginLeft: 10,
+                                      position: "absolute",
+                                      right: 60,
+                                      top: 10,
+                                      zIndex: 1000,
+                                    }}
+                                    onPress={() => {
+                                      const filteredImages =
+                                        images?.filter(
+                                          (img, idx) =>
+                                            idx !== index
+                                        );
+                                      setImages(filteredImages);
+                                    }}
+                                  />
+                                  <Image
+                                    source={{ uri: image }}
+                                    style={{
+                                      width: 200,
+                                      height: 200,
+                                      borderWidth: 1,
+                                      borderRadius: 10,
+                                      borderColor: "#9F78FF",
+                                    }}
+                                  />
+                                </View>
+                              );
+                            })
+                          )}
+                        </Dialog.Content>
+                        <Dialog.Actions>
+                          {images?.length !== 0 ? (
+                            <Button
+                              onPress={() =>
+                                handleTaskFinish(
+                                  taskId,
+                                  selectedStage?.id
+                                )
+                              }
+                            >
+                              Hoàn thành
+                            </Button>
+                          ) : (
+                            <Button disabled={true}>
+                              Hoàn thành
+                            </Button>
+                          )}
+                        </Dialog.Actions>
+                      </Dialog>
+                    </Portal>
+                  </View>
+
+
                 )}
 
                 {selectedStage?.status === 3 && (
@@ -427,13 +569,13 @@ const StepStageView = ({ stageData, taskId, fetchDataTask }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    height: 200,
-    justifyContent: 'center',
+    height: HEIGHT * 0.7,
+    justifyContent: "center",
   },
   contentContainer: {
     flex: 1,
-    alignItems: 'start',
-    height: HEIGHT,
+    alignItems: "start",
+    height: HEIGHT * 0.6,
     padding: 24,
     marginBottom: 100, // Add padding top to prevent overlapping with the close button
   },

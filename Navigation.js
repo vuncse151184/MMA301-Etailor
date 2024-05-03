@@ -17,12 +17,8 @@ import OrderDetail from "./components/Staff/OrderDetail";
 import OrderPayment from "./components/Staff/OrderPayment";
 // import Order from './components/Staff/OrderScreen';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Home from './components/Bottoms-Navigation/Home'
-import Blog from './components/Bottoms-Navigation/Blog'
-import SampleProducts from './components/Bottoms-Navigation/SampleProducts'
-import Order from './components/Bottoms-Navigation/Order'
-import ProductDetail2 from './components/UI/ProductDetail';
-import ProductDetail from './components/Screens/ProductDetail';
+// import ProductDetail2 from './components/UI/ProductDetail';
+// import ProductDetail from './components/Screens/ProductDetail';
 import Notification from "./components/Staff/Notification";
 
 
@@ -321,8 +317,8 @@ function StackGroup() {
             <Stack.Screen name="Staff-Login" component={StaffLogin} options={{ headerShown: false }} />
             <Stack.Screen name="Staff-Home" component={StaffNavigator} options={{ headerShown: false }} />
             <Stack.Screen name="Customer-Home" component={StaffHomeTabNavigator} options={{ headerShown: false }} />
-            <Stack.Screen name="Product-detail2" component={ProductDetail2} options={{ headerShown: false }} />
-            <Stack.Screen name="ProductDetail" component={ProductDetail} options={{ headerShown: false }} />
+            {/* <Stack.Screen name="Product-detail2" component={ProductDetail2} options={{ headerShown: false }} />
+            <Stack.Screen name="ProductDetail" component={ProductDetail} options={{ headerShown: false }} /> */}
         </Stack.Navigator >
     )
 

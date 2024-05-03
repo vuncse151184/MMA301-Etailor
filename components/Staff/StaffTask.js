@@ -209,7 +209,7 @@ export default function StaffTask({ navigation }) {
             >
               <Card.Title
                 title={item.name}
-                subtitle={<Text style={{ color: "#9F78FF" }}>Thời hạn: {item?.deadline ? item.deadline : "Không xác định"} </Text>}
+                subtitle={<Text style={{ color: "#9F78FF" }}>Thời hạn: {item?.deadline ? item.deadline : "Không có thời hạn"} </Text>}
                 left={(props) => (
                   <View
                     style={{
@@ -234,23 +234,12 @@ export default function StaffTask({ navigation }) {
                     case 1:
                       return (
                         <View style={{ display: "flex", flexDirection: "column", paddingRight: 10 }}>
-                          {/* <View
-                            style={{
-                              marginRight: 10,
-                              padding: 5,
-                              borderRadius: 10,
-                            }}
-                          >
-                            <ProgressBar progress={0.5} />
-                            <Text style={{ textAlign: 'center', color: '#000000', marginTop: 5 }}>Hoàn thiện</Text>
 
-                          </View> */}
                           <View>
                             <CustomTabIcon
                               name={"arrow-forward-outline"}
                               onPress={() => setSelectedId(item.id)}
                               status={item.status}
-                              color={"#"}
                             />
                           </View>
                         </View>
@@ -266,7 +255,7 @@ export default function StaffTask({ navigation }) {
                           }}
                         >
                           <ProgressBar progress={0.5} />
-                          <Text style={{ textAlign: 'center', color: '#000000', marginTop: 5 }}>Hoàn thiện</Text>
+                          <Text style={{ textAlign: 'center', color: '#9F78FF', marginTop: 5 }}>Tiến hành</Text>
                           {/* <CustomTabIcon
                             name={"ellipsis-horizontal-outline"}
                             onPress={() => setSelectedId(item.id)}

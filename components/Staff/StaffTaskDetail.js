@@ -140,43 +140,7 @@ const StaffTaskDetail = ({ navigation, route, }) => {
   // </View>
   //);
 
-  const ItemUpload = ({ image }) => {
-
-    return (
-      <View>
-        <Icon
-          name="close-circle-outline"
-          size={30}
-          style={{
-            color: "rgb(48, 176, 166)",
-            marginLeft: 10,
-            position: "absolute",
-            right: 20,
-            top: 10,
-            zIndex: 1000,
-          }}
-          onPress={() => {
-            const filteredImages = images?.filter((img) => img !== image);
-            setImages(filteredImages);
-          }}
-        />
-        <Image
-          source={{ uri: image }}
-          style={{
-            width: 140,
-            height: 140,
-            borderWidth: 1,
-            borderRadius: 10,
-            borderColor: "#9F78FF",
-            margin: "3%",
-          }}
-        />
-      </View>
-    );
-  };
-
-
-
+ 
   return (
     <>
 
