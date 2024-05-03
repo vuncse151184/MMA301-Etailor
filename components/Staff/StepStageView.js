@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { View, StyleSheet, Dimensions, TouchableOpacity, Image, SafeAreaView, FlatList } from 'react-native';
 import { Text, Button, Dialog, Portal, } from 'react-native-paper'
+import * as FileSystem from 'expo-file-system';
 import {
   BottomSheetModal,
   BottomSheetView,
@@ -97,22 +98,13 @@ const StepStageView = ({ stageData, taskId, fetchDataTask }) => {
 
     let imageFromGallery = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsMultipleSelection: true,
+      allowsEditing: false,
       quality: 1,
     });
     console.log("imageFromGallery", imageFromGallery);
-    // if (!result.canceled) {
-    //   setImage((prev) => {
-    //     if (prev) {
-    //       return [...prev, ...result.assets[0].uri];
-    //     } else {
-    //       return result.assets[0].uri;
-    //     }
-    //   });
-    // }
 
     if (!imageFromGallery.canceled) {
-      setImages([...images, imageFromGallery.assets[0].uri]);
+      setImages(prevImages => [...prevImages, imageFromGallery.assets[0].uri]);
     }
   }
   console.log("IMAGE URI", images)
@@ -150,9 +142,6 @@ const StepStageView = ({ stageData, taskId, fetchDataTask }) => {
       </View>
     );
   };
-
-
-
   const handleTaskStart = async (taskId, stageId) => {
     console.log("taskID", taskId, "stageID", stageId)
     setApiLoading(true);
@@ -209,23 +198,32 @@ const StepStageView = ({ stageData, taskId, fetchDataTask }) => {
     console.log("hoàn thành", taskId, stageId)
     const url = `https://e-tailorapi.azurewebsites.net/api/task/staff/${taskId}/finish/${stageId}`;
     const formData = new FormData();
+    const formData1 = new FormData();
 
-    images.forEach((image, index) => {
-      formData.append(`images`, {
+    images.forEach(async (image, index) => {
+      // formData.append(`images`, {
+      //   uri: image,
+      //   type: "image/png",
+      //   name: `image${index}.jpg`,
+      //   fileName: image.split("/").pop(),
+      // });
+      const file = {
         uri: image,
-        type: "image/png",
-        name: `image${index}.jpg`,
-        fileName: image.split("/").pop(),
-      });
+        name: Math.floor(Math.random() * Math.floor(999999999)) + '.jpg',
+        type: 'image/jpeg'
+      };
+      formData.append(`images`, file);
+      formData1.append(`files`, file);
     });
     console.log("formdata", formData._parts)
+
     try {
       const response = await fetch(url, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${staffInfo?.token}`,
         },
-        body: formData._parts,
+        body: formData,
       });
       if (response.ok && response.status === 200) {
         setOpenCheckTask(false);
@@ -241,6 +239,7 @@ const StepStageView = ({ stageData, taskId, fetchDataTask }) => {
       console.error("Error calling API:", error);
     }
   };
+
   return (
     <BottomSheetModalProvider>
       {stageData && stageData.map((stage, index) => (

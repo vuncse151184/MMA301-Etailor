@@ -260,15 +260,19 @@ export default function StaffProfile({ navigation }) {
                 Chuyên môn:{" "}
               </Text>
               <View style={{ maxWidth: 200 }}>
-                {dataStaff?.masterySkills.map((skill, index) => (
+                {dataStaff?.masterySkills ? dataStaff?.masterySkills.map((skill, index) => (
                   <View style={{ flexDirection: "row", flexWrap: "wrap", }}>
                     <Text>{getCategoryName(skill)},</Text>
                   </View>
-
-
-
-
-
+                )) : (
+                  <View>
+                    <Text>Chưa cập nhật kỹ năng chuyên môn</Text>
+                  </View>
+                )}
+                {/* <Text
+                  variant="bodyLarge"
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
                 ))}
                 {/* <Text
                   variant="bodyLarge"
