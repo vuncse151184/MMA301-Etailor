@@ -230,7 +230,6 @@ const StepStageView = ({ stageData, taskId, fetchDataTask }) => {
         setImages([]);
         fetchDataTask();
       } else if (response.status === 400 || response.status === 500) {
-
         const responseData = await response.text();
         Alert.alert("Lỗi", responseData);
       } else if (response.status === 401) {

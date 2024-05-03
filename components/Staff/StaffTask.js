@@ -30,6 +30,18 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+function getHoursDifference(deadline) {
+  const currentDateUTC = new Date();
+
+  const startMillis = new Date(deadline).getTime();
+  const currentMillisUTC7 = currentDateUTC.getTime();
+
+  const millisDiff = startMillis - currentMillisUTC7;
+  const hoursDiff = millisDiff / (1000 * 60 * 60);
+
+  return hoursDiff < 0 ? "Quá hạn" : hoursDiff < 24 ? `${Math.floor(hoursDiff)} giờ ` : `${Math.floor(hoursDiff / 24)} ngày`;
+}
+
 const CustomTabIcon = ({ name, onPress, status }) => {
   let iconColor = "";
 
@@ -199,7 +211,7 @@ export default function StaffTask({ navigation }) {
             >
               <Card.Title
                 title={item.name}
-                subtitle={<Text style={{ color: "#9F78FF" }}>Thời hạn: {item?.deadline ? item.deadline : "Không có thời hạn"} </Text>}
+                subtitle={<Text style={{ color: "#9F78FF" }}>Thời hạn: {item?.plannedTime ? getHoursDifference(item.plannedTime) : "Không có thời hạn"} </Text>}
                 left={(props) => (
                   <View
                     style={{
@@ -259,7 +271,7 @@ export default function StaffTask({ navigation }) {
                             borderRadius: 10,
                           }}
                         >
-                          <ProgressBar progress={1} style={{ width: 100 }} />
+                          <ProgressBar progress={1} style={{ width: 70 }} />
                           <Text style={{ textAlign: 'center', color: '#9F78FF', marginTop: 5 }}>Hoàn thành</Text>
 
                         </View>
