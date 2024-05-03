@@ -120,7 +120,7 @@ export default function StaffTask({ navigation }) {
   }, []);
   const [refreshing, setRefreshing] = useState(false);
 
-  const flatListRef = useRef(null);
+
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -169,17 +169,6 @@ export default function StaffTask({ navigation }) {
 
   const [selectedId, setSelectedId] = useState();
 
-  const [active, setActive] = React.useState("");
-  const chartConfig = {
-    backgroundGradientFrom: "#1E2923",
-    backgroundGradientFromOpacity: 0,
-    backgroundGradientTo: "#08130D",
-    backgroundGradientToOpacity: 0.5,
-    color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
-    strokeWidth: 2,
-    barPercentage: 0.5,
-    useShadowColorFromDataset: false // optional
-  };
   const renderItem = ({ item }) => {
     if (
       value === "all" ||
@@ -188,6 +177,7 @@ export default function StaffTask({ navigation }) {
     ) {
       return (
         <>
+
           <View
             style={{
               backgroundColor: "#fff",
@@ -254,15 +244,26 @@ export default function StaffTask({ navigation }) {
                             borderRadius: 10,
                           }}
                         >
-                          <ProgressBar progress={0.5} />
-                          <Text style={{ textAlign: 'center', color: '#9F78FF', marginTop: 5 }}>Tiến hành</Text>
-                          {/* <CustomTabIcon
-                            name={"ellipsis-horizontal-outline"}
-                            onPress={() => setSelectedId(item.id)}
-                            status={item.status}
-                          /> */}
+                          <ProgressBar progress={0.5} style={{ width: 70 }} />
+                          <Text style={{ textAlign: 'center', color: '#9F78FF', marginTop: 5, }}>Tiến hành</Text>
+
                         </View>
                       );
+                    case 5:
+                      return (
+
+                        <View
+                          style={{
+                            marginRight: 10,
+                            padding: 5,
+                            borderRadius: 10,
+                          }}
+                        >
+                          <ProgressBar progress={1} style={{ width: 100 }} />
+                          <Text style={{ textAlign: 'center', color: '#9F78FF', marginTop: 5 }}>Hoàn thành</Text>
+
+                        </View>
+                      )
                   }
                 }}
               />

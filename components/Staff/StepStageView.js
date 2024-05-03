@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { View, StyleSheet, Dimensions, TouchableOpacity, Image, SafeAreaView, FlatList } from 'react-native';
+import { View, StyleSheet, Dimensions, TouchableOpacity, Image, SafeAreaView, FlatList, Alert } from 'react-native';
 import { Text, Button, Dialog, Portal, } from 'react-native-paper'
 import * as FileSystem from 'expo-file-system';
 import {
@@ -161,7 +161,7 @@ const StepStageView = ({ stageData, taskId, fetchDataTask }) => {
         console.log("FAIL:", response)
         setApiLoading(false);
         const responseData = await response.text();
-        // Alert.alert("Lỗi", responseData);
+        Alert.alert("Lỗi", responseData);
       } else if (response.status === 401) {
         navigation.navigate("Staff-Login");
       }
@@ -230,8 +230,9 @@ const StepStageView = ({ stageData, taskId, fetchDataTask }) => {
         setImages([]);
         fetchDataTask();
       } else if (response.status === 400 || response.status === 500) {
+
         const responseData = await response.text();
-        console.log("Lỗi", responseData);
+        Alert.alert("Lỗi", responseData);
       } else if (response.status === 401) {
         navigation.navigate("Staff-Login");
       }
@@ -418,6 +419,7 @@ const StepStageView = ({ stageData, taskId, fetchDataTask }) => {
                       onPress={() => setOpenCheckTask(true)}
                     >
                       Hoàn thành
+
                     </Button>
                     <Portal>
                       <Dialog

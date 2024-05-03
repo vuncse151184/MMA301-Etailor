@@ -261,7 +261,7 @@ export default function StaffProfile({ navigation }) {
               </Text>
               <View style={{ maxWidth: 200 }}>
                 {dataStaff?.masterySkills ? dataStaff?.masterySkills.map((skill, index) => (
-                  <View style={{ flexDirection: "row", flexWrap: "wrap", }}>
+                  <View style={{ flexDirection: "row", flexWrap: "wrap", }} key={index}>
                     <Text>{getCategoryName(skill)},</Text>
                   </View>
                 )) : (
