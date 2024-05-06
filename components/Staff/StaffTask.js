@@ -156,7 +156,6 @@ export default function StaffTask({ navigation }) {
           });
           if (response.ok && response.status === 200) {
             const responseData = await response.json();
-            console.log("Data task:", responseData);
             setDataTask(responseData);
             const allTask = responseData.length;
             const notStartTask = responseData.filter((task) => task.status === 1)
