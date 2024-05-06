@@ -88,7 +88,7 @@ export default function StaffLogin({ navigation }) {
             <Image style={styles.logo} source={require("../assets/images/ıngoude-removebg-preview.png")} />
 
             <View style={styles.inputContainer}>
-              <Icon style={styles.prefix} name="person-outline" size={20} color="#fff" />
+              <Icon style={styles.prefix} name="person" size={20} color="#fff" />
               <TextInput
                 style={styles.input}
                 placeholder="Tên đăng nhập"
@@ -98,7 +98,7 @@ export default function StaffLogin({ navigation }) {
               />
             </View>
             <View style={styles.inputContainer}>
-              <Icon style={styles.prefix} size={20} color="#fff" name="lock-closed-outline" />
+              <Icon style={styles.prefix} size={20} color="#fff" name="lock-closed" />
               <TextInput
                 style={styles.input}
                 placeholder="Mật khẩu"
