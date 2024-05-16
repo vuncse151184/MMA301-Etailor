@@ -53,14 +53,7 @@ function OrderStackNavigator() {
         </OrderStack.Navigator>
     );
 }
-function NotificationStackNavigator() {
-    return (
-        <NotificationStack.Navigator initialRouteName="Staff-Notification" screenOptions={{ headerShown: false }}>
-            <NotificationStack.Screen name="Staff-Notification" component={Notification} />
-        </NotificationStack.Navigator>
 
-    )
-}
 function StaffStackNavigator() {
     return (
         <StaffStack.Navigator initialRouteName="Staff-Tasks">
@@ -135,46 +128,6 @@ function StaffNavigator() {
                 }}
             />
             <StaffTab.Screen
-                name="Staff-Order-Stack"
-                component={OrderStackNavigator}
-                options={{
-                    tabBarIcon: ({ focused }) => (
-                        <View
-                            style={{
-                                alignItems: "center",
-                                justifyContent: "center",
-                                paddingTop: Platform.OS === "ios" ? 25 : 0
-                            }}
-                        >
-                            <CustomTabIcon name="add-circle" color={"#FFFFFF"} focused={focused} />
-                            <Text
-                                style={{ color: focused ? "#FFFFFF" : "#D9D9D9", fontSize: 12 }}
-                            >
-                                Tạo đơn
-                            </Text>
-                        </View>
-                    ),
-                    tabBarLabel: () => null,
-                    headerShown: false,
-                }}
-            />
-            <StaffTab.Screen
-                name="Staff-Notification-Stack"
-                component={NotificationStackNavigator}
-                options={{
-                    tabBarIcon: ({ focused }) => (
-                        <View style={{ alignItems: "center", justifyContent: "center", paddingTop: Platform.OS === "ios" ? 25 : 0 }}>
-                            <CustomTabIcon name="notifications" color={"#FFFFFF"} focused={focused} />
-                            <Text style={{ color: focused ? "#FFFFFF" : "#D9D9D9", fontSize: 12 }}>
-                                Thông báo
-                            </Text>
-                        </View>
-                    ),
-                    tabBarLabel: () => null,
-                    headerShown: false,
-                }}
-            />
-            <StaffTab.Screen
                 name="Staff-Profile"
                 component={StaffProfile}
                 options={{
@@ -190,21 +143,6 @@ function StaffNavigator() {
                 }}
             />
 
-            {/* <StaffTab.Screen
-                name="Staff-Order"
-                component={OrderScreen}
-                options={{
-                    tabBarIcon: ({ focused }) => (
-                        <View style={{ alignItems: "center", justifyContent: "center", top: 10 }}>
-                            <CustomTabIcon name="add-circle" color={"#FFFFFF"} focused={focused} />
-                            <Text style={{ color: focused ? "#9f78ff" : "#000000", fontSize: 12 }}>
-                                Tạo đơn
-                            </Text>
-                        </View>
-                    ),
-                    tabBarLabel: () => null
-                }}
-            /> */}
         </StaffTab.Navigator>
     );
 }
@@ -314,6 +252,7 @@ function StackGroup() {
         <Stack.Navigator
             initialRouteName="Staff-Login"
         >
+            <Stack.Screen name="Staff-Notification" component={Notification} options={{ headerShown: false }} />
             <Stack.Screen name="Staff-Login" component={StaffLogin} options={{ headerShown: false }} />
             <Stack.Screen name="Staff-Home" component={StaffNavigator} options={{ headerShown: false }} />
             <Stack.Screen name="Customer-Home" component={StaffHomeTabNavigator} options={{ headerShown: false }} />

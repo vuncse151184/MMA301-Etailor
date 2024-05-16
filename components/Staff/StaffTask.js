@@ -1,24 +1,15 @@
 import * as React from "react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Image, ScrollView, StyleSheet, View, Dimensions, RefreshControl } from "react-native";
 
 // import LinearGradient from 'react-native-linear-gradient';
 import {
   Appbar,
-  Banner,
-  Avatar,
-  Button,
   Card,
-  IconButton,
   Text,
-  Chip,
   ActivityIndicator,
   SegmentedButtons,
-  Drawer,
-  Portal,
-  Searchbar,
-  Dialog,
-  Divider,
+  Badge,
   ProgressBar
 } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -26,9 +17,10 @@ import Icon from "react-native-vector-icons/Ionicons";
 import {
   FlatList,
   SafeAreaView,
-  StatusBar,
   TouchableOpacity,
 } from "react-native";
+import { Realtime } from "./Realtime";
+import { Notifier, Easing } from 'react-native-notifier';
 
 function getHoursDifference(deadline) {
   const currentDateUTC = new Date();
@@ -56,6 +48,7 @@ const CustomTabIcon = ({ name, onPress, status }) => {
 
 export default function StaffTask({ navigation }) {
   const [staffInfo, setStaffInfo] = React.useState("");
+  const realTimeMessage = Realtime()
 
   const [loading, setLoading] = useState(false);
 
@@ -67,57 +60,8 @@ export default function StaffTask({ navigation }) {
   const [onGoingTask, setOnGoingTask] = useState(0);
   const [finishedTask, setFinishedTask] = useState(0);
   const [taskByStatus, setTaskByStatus] = useState([]);
-  React.useEffect(() => {
-    const notStartedPopulation = notStartTask;
-    const onGoingPopulation = onGoingTask;
-    const finishedPopulation = finishedTask;
-
-    setTaskByStatus([
-      {
-        name: "Chưa bắt đầu",
-        population: notStartedPopulation,
-        color: "#f6a417",
-        legendFontColor: "#000000",
-        legendFontSize: 15,
-      },
-      {
-        name: "Đang xử lý",
-        population: onGoingPopulation,
-        color: "#66c6de",
-        legendFontColor: "#000000",
-        legendFontSize: 15
-      },
-      {
-        name: "Dừng xử lý",
-        population: finishedPopulation,
-        color: "#fecf16",
-        legendFontColor: "#000000",
-        legendFontSize: 15
-      },
-      {
-        name: "Hoàn thành",
-        population: 1,
-        color: "#2a54a1",
-        legendFontColor: "#000000",
-        legendFontSize: 15
-      },
-      {
-        name: "Bị hủy bỏ",
-        population: 1,
-        color: "#eb5f1a",
-        legendFontColor: "#000000",
-        legendFontSize: 15
-      }
-    ]);
-  }, [notStartTask, onGoingTask, finishedTask]);
-  const currentDate = new Date().toLocaleDateString("vi", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-
-  const formattedDate = currentDate.replace(",", "");
-
+  const [notification, setNotification] = useState([]);
+  // Get Staff Info
   React.useEffect(() => {
     const retrieveStaffItem = async () => {
       AsyncStorage.getItem("staff")
@@ -130,6 +74,49 @@ export default function StaffTask({ navigation }) {
     };
     retrieveStaffItem();
   }, []);
+
+  // get notification realtime
+  React.useEffect(() => {
+    if (realTimeMessage) {
+      Notifier.showNotification({
+        title: 'Bạn có thông báo mới',
+        duration: 0,
+        showAnimationDuration: 800,
+        showEasing: Easing.bounce,
+        onHidden: () => console.log('Hidden'),
+        onPress: () => console.log('Press'),
+        hideOnPress: false,
+      });
+
+      fetchStaffNotification()
+    }
+  }, [realTimeMessage])
+  // Fetch notification
+  const fetchStaffNotification = async () => {
+    const URL = `https://e-tailorapi.azurewebsites.net/api/notification/get-notification`
+    const response = await fetch(URL, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${staffInfo.token}`
+      }
+    });
+    if (response.ok && response.status === 200) {
+      const responseData = await response.json();
+      setNotification(responseData);
+    }
+
+  }
+
+  const currentDate = new Date().toLocaleDateString("vi", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  const formattedDate = currentDate.replace(",", "");
+
+
   const [refreshing, setRefreshing] = useState(false);
 
 
@@ -140,6 +127,7 @@ export default function StaffTask({ navigation }) {
       setRefreshing(false);
     }, 2000);
   }, []);
+  //Fetch task data
   React.useEffect(() => {
     const fetchDataTask = async () => {
       if (staffInfo !== null) {
@@ -176,8 +164,8 @@ export default function StaffTask({ navigation }) {
       }
     };
     fetchDataTask();
+    fetchStaffNotification();
   }, [staffInfo]);
-
   const [selectedId, setSelectedId] = useState();
 
   const renderItem = ({ item }) => {
@@ -260,6 +248,20 @@ export default function StaffTask({ navigation }) {
 
                         </View>
                       );
+                    case 4:
+                      return (
+                        <View
+                          style={{
+                            marginRight: 10,
+                            padding: 5,
+                            borderRadius: 10,
+                          }}
+                        >
+                          <ProgressBar progress={0.5} style={{ width: 70, color: "green" }} />
+                          <Text style={{ textAlign: 'center', color: '#9F78FF', marginTop: 5 }}>Hoàn thành</Text>
+
+                        </View>
+                      )
                     case 5:
                       return (
 
@@ -290,9 +292,12 @@ export default function StaffTask({ navigation }) {
   const [visible, setVisible] = React.useState(false);
 
   const hideDialog = () => setVisible(false);
-
+  const notifierRef = useRef();
   const screenWidth = Dimensions.get("window").width;
-
+  // const _handleNotificationPress = () => {
+  //   console.log("Notification")
+  //   navigation.navigate("Staff-Notification", { notification: notification });
+  // }
   return (
     <>
       <Appbar.Header mode="small" style={{
@@ -307,8 +312,16 @@ export default function StaffTask({ navigation }) {
               <View>
                 <Text style={{ color: "#fff", fontSize: 20 }}>E-tailor</Text>
               </View>
-              <View style={{ marginRight: 20 }}>
-                <Icon name="notifications-circle" size={30} color="#fff" />
+              <View style={{ position: 'relative', marginRight: 10 }}>
+                <TouchableOpacity onPress={() => navigation.navigate("Staff-Notification", { notification: notification })}>
+                  <Icon name="notifications-circle" size={40} color="#fff" />
+                  {
+                    notification && notification.unread !== undefined && notification.unread > 0 &&
+                    <Badge style={{ position: 'absolute', top: 0, right: 0 }} size={20}>
+                      {notification.unread}
+                    </Badge>
+                  }
+                </TouchableOpacity>
               </View>
 
             </>
@@ -342,7 +355,7 @@ export default function StaffTask({ navigation }) {
       </View >
       {
         !loading ? (
-          <View style={{ marginTop: 10 }}>
+          <View style={{ marginTop: 10, marginBottom: 40 }}>
             <View>
               <SafeAreaView
                 style={{ alignItems: "center", margin: 20 }}
