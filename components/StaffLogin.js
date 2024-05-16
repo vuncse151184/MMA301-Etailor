@@ -32,6 +32,20 @@ export default function StaffLogin({ navigation }) {
     regis_password_err: "",
   });
 
+  React.useEffect(() => {
+    const retrieveStaffItem = async () => {
+      try {
+        const existingStaff = await AsyncStorage.getItem("staff");
+        if (existingStaff) {
+          await AsyncStorage.removeItem("staff");
+        }
+      } catch (error) {
+        console.error("Error removing existing staff data:", error);
+      }
+    };
+
+    retrieveStaffItem();
+  }, []);
   const handleLoginValuesChange = (prop) => (text) => {
     setLoginValues({ ...loginValues, [prop]: text });
   };

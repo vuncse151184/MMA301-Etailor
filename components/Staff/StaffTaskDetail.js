@@ -69,79 +69,7 @@ const StaffTaskDetail = ({ navigation, route, }) => {
   const hideDialog = () => setVisible(false);
 
   const [startWork, setStartWork] = useState(0);
-  // const [expanded, setExpanded] = React.useState(true);
 
-  // const handlePress = () => setExpanded(!expanded);
-  // const BodySizesView = ({ item }) => (
-
-  //   <List.Section title="Accordions">
-  //     <List.Accordion
-  //       title={
-  //         <View
-  //           style={{
-  //             flexDirection: "row",
-  //             justifyContent: "space-between",
-  //             alignItems: "center",
-  //           }}
-  //         >
-  //           <Text
-  //             variant="titleLarge"
-  //             style={{
-  //               marginLeft: 15,
-  //               fontWeight: "bold",
-  //             }}
-  //           >
-  //             Số đo
-  //           </Text>
-  //         </View>
-  //       }
-  //       left={props => <List.Icon {...props} icon="folder" />}
-  //       expanded={expanded}
-  //       onPress={handlePress}>
-  //       <View>
-  //         {item && item.map((item) => {
-  //           console.log("item", item)
-  //           return (
-  //             <List.Item title={item.bodySize.name + ": " + item.bodySize.value} />
-  //           )
-  //         })}
-  //       </View>
-
-  //     </List.Accordion>
-  //   </List.Section>
-  // <View
-  //   style={{
-  //     width: "50%",
-  //     height: 50,
-  //     marginTop: 10,
-  //     padding: 10,
-  //   }}
-  // >
-  //   <Text
-  //     style={{
-  //       alignItems: "center",
-  //       textAlign: "center",
-  //       textAlignVertical: "center",
-  //       borderRadius: 10,
-  //       backgroundColor: "white",
-  //       width: "100%",
-  //       height: 50,
-  //       shadowColor: "#9F78FF",
-  //       shadowOffset: {
-  //         width: 0,
-  //         height: 0,
-  //       },
-  //       shadowOpacity: 10,
-  //       shadowRadius: 3,
-  //       elevation: 10,
-  //     }}
-  //   >
-  //     {item.bodySize.name}: {item.value}
-  //   </Text>
-  // </View>
-  //);
-
- 
   return (
     <>
 
@@ -190,7 +118,7 @@ const StaffTaskDetail = ({ navigation, route, }) => {
                     uri: dataTaskDetail?.productTemplate?.thumbnailImage,
                   }}
                   style={{
-                    width: 200,
+                    width: "auto",
                     height: 100,
                     alignSelf: "center",
                     borderRadius: 10,
@@ -229,7 +157,7 @@ const StaffTaskDetail = ({ navigation, route, }) => {
                   Công đoạn:
                 </Text>
                 <View style={styles.bottomSheetContainer}>
-                  <StepStageView stageData={dataTaskDetail?.productStages} taskId={dataTaskDetail?.id}  fetchDataTask={fetchDataTask}/>
+                  <StepStageView stageData={dataTaskDetail?.productStages} taskId={dataTaskDetail?.id} fetchDataTask={fetchDataTask} />
                 </View>
               </View>
 

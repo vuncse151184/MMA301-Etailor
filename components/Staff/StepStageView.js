@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { View, StyleSheet, Dimensions, TouchableOpacity, Image, SafeAreaView, FlatList, Alert } from 'react-native';
-import { Text, Button, Dialog, Portal, } from 'react-native-paper'
+import { Text, Button, Dialog, Portal, TextInput, } from 'react-native-paper'
 import * as FileSystem from 'expo-file-system';
 import {
   BottomSheetModal,
@@ -414,6 +414,7 @@ const StepStageView = ({ stageData, taskId, fetchDataTask }) => {
                         borderRadius: 5,
                         borderWidth: 1,
                         borderColor: "rgb(66, 150, 86)",
+                        marginBottom: 40
                       }}
                       onPress={() => setOpenCheckTask(true)}
                     >
@@ -432,6 +433,10 @@ const StepStageView = ({ stageData, taskId, fetchDataTask }) => {
                           Xác nhận công việc hiện tại
                         </Dialog.Title>
                         <Dialog.Content>
+                          <Text variant="bodyMedium">
+                            Nhập số lượng nguyên liệu đã sử dụng:
+                          </Text>
+                          <TextInput keyboardType='numeric'></TextInput>
                           <Text variant="bodyMedium">
                             Hình ảnh xác thực:
                           </Text>
