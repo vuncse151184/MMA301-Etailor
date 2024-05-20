@@ -118,7 +118,7 @@ const StaffTaskDetail = ({ navigation, route, }) => {
                     uri: dataTaskDetail?.productTemplate?.thumbnailImage,
                   }}
                   style={{
-                    width: "auto",
+                    width: 100,
                     height: 100,
                     alignSelf: "center",
                     borderRadius: 10,
@@ -143,7 +143,15 @@ const StaffTaskDetail = ({ navigation, route, }) => {
                 >
                   Vải sử dụng: {dataTaskDetail?.fabricMaterial?.name}
                 </Text>
-
+                <Text
+                  variant="titleMedium"
+                  style={{
+                    marginTop: 16,
+                    marginLeft: 15,
+                  }}
+                >
+                  Số lượng: {dataTaskDetail?.quantity}
+                </Text>
                 <View>
                   <BodySizesView item={dataTaskDetail?.productBodySizes} />
                 </View>

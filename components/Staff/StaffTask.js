@@ -10,7 +10,8 @@ import {
   ActivityIndicator,
   SegmentedButtons,
   Badge,
-  ProgressBar
+  ProgressBar,
+  Avatar,
 } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -21,7 +22,15 @@ import {
 } from "react-native";
 import { Realtime } from "./Realtime";
 import { Notifier, Easing } from 'react-native-notifier';
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based in JS
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
 function getHoursDifference(deadline) {
   const currentDateUTC = new Date();
 
@@ -34,6 +43,58 @@ function getHoursDifference(deadline) {
   return hoursDiff < 0 ? "Quá hạn" : hoursDiff < 24 ? `${Math.floor(hoursDiff)} giờ ` : `${Math.floor(hoursDiff / 24)} ngày`;
 }
 
+const getStatusTextAndColor = (status) => {
+  let color;
+  let text;
+  switch (status) {
+    case 0:
+      color = "red";
+      text = "Đã huỷ";
+      borderColor = "red";
+    case 1:
+      color = "#72E3FF";
+      text = "Chờ duyệt";
+      borderColor = "red";
+      break;
+    case 2:
+      color = "#D6b164";
+      text = "Chờ duyệt";
+      borderColor = "red";
+      break;
+    case 3:
+      color = "#80E8DD";
+      text = "Chưa bắt đầu";
+      borderColor = "red";
+      break;
+    case 4:
+      color = "#FDA000";
+      text = "Bị từ chối";
+      borderColor = "red";
+      break;
+    case 5:
+      color = "#08b46c";//"#A4F4D3"
+      text = "Hoàn thành";
+      borderColor = "red";
+      break;
+    case 6:
+      color = "green";
+      text = "Kiểm thử thành";
+      borderColor = "red";
+      break;
+    case 7:
+      color = "green";
+      text = "Hoàn tất & nhận hàng";
+      borderColor = "red";
+      break;
+    case 8:
+      color = "green";
+      text = "Hoàn tất & nhận hàng";
+      borderColor = "red";
+      break;
+  }
+  return { color, text, borderColor };
+};
+
 const CustomTabIcon = ({ name, onPress, status }) => {
   let iconColor = "";
 
@@ -41,7 +102,7 @@ const CustomTabIcon = ({ name, onPress, status }) => {
 
   return (
     <TouchableOpacity onPress={onPress}>
-      <Icon name={name} size={30} color={"#9F78FF"} />
+      <Icon name={name} size={30} color={"black"} />
     </TouchableOpacity>
   );
 };
@@ -84,7 +145,7 @@ export default function StaffTask({ navigation }) {
         showAnimationDuration: 800,
         showEasing: Easing.bounce,
         onHidden: () => console.log('Hidden'),
-        onPress: () => console.log('Press'),
+        onPress: () => navigation.navigate("Staff-Notification"),
         hideOnPress: false,
       });
 
@@ -165,7 +226,7 @@ export default function StaffTask({ navigation }) {
     };
     fetchDataTask();
     fetchStaffNotification();
-  }, [staffInfo]);
+  }, [staffInfo, navigation, refreshing]);
   const [selectedId, setSelectedId] = useState();
 
   const renderItem = ({ item }) => {
@@ -179,13 +240,11 @@ export default function StaffTask({ navigation }) {
 
           <View
             style={{
-              backgroundColor: "#fff",
+              backgroundColor: `${getStatusTextAndColor(item.status).color}`,
               marginVertical: 10,
               width: "90%",
               alignSelf: "center",
               borderRadius: 10,
-              borderWidth: 1,
-              borderColor: "#9F78FF",
             }}
           >
             <TouchableOpacity
@@ -198,26 +257,13 @@ export default function StaffTask({ navigation }) {
             >
               <Card.Title
                 title={item.name}
-                subtitle={<Text style={{ color: "#9F78FF" }}>Thời hạn: {item?.plannedTime ? getHoursDifference(item.plannedTime) : "Không có thời hạn"} </Text>}
-                left={(props) => (
-                  <View
-                    style={{
-                      backgroundColor: "#9F78FF",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      width: 45,
-                      height: 45,
-                      borderRadius: 10,
-                    }}
-                  >
-                    <Icon
-                      name="receipt-outline"
-                      onPress={() => setSelectedId(item.id)}
-                      size={30}
-                      style={{ color: "white" }}
-                    />
-                  </View>
-                )}
+                titleStyle={{ color: "black", fontWeight: "bold" }}
+                subtitle={
+                  <Text style={{ color: "black" }}>
+                    <Icon name="calendar-outline" />&nbsp;{formatDate(item?.plannedTime)} &nbsp;&nbsp;<Icon name="alarm-outline" />&nbsp;{item?.plannedTime ? getHoursDifference(item.plannedTime) : "Không có thời hạn"}
+                  </Text>
+                }
+                onPress={() => setSelectedId(item.id)}
                 right={(props) => {
                   switch (item.status) {
                     case 1:
@@ -243,8 +289,8 @@ export default function StaffTask({ navigation }) {
                             borderRadius: 10,
                           }}
                         >
-                          <ProgressBar progress={0.5} style={{ width: 70 }} />
-                          <Text style={{ textAlign: 'center', color: '#9F78FF', marginTop: 5, }}>Tiến hành</Text>
+                          <ProgressBar progress={0.5} style={{ width: 70, color: "#Cd4bc9" }} />
+                          <Text style={{ textAlign: 'center', color: 'black', marginTop: 5, }}>Tiến hành</Text>
 
                         </View>
                       );
@@ -258,7 +304,7 @@ export default function StaffTask({ navigation }) {
                           }}
                         >
                           <ProgressBar progress={0.5} style={{ width: 70, color: "green" }} />
-                          <Text style={{ textAlign: 'center', color: '#9F78FF', marginTop: 5 }}>Hoàn thành</Text>
+                          <Text style={{ textAlign: 'center', color: 'black', marginTop: 5 }}>Làm lại</Text>
 
                         </View>
                       )
@@ -272,8 +318,9 @@ export default function StaffTask({ navigation }) {
                             borderRadius: 10,
                           }}
                         >
-                          <ProgressBar progress={1} style={{ width: 70 }} />
-                          <Text style={{ textAlign: 'center', color: '#9F78FF', marginTop: 5 }}>Hoàn thành</Text>
+                          <Icon name="checkmark-circle-outline" size={30} />
+                          {/* <ProgressBar progress={1} color="white" progressS style={{ width: 70, backgroundColor: "#Cd4bc9" }} />
+                          <Text style={{ textAlign: 'center', color: 'black', marginTop: 5 }}>Hoàn thành</Text> */}
 
                         </View>
                       )
@@ -301,7 +348,7 @@ export default function StaffTask({ navigation }) {
   return (
     <>
       <Appbar.Header mode="small" style={{
-        backgroundColor: "#865abb",
+        backgroundColor: "#D3208B",
       }} statusBarHeight={0}>
         <Appbar.Content style={{ alignItems: "center", flexDirection: "row", justifyContent: "space-between" }}
           title={
@@ -317,7 +364,7 @@ export default function StaffTask({ navigation }) {
                   <Icon name="notifications-circle" size={40} color="#fff" />
                   {
                     notification && notification.unread !== undefined && notification.unread > 0 &&
-                    <Badge style={{ position: 'absolute', top: 0, right: 0 }} size={20}>
+                    <Badge style={{ position: 'absolute', top: 0, right: 0, backgroundColor: "black" }} size={20}>
                       {notification.unread}
                     </Badge>
                   }
@@ -329,22 +376,27 @@ export default function StaffTask({ navigation }) {
         />
 
       </Appbar.Header >
-      < View style={{ position: "relative", height: 70, backgroundColor: "#865abb" }
+      < View style={{ position: "relative", height: 70, backgroundColor: "#D3208B" }
       }>
 
         < View style={{ position: "absolute", bottom: -40, left: 0, right: 0, justifyContent: "center", alignItems: "center" }}>
 
-          <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#ffffff", zIndex: 10, width: 350, borderTopRightRadius: 10, borderTopLeftRadius: 10, height: 100 }}>
+          <View style={{ flex: 1, alignItems: "center", flexDirection: "row", justifyContent: "center", backgroundColor: "#ffffff", zIndex: 10, width: 350, borderTopRightRadius: 10, borderTopLeftRadius: 10, height: 100 }}>
+            <View>
+              <Avatar.Image size={60} source={{ uri: staffInfo?.avatar }} />
+            </View>
+            <View style={{ paddingLeft: 20 }}>
+              <Text style={{ color: "black", fontSize: 16, marginBottom: 2, fontWeight: "bold" }}>
 
-            <Text style={{ marginLeft: 10, color: "#865abb", fontSize: 18, marginBottom: 2, fontWeight: "bold" }}>
-              Xin chào,{" "}
-              <Text style={{ fontWeight: "bold", color: "#865abb" }}>
-                {staffInfo ? staffInfo.name : ""}
+                <Text style={{ fontWeight: "bold", color: "#black", fontSize: 20 }}>
+                  Chào {staffInfo ? staffInfo.name : ""},
+                </Text>
               </Text>
-            </Text>
-            <Text>
-              Bạn có <Text style={{ fontWeight: "bold" }}>{allTask}</Text> công việc chưa hoàn thành
-            </Text>
+              <Text style={{ fontSize: 12 }}>
+                Bạn có <Text style={{ fontWeight: "bold" }}>{allTask}</Text> công việc chưa hoàn thành
+              </Text>
+            </View>
+
           </View>
 
 
@@ -355,7 +407,7 @@ export default function StaffTask({ navigation }) {
       </View >
       {
         !loading ? (
-          <View style={{ marginTop: 10, marginBottom: 40 }}>
+          <View style={{ marginTop: 10, paddingBottom: 40 }}>
             <View>
               <SafeAreaView
                 style={{ alignItems: "center", margin: 20 }}
@@ -364,16 +416,27 @@ export default function StaffTask({ navigation }) {
                   value={value}
                   style={{ paddingTop: 30 }}
                   onValueChange={setValue}
+                  density="regular"
                   buttons={[
                     {
                       value: "all",
                       label: "Tất cả",
+                      checkedColor: "#D3208B",
+                      accessibilityLabel: "all"
+                    },
+
+                    {
+                      value: "on-going",
+                      label: "Cần xử lý"
                     },
                     {
                       value: "not-start",
-                      label: "Chưa bắt đầu",
+                      label: "Hàng đợi",
                     },
-                    { value: "on-going", label: "Đang xử lý" },
+                    {
+                      value: "finished",
+                      label: "Xong",
+                    },
                   ]}
                 />
               </SafeAreaView>
@@ -387,6 +450,7 @@ export default function StaffTask({ navigation }) {
               refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
               }
+
             />
           </View>
         ) : (

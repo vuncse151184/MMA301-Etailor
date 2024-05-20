@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, TouchableOpacity, View, Dimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Realtime } from './Realtime'
 import { Notifications } from 'expo';
@@ -8,6 +8,8 @@ import {
   ActivityIndicator,
 } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
+
+const WIDTH = Dimensions.get('window').width;
 
 function getHoursDifference(startDate) {
   const currentDateUTC = new Date();
@@ -22,11 +24,12 @@ function getHoursDifference(startDate) {
 
 function filterByTime(startDate) {
   const currentDateUTC = new Date();
-  const startMillis = startDate.getTime();
-  const currentMillisUTC7 = currentDateUTC.getTime();
-  const millisDiff = currentMillisUTC7 - startMillis;
+  const millisDiff = currentDateUTC.getTime() - startDate.getTime();
   const dayDiff = millisDiff / (1000 * 60 * 60 * 24);
-  return dayDiff < 3 ? "Mới" : dayDiff < 7 ? "Tuần này" : dayDiff < 30 ? "Tháng này" : null
+  if (dayDiff < 3) return 'Mới';
+  if (dayDiff < 7) return 'Tuần này';
+  if (dayDiff < 30) return 'Tháng này';
+  return null;
 }
 const Notification = ({ navigation, route }) => {
   const { notification } = route.params;
@@ -68,89 +71,89 @@ const Notification = ({ navigation, route }) => {
       fetchStaffNotification()
       console.log("Có Chat Notification", chatNotification);
     }
-  }, [chatNotification]);
+  }, [chatNotification,navigation]);
   const [loading, setLoading] = useState(false);
   const _goBack = () => navigation.navigate("Staff-Tasks");
+  const handleNavigateNotification = (title, id) => {
+    async function markAsRead() {
+      const URL = `https://e-tailorapi.azurewebsites.net/api/notification/get-notification/${id}`
+      const response = await fetch(URL, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${staffInfo.token}`
+        }
+      });
+
+    }
+    markAsRead();
+    console.log("Title", title)
+    const taskId = title.split(" ")[2];
+    console.log("Task ID", taskId)
+    navigation.navigate("Staff-Task-Detail", { id: taskId, staffInfo: staffInfo });
+
+  }
+  const renderNotifications = () => {
+    const categories = ['Mới', 'Tuần này', 'Tháng này'];
+    return categories.map((category) => (
+      <View key={category}>
+        {notifications.data.some((item) => filterByTime(new Date(item.sendTime)) === category) && (
+          <>
+            <Text style={styles.categoryHeader}>{category}</Text>
+            {notifications.data
+              .filter((item) => filterByTime(new Date(item.sendTime)) === category)
+              .map((item, index) => (
+                <View key={index} style={styles.notificationContainer}>
+                  {item.isRead ?
+                    <TouchableOpacity onPress={() => handleNavigateNotification(item.content, item.id)}>
+                      <View style={styles.notificationContent}>
+
+                        <View>
+                          <Text style={styles.read_title}>{item.title}</Text>
+                          <Text style={styles.read_content}>{item.content} . {getHoursDifference(new Date(item.sendTime))}</Text>
+                        </View>
+
+                      </View>
+                    </TouchableOpacity>
+                    : <TouchableOpacity onPress={() => handleNavigateNotification(item.content, item.id)}>
+                      <View style={styles.notificationContent}>
+
+                        <View>
+                          <Text style={styles.title}>{item.title}</Text>
+                          <Text style={styles.content}>{item.content} . {getHoursDifference(new Date(item.sendTime))}</Text>
+                        </View>
+                        <View style={styles.dot_noti}>
+                          <Text style={styles.dot}>{'\u2B24'}</Text>
+                        </View>
+
+                      </View>
+                    </TouchableOpacity>
+                  }
+                  <Divider />
+                </View>
+              ))}
+          </>
+        )}
+      </View>
+    ));
+  };
+
   return (
     <>
+
       <Appbar.Header style={{ height: 40 }} statusBarHeight={0}>
         <View style={styles.headerContent}>
           <Appbar.BackAction onPress={_goBack} style={styles.backAction} />
           <Appbar.Content
-            title={`Thông báo ${notifications?.data.length}`}
-            titleStyle={styles.title}
+            title="Thông báo"
+            titleStyle={styles.appbar_title}
           />
         </View>
       </Appbar.Header>
-      <ScrollView>
+      <ScrollView style={styles.container}>
 
-        <View style={{ flex: 1, backgroundColor: '#fff' }}>
-
-
-          <Text style={{ fontSize: 20, fontWeight: "bold", paddingLeft: 10 }}>Mới</Text>
-          {notifications ? notifications?.data.map((item, index) => (
-
-            <>
-              {filterByTime(new Date(item.sendTime)) === "Mới" && (
-                <>
-                  <View style={{ padding: 10, flexDirection: 'row', alignItems: "center" }} key={index}>
-                    <View>
-                      <View>
-                        <Text>{'\u2B24'}</Text>
-                      </View>
-                    </View>
-                    <View>
-                      <View>
-                        <Text style={[styles.tittleText, { color: "green" }]}>{item.title}</Text>
-                      </View>
-                      <View style={{ paddingRight: 5 }}>
-                        <Text style={styles.normalText}>{item.content}  .{getHoursDifference(new Date(item.sendTime))}</Text>
-                      </View>
-                    </View>
-                  </View>
-                  <Divider />
-                </>
-              )}
-
-              {filterByTime(new Date(item.sendTime)) === "Tuần này" && (
-                <>
-                  <View style={{ padding: 10, flexDirection: 'row', alignItems: "center" }} key={index}>
-
-                    <View>
-                      <View>
-                        <Text style={[styles.tittleText, { color: "green" }]}>{item.title}</Text>
-                      </View>
-                      <View>
-                        <Text style={styles.normalText}>{item.content}  .{getHoursDifference(new Date(item.sendTime))}</Text>
-                      </View>
-                    </View>
-                  </View>
-                  <Divider />
-                </>
-              )}
-              {filterByTime(new Date(item.sendTime)) === "Tháng này" && (
-                <>
-                  <View style={{ padding: 10, flexDirection: 'row', alignItems: "center" }} key={index}>
-
-                    <View>
-                      <View>
-                        <Text style={[styles.tittleText, { color: "green" }]}>{item.title}</Text>
-                      </View>
-                      <View>
-                        <Text style={styles.normalText}>{item.content}  .{getHoursDifference(new Date(item.sendTime))}</Text>
-                      </View>
-                    </View>
-                  </View>
-                  <Divider />
-                </>
-              )}
-            </>
-          )) : (
-            <Text>Không có thông báo</Text>
-          )}
-
-        </View >
-      </ScrollView >
+        {notifications ? renderNotifications() : <Text>Không có thông báo</Text>}
+      </ScrollView>
     </>
   )
 }
@@ -165,20 +168,66 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
     paddingTop: 0,
   },
-  title: {
+  read_title: {
+    fontSize: 17,
+    fontWeight: '800',
+    color: '#747677',
+    width: WIDTH - 50,
+  },
+  read_content: {
+    fontSize: 12,
+    color: '#747677',
+    width: WIDTH - 70,
+  },
+  header: {
+    height: 40,
+  },
+  backAction: {
+    marginTop: 0,
+  },
+  appbar_title: {
     flex: 1,
     marginTop: 5,
-    marginLeft: 20,
+    marginLeft: 20
   },
-  tittleText: {
-    fontSize: 17,
+  dot_noti: {
+    position: 'absolute',
+    right: 10,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  categoryHeader: {
+    fontSize: 20,
     fontWeight: 'bold',
-    marginLeft: 15,
-    marginBottom: 5
+    paddingLeft: 10,
+    marginTop: 10,
   },
-  normalText: {
+  notificationContainer: {
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  notificationContent: {
+    flexDirection: 'row',
+    position: 'relative',
+    alignItems: 'center',
+    width: WIDTH - 10,
+    paddingVertical: 7,
+  },
+  dot: {
+    color: '#BF2188',
+    marginRight: 10,
+  },
+  title: {
+    fontSize: 17,
+    fontWeight: '800',
+    color: 'black',
+    width: WIDTH - 50,
+  },
+  content: {
     fontSize: 12,
-    marginLeft: 15,
-    marginBottom:5
-  }
-})
+    width: WIDTH - 70,
+  },
+});
