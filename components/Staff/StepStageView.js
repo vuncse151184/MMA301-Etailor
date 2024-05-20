@@ -58,6 +58,7 @@ const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 const StepStageView = ({ stageData, taskId, fetchDataTask }) => {
 
+  const [taskLoading, setTaskLoading] = useState(false);
   const sheetRef = useRef(null);
   const [apiLoading, setApiLoading] = useState(false);
   const [selectedStage, setSelectedStage] = useState(null);
@@ -143,6 +144,7 @@ const StepStageView = ({ stageData, taskId, fetchDataTask }) => {
     );
   };
   const handleTaskStart = async (taskId, stageId) => {
+
     console.log("taskID", taskId, "stageID", stageId)
     setApiLoading(true);
     const url = `https://e-tailorapi.azurewebsites.net/api/task/staff/${taskId}/start/${stageId}`;
@@ -201,12 +203,6 @@ const StepStageView = ({ stageData, taskId, fetchDataTask }) => {
     const formData1 = new FormData();
 
     images.forEach(async (image, index) => {
-      // formData.append(`images`, {
-      //   uri: image,
-      //   type: "image/png",
-      //   name: `image${index}.jpg`,
-      //   fileName: image.split("/").pop(),
-      // });
       const file = {
         uri: image,
         name: Math.floor(Math.random() * Math.floor(999999999)) + '.jpg',
@@ -333,32 +329,34 @@ const StepStageView = ({ stageData, taskId, fetchDataTask }) => {
               ))}
               <View>
                 {selectedStage?.status === 1 && (
+
                   <Button
+                    onPress={() =>
+                      handleTaskStart(
+                        taskId,
+                        selectedStage?.id
+                      )}
+
                     icon={() => (
                       <Icon
-                        name="flag"
+                        name="play-circle-outline"
                         size={20}
                         color="rgb(63, 155, 158)"
                       />
                     )}
                     textColor="rgb(63, 155, 158)"
-                    onPress={() =>
-                      handleTaskStart(
-                        taskId,
-                        selectedStage?.id
-                      )
-                    }
-                    style={{
-                      width: "100%",
-                      marginTop: 25,
-                      alignSelf: "center",
-                      backgroundColor:
-                        "rgba(113, 240, 245, 0.6)",
-                      color: "rgb(63, 155, 158)",
-                      borderRadius: 5,
-                      borderWidth: 1,
-                      borderColor: "rgb(63, 155, 158)",
-                    }}
+
+                    // style={{
+                    //   width: "100%",
+                    //   marginTop: 25,
+                    //   backgroundColor:
+                    //     "rgba(113, 240, 245, 0.6)",
+                    //   color: "rgb(63, 155, 158)",
+                    //   borderRadius: 5,
+                    //   borderWidth: 1,
+                    //   borderColor: "rgb(63, 155, 158)",
+                    // }}
+                    style={styles.buttonWithLoading}
                   >
                     Bắt đầu {apiLoading && <ActivityIndicator animating={apiLoading} style={{ paddingLeft: 10 }} size="small" color="black" />}
                   </Button>
@@ -366,35 +364,6 @@ const StepStageView = ({ stageData, taskId, fetchDataTask }) => {
                 )}
                 {selectedStage?.status === 2 && (
                   <View style={{ flexDirection: "row", gap: 10, justifyContent: "center", marginBottom: 20 }}>
-                    {/* <Button
-                      icon={() => (
-                        <Icon
-                          name="alert-circle-outline"
-                          size={20}
-                          color="rgb(194, 44, 41)"
-                        />
-                      )}
-                      textColor="rgb(194, 44, 41)"
-                      onPress={() =>
-                        handleTaskPending(
-                          taskId,
-                          selectedStage?.id
-                        )
-                      }
-                      style={{
-                        width: "45%",
-                        marginTop: 25,
-                        alignSelf: "center",
-                        backgroundColor:
-                          "rgba(194, 44, 41, 0.4)",
-                        color: "rgb(194, 44, 41)",
-                        borderRadius: 5,
-                        borderWidth: 1,
-                        borderColor: "rgb(194, 44, 41)",
-                      }}
-                    >
-                      Tạm dừng
-                    </Button> */}
                     <Button
                       icon={() => (
                         <Icon
@@ -433,10 +402,6 @@ const StepStageView = ({ stageData, taskId, fetchDataTask }) => {
                           Xác nhận công việc hiện tại
                         </Dialog.Title>
                         <Dialog.Content>
-                          <Text variant="bodyMedium">
-                            Nhập số lượng nguyên liệu đã sử dụng:
-                          </Text>
-                          <TextInput keyboardType='numeric'></TextInput>
                           <Text variant="bodyMedium">
                             Hình ảnh xác thực:
                           </Text>
@@ -593,6 +558,16 @@ const styles = StyleSheet.create({
   closeButtonText: {
     color: 'black',
     fontSize: 16,
+  },
+  buttonWithLoading: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(113, 240, 245, 0.6)",
+    color: "rgb(63, 155, 158)",
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: "rgb(63, 155, 158)",
   },
 });
 
