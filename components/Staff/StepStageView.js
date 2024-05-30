@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { View, StyleSheet, Dimensions, TouchableOpacity, Image, SafeAreaView, FlatList, Alert } from 'react-native';
+import { View, StyleSheet, Dimensions, TouchableOpacity, Image, SafeAreaView, FlatList, Alert, Platform } from 'react-native';
 import { Text, Button, Dialog, Portal, TextInput, } from 'react-native-paper'
 import * as FileSystem from 'expo-file-system';
 import {
@@ -56,7 +56,7 @@ const getStatusTextAndColor = (status) => {
 };
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
-const StepStageView = ({ stageData, taskId, fetchDataTask }) => {
+const StepStageView = ({ stageData, taskId, fetchDataTask, navigation }) => {
 
   const [taskLoading, setTaskLoading] = useState(false);
   const sheetRef = useRef(null);
@@ -237,302 +237,305 @@ const StepStageView = ({ stageData, taskId, fetchDataTask }) => {
   };
 
   return (
-    <BottomSheetModalProvider>
-      {stageData && stageData.map((stage, index) => (
-        <View key={index} style={{ marginTop: 12, height: 60, paddingHorizontal: 24 }}>
-          <TouchableOpacity onPress={() => handlePresentModalPress(stage)} style={{ paddingHorizontal: 14, borderWidth: 0.3, borderRadius: 8, height: "100%", backgroundColor: `${getStatusTextAndColor(stage.status).color}`, borderColor: "black", overflow: "hidden" }}>
-            <View style={{ flexDirection: "row", alignItems: "center", height: "100%" }}>
-              <Icon name='ellipse-outline' size={20} color={getStatusTextAndColor(stage.status).textColor} />
-              <View style={{ width: "80%", }}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    color: "#fff",
-                    fontWeight: "bold",
-                    paddingHorizontal: 20,
+    <>
+      <BottomSheetModalProvider>
+        {stageData && stageData.map((stage, index) => (
+          <View key={index} style={{ marginTop: 12, height: 60, paddingHorizontal: 24 }}>
+            <TouchableOpacity onPress={() => handlePresentModalPress(stage)} style={{ paddingHorizontal: 14, borderWidth: 0.3, borderRadius: 8, height: "100%", backgroundColor: `${getStatusTextAndColor(stage.status).color}`, borderColor: "black", overflow: "hidden" }}>
+              <View style={{ flexDirection: "row", alignItems: "center", height: "100%" }}>
+                <Icon name='ellipse-outline' size={20} color={getStatusTextAndColor(stage.status).textColor} />
+                <View style={{ width: "80%", }}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: "#fff",
+                      fontWeight: "bold",
+                      paddingHorizontal: 20,
 
-                    justifyContent: "center"
-                  }}>
-                  Công đoạn {stage.stageNum}: {stage?.stageName}
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 12,
-                    color: "#fff",
-                    paddingHorizontal: 20,
-                    width: "80%",
-                    justifyContent: "center"
-                  }}>
-                  Trạng thái: {getStatusTextAndColor(stage.status).text}
-                </Text>
-              </View>
-
-              <Icon name='chevron-forward-outline' size={20} color="#fff" />
-            </View>
-          </TouchableOpacity>
-        </View>
-
-      ))
-      }
-      <View style={styles.container}>
-        <BottomSheetModal
-          ref={bottomSheetModalRef}
-          enableTouchThrough={true}
-          style={{
-            borderTopLeftRadius: 10,
-            borderTopRightRadius: 10,
-          }}
-          index={0}
-          snapPoints={snapPoints}
-          detached={true}
-          onChange={handleSheetChanges}
-        >
-          <BottomSheetView style={styles.contentContainer}>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => bottomSheetModalRef.current?.close()}
-            >
-              <Icon name='close-outline' size={30} />
-            </TouchableOpacity>
-            <ScrollView>
-              <View style={{ alignItems: "center" }}>
-                <Text style={{ fontSize: 20, fontWeight: "bold" }}>Thông tin công đoạn</Text>
-              </View>
-              {selectedStage?.productComponents.map((component, index) => (
-                <View key={index} style={{ marginTop: 10 }}>
-                  <Text variant='titleMedium'>{index + 1}/ {component.name}</Text>
-                  <View style={{ marginHorizontal: 15 }}>
-                    <Image
-                      source={{
-                        uri: component?.component.image,
-                      }}
-                      style={{
-                        height: 100,
-                        width: 100,
-                        borderRadius: 10,
-                        // Add border to see if image container is visible
-                        borderWidth: 1,
-                        marginVertical: 12,
-
-                      }}
-                      resizeMode="contain"
-                    />
-                    <Text variant='bodyMedium'>
-                      Ghi chú của khách: &nbsp;
-                      {component?.note ? component?.note : "Không có ghi chú"}
-
-                    </Text>
-                  </View>
-
+                      justifyContent: "center"
+                    }}>
+                    Công đoạn {stage.stageNum}: {stage?.stageName}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: "#fff",
+                      paddingHorizontal: 20,
+                      width: "80%",
+                      justifyContent: "center"
+                    }}>
+                    Trạng thái: {getStatusTextAndColor(stage.status).text}
+                  </Text>
                 </View>
 
-              ))}
-              <View>
-                {selectedStage?.status === 1 && (
+                <Icon name='chevron-forward-outline' size={20} color="#fff" />
+              </View>
+            </TouchableOpacity>
+          </View>
 
-                  <Button
-                    onPress={() =>
-                      handleTaskStart(
-                        taskId,
-                        selectedStage?.id
-                      )}
+        ))
+        }
+        <View style={styles.container}>
+          <BottomSheetModal
+            ref={bottomSheetModalRef}
+            enableTouchThrough={true}
+            style={{
+              borderTopLeftRadius: 10,
+              borderTopRightRadius: 10,
+            }}
+            index={0}
+            snapPoints={snapPoints}
+            detached={true}
+            onChange={handleSheetChanges}
+          >
+            <BottomSheetView style={styles.contentContainer}>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => bottomSheetModalRef.current?.close()}
+              >
+                <Icon name='close-outline' size={30} />
+              </TouchableOpacity>
+              <ScrollView style={{ width: "100%" }}>
+                <View style={{ alignItems: "center" }}>
+                  <Text style={{ fontSize: 20, fontWeight: "bold" }}>Thông tin công đoạn</Text>
+                </View>
+                {selectedStage?.productComponents.map((component, index) => (
+                  <View key={index} style={{ marginTop: 10 }}>
+                    <Text variant='titleMedium'>{index + 1}/ {component.name}</Text>
+                    <View style={{ marginHorizontal: 15 }}>
+                      <Image
+                        source={{
+                          uri: component?.component.image,
+                        }}
+                        style={{
+                          height: 100,
+                          width: 100,
+                          // Add border to see if image container is visible
+              
+                          marginVertical: 12,
 
-                    icon={() => (
-                      <Icon
-                        name="play-circle-outline"
-                        size={20}
-                        color="rgb(63, 155, 158)"
+                        }}
+                        resizeMode="contain"
                       />
-                    )}
-                    textColor="rgb(63, 155, 158)"
+                      <Text variant='bodyMedium'>
+                        Ghi chú của khách: &nbsp;
+                        {component?.note ? component?.note : "Không có ghi chú"}
 
-                    // style={{
-                    //   width: "100%",
-                    //   marginTop: 25,
-                    //   backgroundColor:
-                    //     "rgba(113, 240, 245, 0.6)",
-                    //   color: "rgb(63, 155, 158)",
-                    //   borderRadius: 5,
-                    //   borderWidth: 1,
-                    //   borderColor: "rgb(63, 155, 158)",
-                    // }}
-                    style={styles.buttonWithLoading}
-                  >
-                    Bắt đầu {apiLoading && <ActivityIndicator animating={apiLoading} style={{ paddingLeft: 10 }} size="small" color="black" />}
-                  </Button>
+                      </Text>
+                    </View>
 
-                )}
-                {selectedStage?.status === 2 && (
-                  <View style={{ flexDirection: "row", gap: 10, justifyContent: "center", marginBottom: 20 }}>
+                  </View>
+
+                ))}
+                <View>
+                  {selectedStage?.status === 1 && (
+
+                    <Button
+                      onPress={() =>
+                        handleTaskStart(
+                          taskId,
+                          selectedStage?.id
+                        )}
+
+                      icon={() => (
+                        <Icon
+                          name="play-circle-outline"
+                          size={20}
+                          color="rgb(63, 155, 158)"
+                        />
+                      )}
+                      textColor="rgb(63, 155, 158)"
+
+                      // style={{
+                      //   width: "100%",
+                      //   marginTop: 25,
+                      //   backgroundColor:
+                      //     "rgba(113, 240, 245, 0.6)",
+                      //   color: "rgb(63, 155, 158)",
+                      //   borderRadius: 5,
+                      //   borderWidth: 1,
+                      //   borderColor: "rgb(63, 155, 158)",
+                      // }}
+                      style={styles.buttonWithLoading}
+                    >
+                      Bắt đầu {apiLoading && <ActivityIndicator animating={apiLoading} style={{ paddingLeft: 10 }} size="small" color="rgb(63, 155, 158)" />}
+                    </Button>
+
+                  )}
+                  {selectedStage?.status === 2 && (
+                    <View style={{ flexDirection: "row", justifyContent: "center", marginBottom: 20 }}>
+                      <Button
+                        icon={() => (
+                          <Icon
+                            name="checkmark-outline"
+                            size={20}
+                            color="rgb(66, 150, 86)"
+                          />
+                        )}
+                        textColor="rgb(66, 150, 86)"
+                        style={{
+                          width: "95%",
+                          marginTop: 25,
+                          alignSelf: "center",
+                          backgroundColor:
+                            "rgba(82, 247, 120, 0.6)",
+                          color: "rgb(66, 150, 86)",
+                          borderRadius: 5,
+                          borderWidth: 1,
+                          borderColor: "rgb(66, 150, 86)",
+                          marginBottom: 40
+                        }}
+                        onPress={() => setOpenCheckTask(true)}
+                      >
+
+                        Hoàn thành
+
+                      </Button>
+                      <Portal>
+                        <Dialog
+                          visible={openCheckTask}
+                          onDismiss={() => {
+                            setOpenCheckTask(false);
+                            setImages([]);
+                          }}
+                        >
+                          <Dialog.Title>
+                            Xác nhận công việc hiện tại
+                          </Dialog.Title>
+                          <Dialog.Content>
+                            <Text variant="bodyMedium">
+                              Hình ảnh xác thực:
+                            </Text>
+                            <Button onPress={pickImage}>
+                              Upload ảnh
+                            </Button>
+                            {images && images?.length > 1 ? (
+                              <SafeAreaView
+                                style={{
+                                  width: "100%",
+                                  height: 300,
+                                }}
+                              >
+                                <FlatList
+                                  numColumns={2}
+                                  data={images}
+                                  renderItem={({ item }) => (
+                                    <ItemUpload image={item} />
+                                  )}
+                                  keyExtractor={(item, index) =>
+                                    index.toString()
+                                  }
+                                />
+                              </SafeAreaView>
+                            ) : (
+                              images?.map((image, index) => {
+                                return (
+                                  <View
+                                    key={index}
+                                    style={{
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                    }}
+                                  >
+                                    <Icon
+                                      name="close-circle-outline"
+                                      size={30}
+                                      style={{
+                                        color: "rgb(48, 176, 166)",
+                                        marginLeft: 10,
+                                        position: "absolute",
+                                        right: 60,
+                                        top: 10,
+                                        zIndex: 1000,
+                                      }}
+                                      onPress={() => {
+                                        const filteredImages =
+                                          images?.filter(
+                                            (img, idx) =>
+                                              idx !== index
+                                          );
+                                        setImages(filteredImages);
+                                      }}
+                                    />
+                                    <Image
+                                      source={{ uri: image }}
+                                      style={{
+                                        width: 200,
+                                        height: 200,
+                                        borderWidth: 1,
+                                        borderRadius: 10,
+                                        borderColor: "#9F78FF",
+                                      }}
+                                    />
+                                  </View>
+                                );
+                              })
+                            )}
+                          </Dialog.Content>
+                          <Dialog.Actions>
+                            {images?.length !== 0 ? (
+                              <Button
+                                onPress={() =>
+                                  handleTaskFinish(
+                                    taskId,
+                                    selectedStage?.id
+                                  )
+                                }
+                              >
+                                Hoàn thành
+                              </Button>
+                            ) : (
+                              <Button disabled={true}>
+                                Hoàn thành
+                              </Button>
+                            )}
+                          </Dialog.Actions>
+                        </Dialog>
+                      </Portal>
+                    </View>
+
+
+                  )}
+
+                  {selectedStage?.status === 3 && (
                     <Button
                       icon={() => (
                         <Icon
-                          name="checkmark-outline"
+                          name="caret-forward-circle-outline"
                           size={20}
-                          color="rgb(66, 150, 86)"
+                          color="rgb(171, 167, 43)"
                         />
                       )}
-                      textColor="rgb(66, 150, 86)"
+                      textColor="rgb(171, 167, 43)"
+                      onPress={() =>
+                        handleTaskStart(
+                          taskId,
+                          selectedStage?.id
+                        )
+                      }
                       style={{
-                        width: "45%",
+                        width: "100%",
                         marginTop: 25,
                         alignSelf: "center",
                         backgroundColor:
-                          "rgba(82, 247, 120, 0.6)",
-                        color: "rgb(66, 150, 86)",
+                          "rgba(171, 167, 43, 0.4)",
+                        color: "rgb(171, 167, 43)",
                         borderRadius: 5,
                         borderWidth: 1,
-                        borderColor: "rgb(66, 150, 86)",
-                        marginBottom: 40
+                        borderColor: "rgb(171, 167, 43)",
                       }}
-                      onPress={() => setOpenCheckTask(true)}
                     >
-                      Hoàn thành
-
+                      Tiếp tục
                     </Button>
-                    <Portal>
-                      <Dialog
-                        visible={openCheckTask}
-                        onDismiss={() => {
-                          setOpenCheckTask(false);
-                          setImages([]);
-                        }}
-                      >
-                        <Dialog.Title>
-                          Xác nhận công việc hiện tại
-                        </Dialog.Title>
-                        <Dialog.Content>
-                          <Text variant="bodyMedium">
-                            Hình ảnh xác thực:
-                          </Text>
-                          <Button onPress={pickImage}>
-                            Upload ảnh
-                          </Button>
-                          {images && images?.length > 1 ? (
-                            <SafeAreaView
-                              style={{
-                                width: "100%",
-                                height: 300,
-                              }}
-                            >
-                              <FlatList
-                                numColumns={2}
-                                data={images}
-                                renderItem={({ item }) => (
-                                  <ItemUpload image={item} />
-                                )}
-                                keyExtractor={(item, index) =>
-                                  index.toString()
-                                }
-                              />
-                            </SafeAreaView>
-                          ) : (
-                            images?.map((image, index) => {
-                              return (
-                                <View
-                                  key={index}
-                                  style={{
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                  }}
-                                >
-                                  <Icon
-                                    name="close-circle-outline"
-                                    size={30}
-                                    style={{
-                                      color: "rgb(48, 176, 166)",
-                                      marginLeft: 10,
-                                      position: "absolute",
-                                      right: 60,
-                                      top: 10,
-                                      zIndex: 1000,
-                                    }}
-                                    onPress={() => {
-                                      const filteredImages =
-                                        images?.filter(
-                                          (img, idx) =>
-                                            idx !== index
-                                        );
-                                      setImages(filteredImages);
-                                    }}
-                                  />
-                                  <Image
-                                    source={{ uri: image }}
-                                    style={{
-                                      width: 200,
-                                      height: 200,
-                                      borderWidth: 1,
-                                      borderRadius: 10,
-                                      borderColor: "#9F78FF",
-                                    }}
-                                  />
-                                </View>
-                              );
-                            })
-                          )}
-                        </Dialog.Content>
-                        <Dialog.Actions>
-                          {images?.length !== 0 ? (
-                            <Button
-                              onPress={() =>
-                                handleTaskFinish(
-                                  taskId,
-                                  selectedStage?.id
-                                )
-                              }
-                            >
-                              Hoàn thành
-                            </Button>
-                          ) : (
-                            <Button disabled={true}>
-                              Hoàn thành
-                            </Button>
-                          )}
-                        </Dialog.Actions>
-                      </Dialog>
-                    </Portal>
-                  </View>
-
-
-                )}
-
-                {selectedStage?.status === 3 && (
-                  <Button
-                    icon={() => (
-                      <Icon
-                        name="caret-forward-circle-outline"
-                        size={20}
-                        color="rgb(171, 167, 43)"
-                      />
-                    )}
-                    textColor="rgb(171, 167, 43)"
-                    onPress={() =>
-                      handleTaskStart(
-                        taskId,
-                        selectedStage?.id
-                      )
-                    }
-                    style={{
-                      width: "100%",
-                      marginTop: 25,
-                      alignSelf: "center",
-                      backgroundColor:
-                        "rgba(171, 167, 43, 0.4)",
-                      color: "rgb(171, 167, 43)",
-                      borderRadius: 5,
-                      borderWidth: 1,
-                      borderColor: "rgb(171, 167, 43)",
-                    }}
-                  >
-                    Tiếp tục
-                  </Button>
-                )}
-              </View>
-            </ScrollView>
-          </BottomSheetView>
-        </BottomSheetModal>
-      </View>
-    </BottomSheetModalProvider >
+                  )}
+                </View>
+              </ScrollView>
+            </BottomSheetView>
+          </BottomSheetModal>
+        </View>
+      </BottomSheetModalProvider >
+      {/* <TouchableOpacity onPress={() => navigation.navigate("Staff-Task")}><Text>Hoàn tất </Text></TouchableOpacity> */}
+    </>
   );
 };
 
@@ -546,7 +549,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "start",
     height: HEIGHT * 0.6,
-    padding: 24,
+
     marginBottom: 100, // Add padding top to prevent overlapping with the close button
   },
   closeButton: {
@@ -561,11 +564,14 @@ const styles = StyleSheet.create({
   },
   buttonWithLoading: {
     flexDirection: "row",
+    marginTop: 10,
     alignItems: "center",
+    alignSelf: "center",
     justifyContent: "center",
     backgroundColor: "rgba(113, 240, 245, 0.6)",
     color: "rgb(63, 155, 158)",
     borderRadius: 5,
+    width: "80%",
     borderWidth: 1,
     borderColor: "rgb(63, 155, 158)",
   },

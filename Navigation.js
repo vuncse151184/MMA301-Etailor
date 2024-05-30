@@ -20,6 +20,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // import ProductDetail2 from './components/UI/ProductDetail';
 // import ProductDetail from './components/Screens/ProductDetail';
 import Notification from "./components/Staff/Notification";
+import PasswordForgot from "./components/Staff/PasswordForgot";
+import Personality from "./components/Staff/Personality";
 
 
 const Stack = createStackNavigator();
@@ -95,7 +97,6 @@ function StaffNavigator() {
                     bottom: 2,
                     left: 20,
                     right: 20,
-                    elevation: 0,
                     backgroundColor: "rgb(29, 37, 71)",
                     borderRadius: 15,
                     height: Platform.OS === "ios" ? 80 : 70,
@@ -254,6 +255,8 @@ function StackGroup() {
         >
             <Stack.Screen name="Staff-Notification" component={Notification} options={{ headerShown: false }} />
             <Stack.Screen name="Staff-Login" component={StaffLogin} options={{ headerShown: false }} />
+            <Stack.Screen name="Staff-Forget-Password" component={PasswordForgot} options={{ headerShown: false }} />
+            <Stack.Screen name="Staff-Personality" component={Personality} options={{ headerShown: false }} />
             <Stack.Screen name="Staff-Home" component={StaffNavigator} options={{ headerShown: false }} />
             <Stack.Screen name="Customer-Home" component={StaffHomeTabNavigator} options={{ headerShown: false }} />
             {/* <Stack.Screen name="Product-detail2" component={ProductDetail2} options={{ headerShown: false }} />
@@ -284,8 +287,8 @@ export default function Navigation() {
     }, []);
     return (
         <NavigationContainer>
-            <View style={{ flex: 0.99 }}>
-                <StackGroup user={userRole} />
+            <View style={{ flex: 0.99}}>
+                <StackGroup />
             </View>
         </NavigationContainer>
     );

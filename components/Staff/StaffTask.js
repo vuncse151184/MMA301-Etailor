@@ -19,11 +19,14 @@ import {
   FlatList,
   SafeAreaView,
   TouchableOpacity,
+  StatusBar,
+  Platform
 } from "react-native";
 import { Realtime } from "./Realtime";
 import { Notifier, Easing } from 'react-native-notifier';
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
+const statusBarHeight = Platform.OS === 'ios' ? StatusBar.currentHeight : 0;
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   const day = String(date.getDate()).padStart(2, '0');
@@ -51,48 +54,57 @@ const getStatusTextAndColor = (status) => {
       color = "red";
       text = "Đã huỷ";
       borderColor = "red";
+      textColor = "black"
     case 1:
-      color = "#72E3FF";
-      text = "Chờ duyệt";
-      borderColor = "red";
-      break;
-    case 2:
-      color = "#D6b164";
-      text = "Chờ duyệt";
-      borderColor = "red";
-      break;
-    case 3:
-      color = "#80E8DD";
+      color = "#fdf984";
       text = "Chưa bắt đầu";
       borderColor = "red";
+      textColor = "black"
+      break;
+    case 2:
+      color = "#72E3FF";
+      text = "Trong quá trình ";
+      borderColor = "red";
+      textColor = "black"
+      break;
+    case 3:
+      color = "#fdf984";
+      text = "Tạm dừng";
+      borderColor = "red";
+      textColor = "black"
       break;
     case 4:
-      color = "#FDA000";
+      color = "red";
       text = "Bị từ chối";
       borderColor = "red";
+      textColor = "white"
       break;
     case 5:
-      color = "#08b46c";//"#A4F4D3"
+      color = "#77d17d";//"#A4F4D3"
       text = "Hoàn thành";
       borderColor = "red";
+      textColor = "black"
       break;
     case 6:
       color = "green";
       text = "Kiểm thử thành";
       borderColor = "red";
+      textColor = "black"
       break;
     case 7:
       color = "green";
       text = "Hoàn tất & nhận hàng";
       borderColor = "red";
+      textColor = "black"
       break;
     case 8:
       color = "green";
       text = "Hoàn tất & nhận hàng";
       borderColor = "red";
+      textColor = "black"
       break;
   }
-  return { color, text, borderColor };
+  return { color, text, borderColor, textColor };
 };
 
 const CustomTabIcon = ({ name, onPress, status }) => {
@@ -115,12 +127,14 @@ export default function StaffTask({ navigation }) {
 
   const [dataTask, setDataTask] = useState(null);
 
-  const [value, setValue] = useState("all");
+  const [value, setValue] = useState("on-going");
   const [allTask, setAllTask] = useState(0);
+  const [totalRequireTask, setTotalRequireTask] = useState(0)
   const [notStartTask, setNotStartTask] = useState(0);
   const [onGoingTask, setOnGoingTask] = useState(0);
   const [finishedTask, setFinishedTask] = useState(0);
   const [taskByStatus, setTaskByStatus] = useState([]);
+
   const [notification, setNotification] = useState([]);
   // Get Staff Info
   React.useEffect(() => {
@@ -142,11 +156,16 @@ export default function StaffTask({ navigation }) {
       Notifier.showNotification({
         title: 'Bạn có thông báo mới',
         duration: 0,
+        translucentStatusBar: true,
         showAnimationDuration: 800,
         showEasing: Easing.bounce,
         onHidden: () => console.log('Hidden'),
         onPress: () => navigation.navigate("Staff-Notification"),
         hideOnPress: false,
+        containerStyle: {
+          paddingTop: 60 + statusBarHeight,
+          //Fheight: 60 + statusBarHeight, // Assuming 60 is your original height
+        }
       });
 
       fetchStaffNotification()
@@ -211,6 +230,7 @@ export default function StaffTask({ navigation }) {
             const onGoingTask = responseData.filter((task) => task.status === 2)
             const finishedTask = responseData.filter((task) => task.status === 3)
             setAllTask(allTask);
+            setTotalRequireTask(notStartTask.length + onGoingTask.length)
             setNotStartTask(notStartTask.length);
             setOnGoingTask(onGoingTask.length);
             setFinishedTask(finishedTask.length);
@@ -226,14 +246,15 @@ export default function StaffTask({ navigation }) {
     };
     fetchDataTask();
     fetchStaffNotification();
-  }, [staffInfo, navigation, refreshing]);
+  }, [staffInfo, navigation, refreshing, realTimeMessage]);
   const [selectedId, setSelectedId] = useState();
 
   const renderItem = ({ item }) => {
+
     if (
       value === "all" ||
-      (value === "not-start" && item.status === 1) ||
-      (value === "on-going" && item.status === 2)
+      (value === "on-going" && (item.status === 1 || item.status === 2)) ||
+      (value === "cancelled" && item.status === 4)
     ) {
       return (
         <>
@@ -248,6 +269,7 @@ export default function StaffTask({ navigation }) {
             }}
           >
             <TouchableOpacity
+              style={{ backgroundColor: `${getStatusTextAndColor(item.status).color}`, }}
               onPress={() =>
                 navigation.navigate("Staff-Task-Detail", {
                   id: item.id,
@@ -257,9 +279,9 @@ export default function StaffTask({ navigation }) {
             >
               <Card.Title
                 title={item.name}
-                titleStyle={{ color: "black", fontWeight: "bold" }}
+                titleStyle={{ color: `${getStatusTextAndColor(item.status).textColor}`, fontWeight: "bold" }}
                 subtitle={
-                  <Text style={{ color: "black" }}>
+                  <Text style={{ color: `${getStatusTextAndColor(item.status).textColor}` }}>
                     <Icon name="calendar-outline" />&nbsp;{formatDate(item?.plannedTime)} &nbsp;&nbsp;<Icon name="alarm-outline" />&nbsp;{item?.plannedTime ? getHoursDifference(item.plannedTime) : "Không có thời hạn"}
                   </Text>
                 }
@@ -269,10 +291,9 @@ export default function StaffTask({ navigation }) {
                     case 1:
                       return (
                         <View style={{ display: "flex", flexDirection: "column", paddingRight: 10 }}>
-
                           <View>
                             <CustomTabIcon
-                              name={"arrow-forward-outline"}
+                              name={"play"}
                               onPress={() => setSelectedId(item.id)}
                               status={item.status}
                             />
@@ -289,8 +310,15 @@ export default function StaffTask({ navigation }) {
                             borderRadius: 10,
                           }}
                         >
-                          <ProgressBar progress={0.5} style={{ width: 70, color: "#Cd4bc9" }} />
-                          <Text style={{ textAlign: 'center', color: 'black', marginTop: 5, }}>Tiến hành</Text>
+                          <View>
+                            <CustomTabIcon
+                              name={"arrow-forward-outline"}
+                              onPress={() => setSelectedId(item.id)}
+                              status={item.status}
+                            />
+                          </View>
+                          {/* <ProgressBar color="#C59C33" progress={0.5} style={{ width: 70, color: "#Cd4bc9" }} />
+                          <Text style={{ textAlign: 'center', color: `${getStatusTextAndColor(item.status).textColor}`, marginTop: 5, }}>Tiến hành</Text> */}
 
                         </View>
                       );
@@ -304,7 +332,7 @@ export default function StaffTask({ navigation }) {
                           }}
                         >
                           <ProgressBar progress={0.5} style={{ width: 70, color: "green" }} />
-                          <Text style={{ textAlign: 'center', color: 'black', marginTop: 5 }}>Làm lại</Text>
+                          <Text style={{ textAlign: 'center', color: 'white', marginTop: 5 }}>Làm lại</Text>
 
                         </View>
                       )
@@ -332,7 +360,9 @@ export default function StaffTask({ navigation }) {
         </>
       );
     } else {
-      return null;
+      return (
+        null
+      );
     }
   };
 
@@ -347,9 +377,7 @@ export default function StaffTask({ navigation }) {
   // }
   return (
     <>
-      <Appbar.Header mode="small" style={{
-        backgroundColor: "#D3208B",
-      }} statusBarHeight={0}>
+      <Appbar.Header mode="small" style={{ backgroundColor: "#bb0aad", }} statusBarHeight={0}>
         <Appbar.Content style={{ alignItems: "center", flexDirection: "row", justifyContent: "space-between" }}
           title={
             <>
@@ -364,7 +392,7 @@ export default function StaffTask({ navigation }) {
                   <Icon name="notifications-circle" size={40} color="#fff" />
                   {
                     notification && notification.unread !== undefined && notification.unread > 0 &&
-                    <Badge style={{ position: 'absolute', top: 0, right: 0, backgroundColor: "black" }} size={20}>
+                    <Badge style={{ position: 'absolute', top: 0, right: 0, backgroundColor: "red" }} size={20}>
                       {notification.unread}
                     </Badge>
                   }
@@ -376,12 +404,12 @@ export default function StaffTask({ navigation }) {
         />
 
       </Appbar.Header >
-      < View style={{ position: "relative", height: 70, backgroundColor: "#D3208B" }
+      < View style={{ position: "relative", height: 70, backgroundColor: "#bb0aad" }
       }>
 
         < View style={{ position: "absolute", bottom: -40, left: 0, right: 0, justifyContent: "center", alignItems: "center" }}>
 
-          <View style={{ flex: 1, alignItems: "center", flexDirection: "row", justifyContent: "center", backgroundColor: "#ffffff", zIndex: 10, width: 350, borderTopRightRadius: 10, borderTopLeftRadius: 10, height: 100 }}>
+          <View style={{ flex: 1, alignItems: "center", flexDirection: "row", justifyContent: "center", backgroundColor: "#fff", zIndex: 10, width: 350, borderTopRightRadius: 10, borderTopLeftRadius: 10, height: 100 }}>
             <View>
               <Avatar.Image size={60} source={{ uri: staffInfo?.avatar }} />
             </View>
@@ -393,7 +421,7 @@ export default function StaffTask({ navigation }) {
                 </Text>
               </Text>
               <Text style={{ fontSize: 12 }}>
-                Bạn có <Text style={{ fontWeight: "bold" }}>{allTask}</Text> công việc chưa hoàn thành
+                Bạn có <Text style={{ fontWeight: "bold" }}>{totalRequireTask}</Text> công việc chưa hoàn thành
               </Text>
             </View>
 
@@ -421,26 +449,23 @@ export default function StaffTask({ navigation }) {
                     {
                       value: "all",
                       label: "Tất cả",
-                      checkedColor: "#D3208B",
+                      checkedColor: "#bb0aad",
                       accessibilityLabel: "all"
                     },
-
                     {
                       value: "on-going",
                       label: "Cần xử lý"
                     },
                     {
-                      value: "not-start",
-                      label: "Hàng đợi",
-                    },
-                    {
-                      value: "finished",
-                      label: "Xong",
-                    },
+                      value: "cancelled",
+                      label: "Đã huỷ",
+                    }
                   ]}
                 />
               </SafeAreaView>
             </View>
+            {dataTask && dataTask.filter(x => x.status === 1 || x.status === 2).length === 0 && value === "on-going" ? <Text style={{ alignSelf: "center" }}>Không có công việc</Text> : null}
+            {dataTask && dataTask.filter(x => x.status === 4).length === 0 && value === "cancelled" ? <Text style={{ alignSelf: "center" }}>Không có công việc</Text> : null}
             <FlatList
               data={dataTask}
               renderItem={renderItem}

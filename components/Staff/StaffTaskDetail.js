@@ -4,6 +4,7 @@ import {
   Image,
   ScrollView,
   Alert,
+  Platform,
   Dimensions
 } from "react-native";
 import Modal from "react-native-modal";
@@ -20,7 +21,7 @@ import BodySizesView from "./BodySizesView";
 import StepStageView from "./StepStageView";
 
 const WIDTH = Dimensions.get('window').width;
-const Height = Dimensions.get('window').height;
+const HEIGHT = Dimensions.get('window').height;
 const StaffTaskDetail = ({ navigation, route, }) => {
   const { id, staffInfo } = route.params;
   const [loading, setLoading] = useState(false);
@@ -45,7 +46,7 @@ const StaffTaskDetail = ({ navigation, route, }) => {
         });
         if (response.ok && response.status === 200) {
           const responseData = await response.json();
-          console.log("pop up");
+          console.log("pop up",responseData);
           setDataTaskDetail(responseData);
         }
       } catch (error) {
@@ -69,11 +70,10 @@ const StaffTaskDetail = ({ navigation, route, }) => {
   const hideDialog = () => setVisible(false);
 
   const [startWork, setStartWork] = useState(0);
-
   return (
     <>
 
-      <Appbar.Header style={{ height: 40 }} statusBarHeight={0}>
+      <Appbar.Header style={{ height: HEIGHT*0.05 }} statusBarHeight={0}>
         <View style={styles.headerContent}>
           <Appbar.BackAction onPress={_goBack} style={styles.backAction} />
           <Appbar.Content
@@ -104,7 +104,16 @@ const StaffTaskDetail = ({ navigation, route, }) => {
                 {dataTaskDetail?.name}
               </Text>
 
-
+              <Text
+                variant="titleMedium"
+                style={{
+                  marginTop: 10,
+                  marginLeft: 15,
+                  fontWeight: "bold",
+                }}
+              >
+                Mã đơn: {dataTaskDetail?.orderId}
+              </Text>
               <View>
                 <Text
                   variant="titleMedium"
@@ -143,15 +152,7 @@ const StaffTaskDetail = ({ navigation, route, }) => {
                 >
                   Vải sử dụng: {dataTaskDetail?.fabricMaterial?.name}
                 </Text>
-                <Text
-                  variant="titleMedium"
-                  style={{
-                    marginTop: 16,
-                    marginLeft: 15,
-                  }}
-                >
-                  Số lượng: {dataTaskDetail?.quantity}
-                </Text>
+               
                 <View>
                   <BodySizesView item={dataTaskDetail?.productBodySizes} />
                 </View>

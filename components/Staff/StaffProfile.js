@@ -29,10 +29,7 @@ export default function StaffProfile({ navigation }) {
   const [staffInfo, setStaffInfo] = React.useState("");
   const _goBack = () => navigation.navigate("Staff-Tasks");
   const [categoryData, setCategoryData] = useState([]);
-  const getCategoryName = (id) => {
-    const category = categoryData.find((item) => item.id === id);
-    return category?.name;
-  }
+
   const [loading, setLoading] = useState(false);
   const [dataStaff, setDataStaff] = useState(null);
   React.useEffect(() => {
@@ -100,7 +97,6 @@ export default function StaffProfile({ navigation }) {
     };
     fetchDataTask();
   }, [staffInfo]);
-  console.log("data staff ma: ", dataStaff);
   const logout = async () => {
     try {
       await AsyncStorage.removeItem("staff");
@@ -109,6 +105,7 @@ export default function StaffProfile({ navigation }) {
       console.error("Error logging out:", error);
     }
   };
+
   return (
     <>
       <Appbar.Header style={{ height: 40 }} statusBarHeight={0}>
@@ -124,11 +121,48 @@ export default function StaffProfile({ navigation }) {
           <ActivityIndicator animating={true} color={"#9F78FF"} />
         </View>
       ) : (
-        <ScrollView style={{ flex: 1, marginBottom: 100 }}>
-          <View style={{ alignSelf: "center", marginTop: 50 }}>
-            <Avatar.Image size={120} source={{ uri: dataStaff?.avatar }} />
+        <ScrollView style={{ flex: 1, marginBottom: 100, }}>
+          <View style={{ marginTop: 50, paddingLeft: 40, flexDirection: "row", alignItems: 'center' }}>
+            <Avatar.Image size={80} source={{ uri: dataStaff?.avatar }} />
+            <View style={{ maxWidth: 200, marginLeft: 40 }}>
+              <Text style={{ fontSize: 20, fontWeight: "700" }}>
+                {dataStaff?.fullname}
+              </Text>
+              <Text style={{ fontSize: 14, fontWeight: "300", paddingTop: 5 }}>
+                Địa chỉ: {dataStaff?.address}
+              </Text>
+            </View>
           </View>
-          <View style={{ marginTop: 50, padding: 30 }}>
+          <View style={{ marginTop: 40 }}>
+            <Divider bold="true" />
+            <TouchableOpacity onPress={() => navigation.navigate("Staff-Personality", { data: dataStaff, categoryData: categoryData })}>
+              <View style={{ margin: 20, flexDirection: "row", alignItems: "center" }}>
+                <Icon name="person" size={20}></Icon>
+                <Text style={{ fontSize: 20, fontWeight: "bold", paddingLeft: 20 }}>
+                  Thông tin cá nhân
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <Divider bold="true" />
+            <TouchableOpacity onPress={() => navigation.navigate("Staff-Forget-Password")}>
+              <View style={{ margin: 20, flexDirection: "row", alignItems: "center" }}>
+                <Icon name="key" size={20}></Icon>
+                <Text style={{ fontSize: 20, fontWeight: "bold", paddingLeft: 20 }}>
+                  Thay đổi mật khẩu
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <Divider bold="true" />
+            <TouchableOpacity onPress={logout}>
+              <View style={{ margin: 20, flexDirection: "row", alignItems: "center" }}>
+                <Icon name="log-out" size={20}></Icon>
+                <Text style={{ fontSize: 20, fontWeight: "bold", paddingLeft: 20 }}>
+                  Đăng xuất
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          {/* <View style={{ marginTop: 50, padding: 30 }}>
             <View
               style={{ justifyContent: "space-between", flexDirection: "row" }}
             >
@@ -269,33 +303,12 @@ export default function StaffProfile({ navigation }) {
                     <Text>Chưa cập nhật kỹ năng chuyên môn</Text>
                   </View>
                 )}
-                {/* <Text
-                  variant="bodyLarge"
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                ))}
-                {/* <Text
-                  variant="bodyLarge"
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                >
-                  {dataStaff?.address}
-                </Text> */}
               </View>
             </View>
             <Divider bold="true" style={{ marginTop: 20 }} />
 
-          </View>
-          <View>
-            <Button
-              icon="logout"
-              mode="contained"
-              onPress={logout}
-              style={{ margin: 20 }}
-            >
-              Đăng xuất
-            </Button>
-          </View>
+          </View> */}
+
         </ScrollView >
       )
       }

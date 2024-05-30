@@ -54,7 +54,7 @@ export default function App() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <PaperProvider theme={theme}>
 
-          <SafeAreaView style={{ flex: 1, backgroundColor: "#fff", marginTop: Platform.OS === 'android' ? Constants.statusBarHeight : 0, }}>
+          <SafeAreaView style={[styles.container, { backgroundColor: "unset", marginTop: Platform.OS === 'android' ? Constants.statusBarHeight : 0, }]}>
             <NotifierWrapper>
 
               <Navigation />
