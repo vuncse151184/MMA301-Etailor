@@ -28,8 +28,10 @@
       "favicon": "./assets/favicon.png"
     },
     "extra": {
-      "eas": {
-      }
-    }
+      "eas": {}
+    },
+    "plugins": [
+      "expo-font"
+    ]
   }
 }

@@ -5,11 +5,14 @@ import {
   StyleSheet,
   Image,
   TextInput,
+  Alert,
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
   ImageBackground,
-  Dimensions
+  KeyboardAvoidingView,
+  Dimensions,
+  Platform
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -20,8 +23,8 @@ const HEIGHT = Dimensions.get('window').height;
 
 export default function StaffLogin({ navigation }) {
   const [loginValues, setLoginValues] = useState({
-    username: "",
-    password: "",
+    username: "tu_staff",
+    password: "123",
   });
   const [loading, setLoading] = useState(false);
 
@@ -53,7 +56,7 @@ export default function StaffLogin({ navigation }) {
   const handleLogin = async () => {
     setLoading(true);
 
-    const staffLogin_Url = `https://e-tailorapi.azurewebsites.net/api/auth/mma/login`;
+    const staffLogin_Url = `https://e-tailorapi.azurewebsites.net/api/auth/staff/login`;
     const staffInfo = await AsyncStorage.getItem("Staff");
     if (staffInfo) {
       await AsyncStorage.removeItem("Staff");
@@ -65,7 +68,7 @@ export default function StaffLogin({ navigation }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          emailOrUsername: loginValues.username,
+          username: loginValues.username,
           password: loginValues.password,
         }),
       });
@@ -78,8 +81,8 @@ export default function StaffLogin({ navigation }) {
       } else {
         const errorText = await response.text();
         setLoading(false);
-        setError({ ...error, otp_err: errorText });
-        console.log("Login ERROR:", errorText);
+        setError({ ...error, login_err: errorText });
+        Alert.alert("Đăng nhập thất bại", errorText);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -92,53 +95,55 @@ export default function StaffLogin({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <ImageBackground
-        source={require("../assets/images/sewing-kit-with-cotton-threads-top-view.jpg")}
-        style={styles.backgroundImage}
-        resizeMode="cover"
-      >
-        <TouchableWithoutFeedback onPress={dismissKeyboard}>
-          <View style={styles.overlay}>
-            <Image style={styles.logo} source={require("../assets/images/ıngoude-removebg-preview.png")} />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -500}
+        style={styles.container}>
+        <ImageBackground
+          source={require("../assets/images/sewing-kit-with-cotton-threads-top-view.jpg")}
+          style={styles.backgroundImage}
+          resizeMode="cover"
+        >
 
-            <View style={styles.inputContainer}>
-              <Icon style={styles.prefix} name="person" size={20} color="#fff" />
-              <TextInput
-                style={styles.input}
-                placeholder="Tên đăng nhập"
-                onChangeText={handleLoginValuesChange("username")}
-                autoCapitalize="none"
-                value={loginValues.username}
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Icon style={styles.prefix} size={20} color="#fff" name="lock-closed" />
-              <TextInput
-                style={styles.input}
-                placeholder="Mật khẩu"
-                onChangeText={handleLoginValuesChange("password")}
-                value={loginValues.password}
-                autoCapitalize="none"
-                secureTextEntry
-              />
-            </View>
+          <TouchableWithoutFeedback onPress={dismissKeyboard}>
+            <View style={styles.overlay}>
+              <Image style={styles.logo} source={require("../assets/images/ıngoude-removebg-preview.png")} />
 
-            {error.login_err && (
-              <Text style={styles.errorText}>{error.login_err}</Text>
-            )}
-            <TouchableOpacity>
-              <Text style={{ color: "white", marginBottom: 10 }}>Quên mật khẩu?</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, { width: loading ? "50%" : "40%" }]} onPress={handleLogin}>
-              <View style={styles.buttonWithLoading}>
-                <Text style={styles.buttonText}>Đăng nhập</Text>
-                {loading && <ActivityIndicator animating={loading} style={{ paddingLeft: 10 }} size="small" color="#fff" />}
+              <View style={styles.inputContainer}>
+                <Icon style={styles.prefix} name="person" size={20} color="#fff" />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Tên đăng nhập"
+                  onChangeText={handleLoginValuesChange("username")}
+                  autoCapitalize="none"
+                  value={loginValues.username}
+                />
               </View>
-            </TouchableOpacity>
-          </View>
-        </TouchableWithoutFeedback>
-      </ImageBackground>
-    </View>
+              <View style={styles.inputContainer}>
+                <Icon style={styles.prefix} size={20} color="#fff" name="lock-closed" />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Mật khẩu"
+                  onChangeText={handleLoginValuesChange("password")}
+                  value={loginValues.password}
+                  autoCapitalize="none"
+                  secureTextEntry
+                />
+              </View>
+
+              <TouchableOpacity style={[styles.button, { width: loading ? "50%" : "40%" }]} onPress={handleLogin}>
+                <View style={styles.buttonWithLoading}>
+                  <Text style={styles.buttonText}>Đăng nhập</Text>
+                  {loading && <ActivityIndicator animating={loading} style={{ paddingLeft: 10 }} size="small" color="#fff" />}
+                </View>
+              </TouchableOpacity>
+
+            </View>
+          </TouchableWithoutFeedback>
+
+        </ImageBackground>
+      </KeyboardAvoidingView>
+    </View >
   );
 }
 
@@ -176,7 +181,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignContent: "center",
     alignItems: "center",
-    // Platform-specific shadow properties
     ...Platform.select({
       ios: {
         shadowColor: "#000",
@@ -216,9 +220,10 @@ const styles = StyleSheet.create({
     color: "#000",
   },
   errorText: {
-    color: "red",
-    fontSize: 12,
+    color: "#fff",
+    fontSize: 20,
     paddingLeft: 5,
+    backgroundColor: "red",
     marginBottom: 10,
   },
 });

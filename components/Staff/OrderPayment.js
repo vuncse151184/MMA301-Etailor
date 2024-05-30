@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, WebView, TouchableHighlight } from 'react-native'
+import { StyleSheet, Text, View, Image, WebView, Platform } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Appbar, Button, ActivityIndicator } from 'react-native-paper';
