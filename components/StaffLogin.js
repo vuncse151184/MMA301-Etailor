@@ -23,8 +23,8 @@ const HEIGHT = Dimensions.get('window').height;
 
 export default function StaffLogin({ navigation }) {
   const [loginValues, setLoginValues] = useState({
-    username: "tu_staff",
-    password: "123",
+    username: "",
+    password: "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -77,7 +77,7 @@ export default function StaffLogin({ navigation }) {
         const data = await response.json();
         await AsyncStorage.setItem("staff", JSON.stringify(data));
         setLoading(false);
-        navigation.navigate(data?.role === "Staff" ? "Staff-Home" : "Customer-Home");
+        navigation.navigate("Staff-Home");
       } else {
         const errorText = await response.text();
         setLoading(false);

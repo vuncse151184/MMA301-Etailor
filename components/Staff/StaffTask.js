@@ -127,7 +127,7 @@ export default function StaffTask({ navigation }) {
 
   const [dataTask, setDataTask] = useState(null);
 
-  const [value, setValue] = useState("on-going");
+  const [value, setValue] = useState("all");
   const [allTask, setAllTask] = useState(0);
   const [totalRequireTask, setTotalRequireTask] = useState(0)
   const [notStartTask, setNotStartTask] = useState(0);
@@ -282,7 +282,10 @@ export default function StaffTask({ navigation }) {
                 titleStyle={{ color: `${getStatusTextAndColor(item.status).textColor}`, fontWeight: "bold" }}
                 subtitle={
                   <Text style={{ color: `${getStatusTextAndColor(item.status).textColor}` }}>
-                    <Icon name="calendar-outline" />&nbsp;{formatDate(item?.plannedTime)} &nbsp;&nbsp;<Icon name="alarm-outline" />&nbsp;{item?.plannedTime ? getHoursDifference(item.plannedTime) : "Không có thời hạn"}
+                    <Icon name="calendar-outline" />&nbsp;{formatDate(item?.plannedTime)} &nbsp;&nbsp;
+                    {item?.status === 5 ? null : (
+                      <><Icon name="alarm-outline" />&nbsp;{item?.plannedTime ? getHoursDifference(item.plannedTime) : "Không có thời hạn"}</>
+                    )}
                   </Text>
                 }
                 onPress={() => setSelectedId(item.id)}
@@ -435,7 +438,7 @@ export default function StaffTask({ navigation }) {
       </View >
       {
         !loading ? (
-          <View style={{ marginTop: 10, paddingBottom: 40 }}>
+          <View style={{ marginTop: 10, paddingBottom: 340 }}>
             <View>
               <SafeAreaView
                 style={{ alignItems: "center", margin: 20 }}
@@ -454,11 +457,11 @@ export default function StaffTask({ navigation }) {
                     },
                     {
                       value: "on-going",
-                      label: "Cần xử lý"
+                      label: `Cần làm`,
                     },
                     {
                       value: "cancelled",
-                      label: "Đã huỷ",
+                      label: "Cần sửa lại",
                     }
                   ]}
                 />

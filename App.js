@@ -32,7 +32,7 @@ const theme = {
   //   myOwnColor: '#BADA55',
   // },
 };
-
+console.disableYellowBox = true;
 export default function App() {
   let [fontsLoaded] = useFonts({
     LexendDeca_100Thin,
