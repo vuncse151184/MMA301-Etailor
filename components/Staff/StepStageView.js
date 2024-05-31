@@ -62,6 +62,7 @@ const StepStageView = ({ stageData, taskId, fetchDataTask, navigation }) => {
   const sheetRef = useRef(null);
   const [apiLoading, setApiLoading] = useState(false);
   const [selectedStage, setSelectedStage] = useState(null);
+  console.log("selectedStage", selectedStage)
   const [staffInfo, setStaffInfo] = useState(null);
   React.useEffect(() => {
     const retrieveStaffItem = async () => {
@@ -293,14 +294,30 @@ const StepStageView = ({ stageData, taskId, fetchDataTask, navigation }) => {
                 style={styles.closeButton}
                 onPress={() => bottomSheetModalRef.current?.close()}
               >
-                <Icon name='close-outline' size={30} />
+                <Icon name='close-outline' size={30} onPress={() => bottomSheetModalRef.current?.close()} />
               </TouchableOpacity>
               <ScrollView style={{ width: "100%" }}>
                 <View style={{ alignItems: "center" }}>
                   <Text style={{ fontSize: 20, fontWeight: "bold" }}>Thông tin công đoạn</Text>
                 </View>
+                <View style={{ marginLeft: 10 }}>
+                  <Text variant='titleMedium'>Vải sử dụng: </Text>
+                  {selectedStage?.productStageMaterials ? selectedStage?.productStageMaterials.map((material, index) => (
+                    <View key={index} style={{ flexDirection: "row", margin: 15 }}>
+                      <Image source={{ uri: material?.material.image }} style={{ width: 40, marginRight: 20 }} resizeMode='cover' />
+                      <View>
+                        <Text variant='bodyMedium'>{material?.material.name}</Text>
+
+                        <Text variant='bodyMedium'>Số lượng: {material?.quantity}m</Text>
+                      </View>
+
+                    </View>
+                  )) : (null)
+                  }
+                </View>
+
                 {selectedStage?.productComponents.map((component, index) => (
-                  <View key={index} style={{ marginTop: 10 }}>
+                  <View key={index} style={{ marginTop: 10, marginLeft: 10 }}>
                     <Text variant='titleMedium'>{index + 1}/ {component.name}</Text>
                     <View style={{ marginHorizontal: 15 }}>
                       <Image
@@ -311,7 +328,7 @@ const StepStageView = ({ stageData, taskId, fetchDataTask, navigation }) => {
                           height: 100,
                           width: 100,
                           // Add border to see if image container is visible
-              
+
                           marginVertical: 12,
 
                         }}
