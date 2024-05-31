@@ -34,7 +34,7 @@ function filterByTime(startDate) {
 const Notification = ({ navigation, route }) => {
   const { notification } = route.params;
   const [staffInfo, setStaffInfo] = useState(null);
-  const [notifications, setNotifications] = useState(notification)
+  const [notifications, setNotifications] = useState(notification || null)
   React.useEffect(() => {
     const retrieveStaffItem = async () => {
       AsyncStorage.getItem("staff")
@@ -71,7 +71,7 @@ const Notification = ({ navigation, route }) => {
       fetchStaffNotification()
       console.log("Có Chat Notification", chatNotification);
     }
-  }, [chatNotification,navigation]);
+  }, [chatNotification, navigation]);
   const [loading, setLoading] = useState(false);
   const _goBack = () => navigation.navigate("Staff-Tasks");
   const handleNavigateNotification = (title, id) => {
