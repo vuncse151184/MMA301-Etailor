@@ -82,6 +82,7 @@ export default function StaffLogin({ navigation }) {
         const errorText = await response.text();
         setLoading(false);
         setError({ ...error, login_err: errorText });
+        navigation.navigate("Staff-Login");
         Alert.alert("Đăng nhập thất bại", errorText);
       }
     } catch (error) {
