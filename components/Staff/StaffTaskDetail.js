@@ -46,7 +46,6 @@ const StaffTaskDetail = ({ navigation, route, }) => {
         });
         if (response.ok && response.status === 200) {
           const responseData = await response.json();
-          console.log("pop up",responseData);
           setDataTaskDetail(responseData);
         }
       } catch (error) {

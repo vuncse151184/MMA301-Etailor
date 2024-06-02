@@ -58,11 +58,8 @@ const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 const StepStageView = ({ stageData, taskId, fetchDataTask, navigation }) => {
 
-  const [taskLoading, setTaskLoading] = useState(false);
-  const sheetRef = useRef(null);
   const [apiLoading, setApiLoading] = useState(false);
   const [selectedStage, setSelectedStage] = useState(null);
-  console.log("selectedStage", selectedStage)
   const [staffInfo, setStaffInfo] = useState(null);
   React.useEffect(() => {
     const retrieveStaffItem = async () => {
@@ -78,9 +75,13 @@ const StepStageView = ({ stageData, taskId, fetchDataTask, navigation }) => {
   }, []);
   // variables
   const bottomSheetModalRef = useRef(null);
-
   // variables
   const snapPoints = useMemo(() => ['95%', '80%'], []);
+  // useEffect(() => {
+  //   if (!showAuthModal) {
+  //     bottomSheetRef.current?.close?.()
+  //   }
+  // }, [showAuthModal]);
 
   // callbacks
   const handlePresentModalPress = useCallback((stage) => {
@@ -90,7 +91,6 @@ const StepStageView = ({ stageData, taskId, fetchDataTask, navigation }) => {
 
 
   const handleSheetChanges = useCallback((index) => {
-    console.log('handleSheetChanges', index);
   }, []);
   //----------------------------------------------------------------completed tasks--------------------------------------
   const [openCheckTask, setOpenCheckTask] = useState(false);
@@ -103,13 +103,11 @@ const StepStageView = ({ stageData, taskId, fetchDataTask, navigation }) => {
       allowsEditing: false,
       quality: 1,
     });
-    console.log("imageFromGallery", imageFromGallery);
 
     if (!imageFromGallery.canceled) {
       setImages(prevImages => [...prevImages, imageFromGallery.assets[0].uri]);
     }
   }
-  console.log("IMAGE URI", images)
   const ItemUpload = ({ image }) => {
 
     return (
@@ -146,7 +144,6 @@ const StepStageView = ({ stageData, taskId, fetchDataTask, navigation }) => {
   };
   const handleTaskStart = async (taskId, stageId) => {
 
-    console.log("taskID", taskId, "stageID", stageId)
     setApiLoading(true);
     const url = `https://e-tailorapi.azurewebsites.net/api/task/staff/${taskId}/start/${stageId}`;
     try {
@@ -157,11 +154,9 @@ const StepStageView = ({ stageData, taskId, fetchDataTask, navigation }) => {
         },
       });
       if (response.ok && response.status === 200) {
-        console.log("response", response)
         setApiLoading(false);
         fetchDataTask();
       } else if (response.status === 400 || response.status === 500) {
-        console.log("FAIL:", response)
         setApiLoading(false);
         const responseData = await response.text();
         Alert.alert("Lỗi", responseData);
@@ -198,7 +193,6 @@ const StepStageView = ({ stageData, taskId, fetchDataTask, navigation }) => {
     }
   };
   const handleTaskFinish = async (taskId, stageId) => {
-    console.log("hoàn thành", taskId, stageId)
     const url = `https://e-tailorapi.azurewebsites.net/api/task/staff/${taskId}/finish/${stageId}`;
     const formData = new FormData();
     const formData1 = new FormData();
@@ -212,7 +206,6 @@ const StepStageView = ({ stageData, taskId, fetchDataTask, navigation }) => {
       formData.append(`images`, file);
       formData1.append(`files`, file);
     });
-    console.log("formdata", formData._parts)
 
     try {
       const response = await fetch(url, {
@@ -290,15 +283,17 @@ const StepStageView = ({ stageData, taskId, fetchDataTask, navigation }) => {
             onChange={handleSheetChanges}
           >
             <BottomSheetView style={styles.contentContainer}>
-              <TouchableOpacity
-                style={styles.closeButton}
-                onPress={() => bottomSheetModalRef.current?.close()}
-              >
-                <Icon name='close-outline' size={30} onPress={() => bottomSheetModalRef.current?.close()} />
-              </TouchableOpacity>
+
               <ScrollView style={{ width: "100%" }}>
-                <View style={{ alignItems: "center" }}>
-                  <Text style={{ fontSize: 20, fontWeight: "bold" }}>Thông tin công đoạn</Text>
+
+                <View style={{ alignItems: "center", flexDirection: "row" }}>
+                  <Text style={{ fontSize: 20, fontWeight: "bold", paddingLeft: WIDTH * 0.2 }}>Thông tin công đoạn</Text>
+                  <TouchableOpacity
+                    style={styles.closeButton}
+                    onPress={() => bottomSheetModalRef.current?.close()}
+                  >
+                    <Icon name='close-outline' size={30} />
+                  </TouchableOpacity>
                 </View>
                 <View style={{ marginLeft: 10 }}>
                   <Text variant='titleMedium'>Vải sử dụng: </Text>
@@ -570,10 +565,7 @@ const styles = StyleSheet.create({
     marginBottom: 100, // Add padding top to prevent overlapping with the close button
   },
   closeButton: {
-    position: 'absolute',
-    top: -10,
-    right: 10,
-    padding: 10,
+    paddingLeft: 50
   },
   closeButtonText: {
     color: 'black',

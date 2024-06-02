@@ -155,7 +155,7 @@ export default function StaffTask({ navigation }) {
     if (realTimeMessage) {
       Notifier.showNotification({
         title: 'Bạn có thông báo mới',
-        duration: 0,
+        duration: 2000,
         translucentStatusBar: true,
         showAnimationDuration: 800,
         showEasing: Easing.bounce,
@@ -164,6 +164,7 @@ export default function StaffTask({ navigation }) {
         hideOnPress: false,
         containerStyle: {
           paddingTop: 60 + statusBarHeight,
+          
           //Fheight: 60 + statusBarHeight, // Assuming 60 is your original height
         }
       });
@@ -391,7 +392,7 @@ export default function StaffTask({ navigation }) {
                 <Text style={{ color: "#fff", fontSize: 20 }}>E-tailor</Text>
               </View>
               <View style={{ position: 'relative', marginRight: 10 }}>
-                <TouchableOpacity onPress={() => navigation.navigate("Staff-Notification", { notification: notification })}>
+                <TouchableOpacity onPress={() => navigation.navigate("Staff-Notification")}>
                   <Icon name="notifications-circle" size={40} color="#fff" />
                   {
                     notification && notification.unread !== undefined && notification.unread > 0 &&

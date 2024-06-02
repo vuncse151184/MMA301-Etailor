@@ -31,10 +31,9 @@ function filterByTime(startDate) {
   if (dayDiff < 30) return 'Tháng này';
   return null;
 }
-const Notification = ({ navigation, route }) => {
-  const { notification } = route.params;
+const Notification = ({ navigation }) => {
   const [staffInfo, setStaffInfo] = useState(null);
-  const [notifications, setNotifications] = useState(notification || null)
+  const [notifications, setNotifications] = useState("")
   React.useEffect(() => {
     const retrieveStaffItem = async () => {
       AsyncStorage.getItem("staff")
@@ -49,7 +48,7 @@ const Notification = ({ navigation, route }) => {
   }, []);
 
   const chatNotification = Realtime()
-
+  console.log("Chat Notification", chatNotification)
   const fetchStaffNotification = async () => {
     console.log("fetching notification")
     const URL = `https://e-tailorapi.azurewebsites.net/api/notification/get-notification`
@@ -66,12 +65,18 @@ const Notification = ({ navigation, route }) => {
     }
 
   }
+  console.log("Notifications", notifications)
   useEffect(() => {
     if (chatNotification) {
       fetchStaffNotification()
       console.log("Có Chat Notification", chatNotification);
     }
-  }, [chatNotification, navigation]);
+  }, [chatNotification]);
+
+  useEffect(() => {
+    fetchStaffNotification()
+  }, [navigation])
+
   const [loading, setLoading] = useState(false);
   const _goBack = () => navigation.navigate("Staff-Tasks");
   const handleNavigateNotification = (title, id) => {
