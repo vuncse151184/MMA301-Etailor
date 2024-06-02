@@ -43,7 +43,8 @@ export const Realtime = () => {
 
             connection.on("Notification", message => {
                 setMessageReturn(message);
-                console.log("message", message);
+
+               
             });
 
             connection.start()
