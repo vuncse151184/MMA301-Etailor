@@ -160,11 +160,11 @@ export default function StaffTask({ navigation }) {
         showAnimationDuration: 800,
         showEasing: Easing.bounce,
         onHidden: () => console.log('Hidden'),
-        onPress: () => navigation.navigate("Staff-Notification"),
+        onPress: () => navigation.navigate("Staff-Notification", { staffInfoData: staffInfo }),
         hideOnPress: false,
         containerStyle: {
           paddingTop: 60 + statusBarHeight,
-          
+
           //Fheight: 60 + statusBarHeight, // Assuming 60 is your original height
         }
       });
@@ -392,7 +392,7 @@ export default function StaffTask({ navigation }) {
                 <Text style={{ color: "#fff", fontSize: 20 }}>E-tailor</Text>
               </View>
               <View style={{ position: 'relative', marginRight: 10 }}>
-                <TouchableOpacity onPress={() => navigation.navigate("Staff-Notification")}>
+                <TouchableOpacity onPress={() => navigation.navigate("Staff-Notification", { staffInfoData: staffInfo })}>
                   <Icon name="notifications-circle" size={40} color="#fff" />
                   {
                     notification && notification.unread !== undefined && notification.unread > 0 &&
