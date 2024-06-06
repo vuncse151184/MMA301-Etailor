@@ -23,34 +23,38 @@ export const Realtime = () => {
     useEffect(() => {
         let connection;
 
-        if (staffInfo) {
-            const URL = "https://e-tailorapi.azurewebsites.net/chatHub";
+        const startConnection = async () => {
+            if (staffInfo) {
+                const URL = "https://e-tailorapi.azurewebsites.net/chatHub";
+                const accessToken = staffInfo?.token;
 
-            const accessToken = staffInfo?.token;
-            console.log("accessToken", accessToken)
-            connection = new signalR.HubConnectionBuilder()
-                .withUrl(URL, {
-                    withCredentials: true,
-                    accessTokenFactory: () => accessToken,
-                    transport: signalR.HttpTransportType.WebSockets,
-                    skipNegotiation: true,
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                    },
-                })
-                .configureLogging(signalR.LogLevel.Information)
-                .build();
+                connection = new signalR.HubConnectionBuilder()
+                    .withUrl(URL, {
+                        withCredentials: true,
+                        accessTokenFactory: () => accessToken,
+                        transport: signalR.HttpTransportType.WebSockets,
+                        skipNegotiation: true,
+                        headers: {
+                            'Authorization': `Bearer ${accessToken}`,
+                        },
+                    })
+                    .configureLogging(signalR.LogLevel.Information)
+                    .build();
 
-            connection.on("Notification", message => {
-                setMessageReturn(message);
+                connection.on("Notification", message => {
+                    setMessageReturn(message);
+                });
 
-               
-            });
+                try {
+                    await connection.start();
+                    console.log('Connection started!');
+                } catch (err) {
+                    console.error('Error starting connection: ', err);
+                }
+            }
+        };
 
-            connection.start()
-                .then(() => console.log('Connection started!'))
-                .catch(err => { }); // Add error handling here
-        }
+        startConnection();
 
         return () => {
             if (connection) {

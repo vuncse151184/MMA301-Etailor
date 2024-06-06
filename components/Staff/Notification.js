@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
 } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
+import { isLoading } from 'expo-font';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -31,26 +32,29 @@ function filterByTime(startDate) {
   if (dayDiff < 30) return 'Tháng này';
   return null;
 }
-const Notification = ({ navigation }) => {
-  const [staffInfo, setStaffInfo] = useState(null);
+const Notification = ({ navigation, route }) => {
+  const { staffInfoData } = route.params;
+  const [staffInfo, setStaffInfo] = useState(staffInfoData);
   const [notifications, setNotifications] = useState("")
+
+  const retrieveStaffItem = async () => {
+    AsyncStorage.getItem("staff")
+      .then((user) => {
+        setStaffInfo(JSON.parse(user));
+      })
+      .catch((error) => {
+        console.error("Error retrieving staff data:", error);
+      });
+  };
   React.useEffect(() => {
-    const retrieveStaffItem = async () => {
-      AsyncStorage.getItem("staff")
-        .then((user) => {
-          setStaffInfo(JSON.parse(user));
-        })
-        .catch((error) => {
-          console.error("Error retrieving staff data:", error);
-        });
-    };
     retrieveStaffItem();
   }, []);
-
+  console.log("Staff Info", staffInfo)
   const chatNotification = Realtime()
   console.log("Chat Notification", chatNotification)
+
   const fetchStaffNotification = async () => {
-    console.log("fetching notification")
+    setLoading(true)
     const URL = `https://e-tailorapi.azurewebsites.net/api/notification/get-notification`
     const response = await fetch(URL, {
       method: 'GET',
@@ -60,11 +64,15 @@ const Notification = ({ navigation }) => {
       }
     });
     if (response.ok && response.status === 200) {
+      setLoading(false)
       const responseData = await response.json();
       setNotifications(responseData);
     }
-
   }
+  React.useEffect(() => {
+    fetchStaffNotification()
+  }, [])
+
   console.log("Notifications", notifications)
   useEffect(() => {
     if (chatNotification) {
@@ -73,13 +81,12 @@ const Notification = ({ navigation }) => {
     }
   }, [chatNotification]);
 
-  useEffect(() => {
-    fetchStaffNotification()
-  }, [navigation])
 
   const [loading, setLoading] = useState(false);
   const _goBack = () => navigation.navigate("Staff-Tasks");
+
   const handleNavigateNotification = (title, id) => {
+  
     async function markAsRead() {
       const URL = `https://e-tailorapi.azurewebsites.net/api/notification/get-notification/${id}`
       const response = await fetch(URL, {
@@ -93,9 +100,11 @@ const Notification = ({ navigation }) => {
     }
     markAsRead();
     console.log("Title", title)
-    const taskId = title.split(" ")[2];
-    console.log("Task ID", taskId)
-    navigation.navigate("Staff-Task-Detail", { id: taskId, staffInfo: staffInfo });
+    if (!(title.startsWith("Sản phẩm của đơn hàng") || title.startsWith("Đơn hàng"))) {
+      const taskId = title.split(" ")[2];
+      console.log("Task ID", taskId)
+      navigation.navigate("Staff-Task-Detail", { id: taskId, staffInfo: staffInfo });
+    }
 
   }
   const renderNotifications = () => {
@@ -155,10 +164,18 @@ const Notification = ({ navigation }) => {
           />
         </View>
       </Appbar.Header>
-      <ScrollView style={styles.container}>
+      {loading ? (
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+          <ActivityIndicator animating={true} color={"#9F78FF"} />
+        </View>
+      ) : (
 
-        {notifications ? renderNotifications() : <Text>Không có thông báo</Text>}
-      </ScrollView>
+
+        <ScrollView style={styles.container}>
+
+          {notifications ? renderNotifications() : <Text style={{ alignSelf: "center" }}>Không có thông báo!</Text>}
+        </ScrollView>
+      )}
     </>
   )
 }

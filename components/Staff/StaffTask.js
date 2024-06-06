@@ -56,13 +56,13 @@ const getStatusTextAndColor = (status) => {
       borderColor = "red";
       textColor = "black"
     case 1:
-      color = "#fdf984";
+      color = "#5694f2";
       text = "Chưa bắt đầu";
       borderColor = "red";
       textColor = "black"
       break;
     case 2:
-      color = "#72E3FF";
+      color = "#fec347";
       text = "Trong quá trình ";
       borderColor = "red";
       textColor = "black"
@@ -74,7 +74,7 @@ const getStatusTextAndColor = (status) => {
       textColor = "black"
       break;
     case 4:
-      color = "red";
+      color = "#f26e56";
       text = "Bị từ chối";
       borderColor = "red";
       textColor = "white"
@@ -160,11 +160,11 @@ export default function StaffTask({ navigation }) {
         showAnimationDuration: 800,
         showEasing: Easing.bounce,
         onHidden: () => console.log('Hidden'),
-        onPress: () => navigation.navigate("Staff-Notification"),
+        onPress: () => navigation.navigate("Staff-Notification", { staffInfoData: staffInfo }),
         hideOnPress: false,
         containerStyle: {
           paddingTop: 60 + statusBarHeight,
-          
+
           //Fheight: 60 + statusBarHeight, // Assuming 60 is your original height
         }
       });
@@ -335,9 +335,12 @@ export default function StaffTask({ navigation }) {
                             borderRadius: 10,
                           }}
                         >
-                          <ProgressBar progress={0.5} style={{ width: 70, color: "green" }} />
-                          <Text style={{ textAlign: 'center', color: 'white', marginTop: 5 }}>Làm lại</Text>
-
+                          <CustomTabIcon
+                            name={"alert-outline"}
+                            onPress={() => setSelectedId(item.id)}
+                            style={{color:"white"}}
+                            status={item.status}
+                          />
                         </View>
                       )
                     case 5:
@@ -381,7 +384,7 @@ export default function StaffTask({ navigation }) {
   // }
   return (
     <>
-      <Appbar.Header mode="small" style={{ backgroundColor: "#bb0aad", }} statusBarHeight={0}>
+      <Appbar.Header mode="small" style={{ backgroundColor: "#8157c2", }} statusBarHeight={0}>
         <Appbar.Content style={{ alignItems: "center", flexDirection: "row", justifyContent: "space-between" }}
           title={
             <>
@@ -392,7 +395,7 @@ export default function StaffTask({ navigation }) {
                 <Text style={{ color: "#fff", fontSize: 20 }}>E-tailor</Text>
               </View>
               <View style={{ position: 'relative', marginRight: 10 }}>
-                <TouchableOpacity onPress={() => navigation.navigate("Staff-Notification")}>
+                <TouchableOpacity onPress={() => navigation.navigate("Staff-Notification", { staffInfoData: staffInfo })}>
                   <Icon name="notifications-circle" size={40} color="#fff" />
                   {
                     notification && notification.unread !== undefined && notification.unread > 0 &&
@@ -408,7 +411,7 @@ export default function StaffTask({ navigation }) {
         />
 
       </Appbar.Header >
-      < View style={{ position: "relative", height: 70, backgroundColor: "#bb0aad" }
+      < View style={{ position: "relative", height: 70, backgroundColor: "#8157c2" }
       }>
 
         < View style={{ position: "absolute", bottom: -40, left: 0, right: 0, justifyContent: "center", alignItems: "center" }}>
@@ -453,7 +456,7 @@ export default function StaffTask({ navigation }) {
                     {
                       value: "all",
                       label: "Tất cả",
-                      checkedColor: "#bb0aad",
+                      checkedColor: "#8157c2",
                       accessibilityLabel: "all"
                     },
                     {
