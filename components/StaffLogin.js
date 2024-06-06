@@ -77,10 +77,12 @@ export default function StaffLogin({ navigation }) {
         const data = await response.json();
         await AsyncStorage.setItem("staff", JSON.stringify(data));
         setLoading(false);
-        if (data.role === "admin") {
+        console.log("Staff Info", data);
+        if (data.role === "Admin") {
           Alert.alert("Đăng nhập thất bại", "Bạn không được phép sử dụng ứng dụng này!");
+        }else{
+          navigation.navigate("Staff-Home");
         }
-        navigation.navigate("Staff-Home");
       } else {
         const errorText = await response.text();
         setLoading(false);

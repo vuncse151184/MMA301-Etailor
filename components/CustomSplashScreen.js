@@ -42,9 +42,6 @@ const AnimatedSplashScreen = ({ onAnimationEnd }) => {
             <Animated.View style={[styles.circle, { transform: [{ rotate }] }]}>
                 <Image source={require('./../assets/circle.png')} style={styles.circleImage} />
             </Animated.View>
-            <Text>
-                Chào mừng bạn đến với E-tailor
-            </Text>
         </View>
     );
 };
