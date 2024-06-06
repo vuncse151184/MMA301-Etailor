@@ -84,7 +84,9 @@ const Notification = ({ navigation, route }) => {
 
   const [loading, setLoading] = useState(false);
   const _goBack = () => navigation.navigate("Staff-Tasks");
+
   const handleNavigateNotification = (title, id) => {
+  
     async function markAsRead() {
       const URL = `https://e-tailorapi.azurewebsites.net/api/notification/get-notification/${id}`
       const response = await fetch(URL, {
@@ -98,9 +100,11 @@ const Notification = ({ navigation, route }) => {
     }
     markAsRead();
     console.log("Title", title)
-    const taskId = title.split(" ")[2];
-    console.log("Task ID", taskId)
-    navigation.navigate("Staff-Task-Detail", { id: taskId, staffInfo: staffInfo });
+    if (!(title.startsWith("Sản phẩm của đơn hàng") || title.startsWith("Đơn hàng"))) {
+      const taskId = title.split(" ")[2];
+      console.log("Task ID", taskId)
+      navigation.navigate("Staff-Task-Detail", { id: taskId, staffInfo: staffInfo });
+    }
 
   }
   const renderNotifications = () => {
