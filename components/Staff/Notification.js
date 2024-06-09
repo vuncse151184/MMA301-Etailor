@@ -49,9 +49,9 @@ const Notification = ({ navigation, route }) => {
   React.useEffect(() => {
     retrieveStaffItem();
   }, []);
-  console.log("Staff Info", staffInfo)
+  // // console.log("Staff Info", staffInfo)
   const chatNotification = Realtime()
-  console.log("Chat Notification", chatNotification)
+  // // console.log("Chat Notification", chatNotification)
 
   const fetchStaffNotification = async () => {
     setLoading(true)
@@ -73,11 +73,11 @@ const Notification = ({ navigation, route }) => {
     fetchStaffNotification()
   }, [])
 
-  console.log("Notifications", notifications)
+  // // console.log("Notifications", notifications)
   useEffect(() => {
     if (chatNotification) {
       fetchStaffNotification()
-      console.log("Có Chat Notification", chatNotification);
+      // // console.log("Có Chat Notification", chatNotification);
     }
   }, [chatNotification]);
 
@@ -99,10 +99,10 @@ const Notification = ({ navigation, route }) => {
 
     }
     markAsRead();
-    console.log("Title", title)
+    // // console.log("Title", title)
     if (!(title.startsWith("Sản phẩm của đơn hàng") || title.startsWith("Đơn hàng"))) {
       const taskId = title.split(" ")[2];
-      console.log("Task ID", taskId)
+      // // console.log("Task ID", taskId)
       navigation.navigate("Staff-Task-Detail", { id: taskId, staffInfo: staffInfo });
     }
 

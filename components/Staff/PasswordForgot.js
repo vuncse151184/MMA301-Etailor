@@ -41,7 +41,7 @@ const PasswordForgot = ({ navigation }) => {
     const _goBack = () => navigation.navigate("Staff-Profile");
     const [loading, setLoading] = useState(false)
     const handleChangePassWord = async () => {
-        console.log("password", password)
+        // console.log("password", password)
         setLoading(true)
         const URL = `https://e-tailorapi.azurewebsites.net/api/staff/change-password`
         const token = staffInfo.token;

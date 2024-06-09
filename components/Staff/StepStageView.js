@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { View, StyleSheet, Dimensions, TouchableOpacity, Image, SafeAreaView, FlatList, Alert, Platform } from 'react-native';
-import { Text, Button, Dialog, Portal, TextInput, } from 'react-native-paper'
+import { Text, Button, Dialog, Portal, TextInput } from 'react-native-paper'
 import * as FileSystem from 'expo-file-system';
 import {
   BottomSheetModal,
@@ -94,7 +94,7 @@ const StepStageView = ({ stageData, taskId, fetchDataTask, navigation }) => {
   }, []);
   //----------------------------------------------------------------completed tasks--------------------------------------
   const [openCheckTask, setOpenCheckTask] = useState(false);
-
+  const [finishLoading, setFinishLoading] = useState(false);
   const [images, setImages] = useState([]);
   const pickImage = async () => {
 
@@ -102,14 +102,17 @@ const StepStageView = ({ stageData, taskId, fetchDataTask, navigation }) => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
       quality: 1,
+      allowsMultipleSelection: true
     });
 
     if (!imageFromGallery.canceled) {
-      setImages(prevImages => [...prevImages, imageFromGallery.assets[0].uri]);
+      const newImages = imageFromGallery.assets.map(asset => asset.uri);
+      setImages(prevImages => [...prevImages, ...newImages]);
     }
   }
+  // console.log("-------IMAGES:", images)
   const ItemUpload = ({ image }) => {
-
+    // console.log("-------------------------------------images:", image)
     return (
       <View>
         <Icon
@@ -167,6 +170,7 @@ const StepStageView = ({ stageData, taskId, fetchDataTask, navigation }) => {
       console.error("Error calling API:", error);
     }
   };
+
   const handleTaskPending = async (taskId, stageId) => {
     setApiLoading(true);
     const url = `https://e-tailorapi.azurewebsites.net/api/task/staff/${taskId}/pending/${stageId}`;
@@ -196,7 +200,7 @@ const StepStageView = ({ stageData, taskId, fetchDataTask, navigation }) => {
     const url = `https://e-tailorapi.azurewebsites.net/api/task/staff/${taskId}/finish/${stageId}`;
     const formData = new FormData();
     const formData1 = new FormData();
-
+    setFinishLoading(true);
     images.forEach(async (image, index) => {
       const file = {
         uri: image,
@@ -219,8 +223,10 @@ const StepStageView = ({ stageData, taskId, fetchDataTask, navigation }) => {
         setOpenCheckTask(false);
         setImages([]);
         fetchDataTask();
+        setFinishLoading(false);
       } else if (response.status === 400 || response.status === 500) {
         const responseData = await response.text();
+        setFinishLoading(false);
         Alert.alert("Lỗi", responseData);
       } else if (response.status === 401) {
         navigation.navigate("Staff-Login");
@@ -322,8 +328,6 @@ const StepStageView = ({ stageData, taskId, fetchDataTask, navigation }) => {
                         style={{
                           height: 100,
                           width: 100,
-                          // Add border to see if image container is visible
-
                           marginVertical: 12,
 
                         }}
@@ -357,17 +361,6 @@ const StepStageView = ({ stageData, taskId, fetchDataTask, navigation }) => {
                         />
                       )}
                       textColor="rgb(63, 155, 158)"
-
-                      // style={{
-                      //   width: "100%",
-                      //   marginTop: 25,
-                      //   backgroundColor:
-                      //     "rgba(113, 240, 245, 0.6)",
-                      //   color: "rgb(63, 155, 158)",
-                      //   borderRadius: 5,
-                      //   borderWidth: 1,
-                      //   borderColor: "rgb(63, 155, 158)",
-                      // }}
                       style={styles.buttonWithLoading}
                     >
                       Bắt đầu {apiLoading && <ActivityIndicator animating={apiLoading} style={{ paddingLeft: 10 }} size="small" color="rgb(63, 155, 158)" />}
@@ -494,7 +487,7 @@ const StepStageView = ({ stageData, taskId, fetchDataTask, navigation }) => {
                                   )
                                 }
                               >
-                                Hoàn thành
+                                Hoàn thành {finishLoading && <ActivityIndicator animating={finishLoading} style={{ paddingLeft: 10 }} size="small" color="rgb(66, 150, 86)" />}
                               </Button>
                             ) : (
                               <Button disabled={true}>

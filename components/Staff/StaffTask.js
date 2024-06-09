@@ -1,8 +1,6 @@
 import * as React from "react";
 import { useState, useRef, useEffect } from "react";
 import { Image, ScrollView, StyleSheet, View, Dimensions, RefreshControl } from "react-native";
-
-// import LinearGradient from 'react-native-linear-gradient';
 import {
   Appbar,
   Card,
@@ -24,7 +22,6 @@ import {
 } from "react-native";
 import { Realtime } from "./Realtime";
 import { Notifier, Easing } from 'react-native-notifier';
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 const statusBarHeight = Platform.OS === 'ios' ? StatusBar.currentHeight : 0;
 const formatDate = (dateString) => {
@@ -56,13 +53,13 @@ const getStatusTextAndColor = (status) => {
       borderColor = "red";
       textColor = "black"
     case 1:
-      color = "#5694f2";
+      color = "#e8d8fc";
       text = "Chưa bắt đầu";
       borderColor = "red";
       textColor = "black"
       break;
     case 2:
-      color = "#fec347";
+      color = "#e8d8fc";
       text = "Trong quá trình ";
       borderColor = "red";
       textColor = "black"
@@ -74,10 +71,10 @@ const getStatusTextAndColor = (status) => {
       textColor = "black"
       break;
     case 4:
-      color = "#f26e56";
+      color = "#fff07d";
       text = "Bị từ chối";
       borderColor = "red";
-      textColor = "white"
+      textColor = "black"
       break;
     case 5:
       color = "#77d17d";//"#A4F4D3"
@@ -338,7 +335,7 @@ export default function StaffTask({ navigation }) {
                           <CustomTabIcon
                             name={"alert-outline"}
                             onPress={() => setSelectedId(item.id)}
-                            style={{color:"white"}}
+                            style={{ color: "white" }}
                             status={item.status}
                           />
                         </View>
@@ -379,12 +376,12 @@ export default function StaffTask({ navigation }) {
   const notifierRef = useRef();
   const screenWidth = Dimensions.get("window").width;
   // const _handleNotificationPress = () => {
-  //   console.log("Notification")
+  //   // console.log("Notification")
   //   navigation.navigate("Staff-Notification", { notification: notification });
   // }
   return (
     <>
-      <Appbar.Header mode="small" style={{ backgroundColor: "#8157c2", }} statusBarHeight={0}>
+      <Appbar.Header mode="small" style={{ backgroundColor: "rgb(29, 37, 71)", }} statusBarHeight={0}>
         <Appbar.Content style={{ alignItems: "center", flexDirection: "row", justifyContent: "space-between" }}
           title={
             <>
@@ -392,7 +389,7 @@ export default function StaffTask({ navigation }) {
                 <Icon name="menu-outline" size={30} color="#fff" />
               </View>
               <View>
-                <Text style={{ color: "#fff", fontSize: 20 }}>E-tailor</Text>
+                <Text style={{ color: "#fff", fontSize: 20, fontWeight: 'bold' }}>E-tailor</Text>
               </View>
               <View style={{ position: 'relative', marginRight: 10 }}>
                 <TouchableOpacity onPress={() => navigation.navigate("Staff-Notification", { staffInfoData: staffInfo })}>
@@ -411,7 +408,7 @@ export default function StaffTask({ navigation }) {
         />
 
       </Appbar.Header >
-      < View style={{ position: "relative", height: 70, backgroundColor: "#8157c2" }
+      < View style={{ position: "relative", height: 70, backgroundColor: "rgb(29, 37, 71)" }
       }>
 
         < View style={{ position: "absolute", bottom: -40, left: 0, right: 0, justifyContent: "center", alignItems: "center" }}>
@@ -436,36 +433,41 @@ export default function StaffTask({ navigation }) {
 
 
         </View >
-        {/* <View style={{ width: 500, height: 200 }}>
-          <Image source={require('../../assets/images/7172318.jpg')} style={{ width: 500, height: 200, resizeMode: "contain" }} />
-        </View > */}
       </View >
       {
         !loading ? (
           <View style={{ marginTop: 10, paddingBottom: 340 }}>
             <View>
-              <SafeAreaView
-                style={{ alignItems: "center", margin: 20 }}
-              >
+              <SafeAreaView style={{ alignItems: "center", margin: 20 }} >
                 <SegmentedButtons
                   value={value}
-                  style={{ paddingTop: 30 }}
+
+                  theme={{ colors: { secondaryContainer: 'rgb(29, 37, 71)' } }}
+                  style={{ marginTop: 30 }}
                   onValueChange={setValue}
                   density="regular"
                   buttons={[
                     {
                       value: "all",
                       label: "Tất cả",
-                      checkedColor: "#8157c2",
+                      checkedColor: "white",
+                      textColor: "white",
+                      buttonStyle: { backgroundColor: value === "all" ? "blue" : "rgb(29, 37, 71)" },
                       accessibilityLabel: "all"
                     },
                     {
                       value: "on-going",
-                      label: `Cần làm`,
+                      label: "Cần làm",
+                      checkedColor: "white",
+                      textColor: "white",
+                      buttonStyle: { backgroundColor: value === "on-going" ? "blue" : "rgb(29, 37, 71)" },
                     },
                     {
                       value: "cancelled",
                       label: "Cần sửa lại",
+                      checkedColor: "white",
+                      textColor: "white",
+                      buttonStyle: { backgroundColor: value === "cancelled" ? "blue" : "rgb(29, 37, 71)" },
                     }
                   ]}
                 />
@@ -484,7 +486,7 @@ export default function StaffTask({ navigation }) {
               }
 
             />
-          </View>
+          </View >
         ) : (
           <View
             style={{ flex: 0.8, alignItems: "center", justifyContent: "center" }}

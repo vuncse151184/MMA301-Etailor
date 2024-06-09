@@ -1,0 +1,44 @@
+{
+    "assets": [
+        {
+            "assetId": "7B4D5BDE-33CC-458F-91F9-49DBADBE85A6/L0/001",
+            "base64": null,
+            "duration": null,
+            "exif": null,
+            "fileName": "IMG_5800.jpg",
+            "fileSize": 1062824,
+            "height": 2048,
+            "mimeType": "image/jpeg",
+            "type": "image",
+            "uri": "file:///var/mobile/Containers/Data/Application/D8EB8EF7-29AC-4E6F-8ABF-CD2942858B35/Library/Caches/ExponentExperienceData/@anonymous/ETailorMobile-37345d8f-04fe-49e1-b504-759fa1394498/ImagePicker/40356AA6-721E-4B58-92B2-C8AC4B5DE385.jpg",
+            "width": 1536
+        },
+        {
+            "assetId": "BCB1E455-BF64-45B9-A1A9-11E9F94B7DAB/L0/001",
+            "base64": null,
+            "duration": null,
+            "exif": null,
+            "fileName": "1HUSASM4H_425UHN.jpg",
+            "fileSize": 1820360,
+            "height": 2048,
+            "mimeType": "image/jpeg",
+            "type": "image",
+            "uri": "file:///var/mobile/Containers/Data/Application/D8EB8EF7-29AC-4E6F-8ABF-CD2942858B35/Library/Caches/ExponentExperienceData/@anonymous/ETailorMobile-37345d8f-04fe-49e1-b504-759fa1394498/ImagePicker/100F7763-3F70-457C-99D0-75E5B3D99712.jpg",
+            "width": 1536
+        },
+        {
+            "assetId": "E1A25E7C-8E6B-49F5-84EA-CC5B6B4C76DD/L0/001",
+            "base64": null,
+            "duration": null,
+            "exif": null,
+            "fileName": "IMG_5798.jpg",
+            "fileSize": 4908586,
+            "height": 4032,
+            "mimeType": "image/jpeg",
+            "type": "image",
+            "uri": "file:///var/mobile/Containers/Data/Application/D8EB8EF7-29AC-4E6F-8ABF-CD2942858B35/Library/Caches/ExponentExperienceData/@anonymous/ETailorMobile-37345d8f-04fe-49e1-b504-759fa1394498/ImagePicker/E3496B7A-65FD-4DFB-B01C-8C31FEEC7A05.jpg",
+            "width": 3024
+        }
+    ],
+    "canceled": false
+}

@@ -25,7 +25,7 @@ const OrderScreen = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
     const handleInputChange = (text) => {
         setEmail(text);
-        console.log("TEXT CHANGE:", text)
+        // // console.log("TEXT CHANGE:", text)
         if (text.trim() != '' && loading == false) {
             const filteredData = allCusData?.filter((item) => {
                 return item.email && item.email.toLowerCase().includes(text.toLowerCase());
@@ -71,7 +71,7 @@ const OrderScreen = ({ navigation }) => {
     }, []);
     const [orderId, setOrderId] = useState('');
     const handleChoseCustomer = async (customer) => {
-        console.log('Chose customer', customer);
+        // // console.log('Chose customer', customer);
         const fetchCustomerProfile = async () => {
             const CREATE_ORDER_URL = `https://e-tailorapi.azurewebsites.net/api/order`
             setLoading(true);
@@ -80,15 +80,15 @@ const OrderScreen = ({ navigation }) => {
                 const token = staffInfo ? JSON.parse(staffInfo).token : '';
 
                 let id = await AsyncStorage.getItem('orderId');
-                console.log("ORDER ID:", id)
+                // // console.log("ORDER ID:", id)
                 let payload;
                 if (!id) {
-                    console.log("NO ORDER ID")
+                    // // console.log("NO ORDER ID")
                     payload = JSON.stringify({
                         customerId: customer?.id,
                     })
                 } else {
-                    console.log("HAS ORDER ID")
+                    // console.log("HAS ORDER ID")
                     let flag = "1";
                     if (currentCustomer !== customer.id) {
                         await AsyncStorage.removeItem("orderId");
@@ -122,7 +122,7 @@ const OrderScreen = ({ navigation }) => {
                     return;
                 }
 
-                console.log("ORDER ID:", id);
+                // console.log("ORDER ID:", id);
 
                 // Proceed with your logic using the orderId
                 navigation.navigate('Staff-Order-Detail', { id: customer.id, fullname: customer.fullname, orderId: id });
@@ -138,7 +138,7 @@ const OrderScreen = ({ navigation }) => {
     }
 
     const handleCreateNewCus = () => {
-        console.log('Create new customer');
+        // console.log('Create new customer');
         navigation.navigate('Staff-Create-Customer');
     }
 
