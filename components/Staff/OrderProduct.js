@@ -47,7 +47,7 @@ const OrderProduct = ({ navigation, route }) => {
   };
   const onNoteChange = note => {
     setNote(note)
-    console.log("note", note)
+    // // console.log("note", note)
   }
   useEffect(() => {
     const GET_PROFILE_URL = `https://e-tailorapi.azurewebsites.net/api/profile-body/staff/customer/${id}`
@@ -66,7 +66,7 @@ const OrderProduct = ({ navigation, route }) => {
         });
         if (response.ok) {
           const data = await response.json();
-          console.log("profile", data)
+          // // console.log("profile", data)
           setProfileData(data)
           setLoading(false);
         } else {
@@ -227,7 +227,7 @@ const OrderProduct = ({ navigation, route }) => {
       note: note,
       productComponents: convertedArray
     })
-    console.log("Payload:", JSON.stringify(payload))
+    // // console.log("Payload:", JSON.stringify(payload))
     setLoadingAdd(true)
     const ADD_PRODUCT_URL = `https://e-tailorapi.azurewebsites.net/api/product/${orderId}`
     const staff = await AsyncStorage.getItem('staff');
@@ -242,10 +242,10 @@ const OrderProduct = ({ navigation, route }) => {
     }
 
     )
-    console.log("response", response)
+    // // console.log("response", response)
     if (response.ok) {
       const data = await response.text();
-      console.log("data", data)
+      // // console.log("data", data)
       setLoadingAdd(false)
       navigation.navigate('Staff-Order-Detail', { orderId: orderId, fullname: fullname, id: id });
     } else {

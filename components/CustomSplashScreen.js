@@ -23,7 +23,7 @@ const AnimatedSplashScreen = ({ onAnimationEnd }) => {
         const timer = setTimeout(async () => {
             await SplashScreen.hideAsync();
             onAnimationEnd();
-        }, 3000); // Duration for which the splash screen is displayed
+        }, 2000) 
 
         return () => {
             rotateAnimation.stop();

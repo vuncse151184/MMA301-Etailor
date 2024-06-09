@@ -13,7 +13,7 @@ const OrderPayment = ({ navigation, route }) => {
     const _goBack = () => navigation.navigate("Staff-Order-Detail", { id: id, fullname: fullname, orderId });
     const vnpayNotification = Realtime()
     const handleOpenWebView = async (url) => {
-        console.log("URL:", url)
+        // // console.log("URL:", url)
         return (
             <WebView
                 source={{ uri: url }}
@@ -27,9 +27,9 @@ const OrderPayment = ({ navigation, route }) => {
             vnpayNotification !== undefined &&
             vnpayNotification !== ""
         ) {
-            console.log("Noti Có kết nối: ", vnpayNotification)
+            // // console.log("Noti Có kết nối: ", vnpayNotification)
         } else {
-            console.log("Noti có kết nối:", vnpayNotification)
+            // // console.log("Noti có kết nối:", vnpayNotification)
         }
 
     }, [vnpayNotification])

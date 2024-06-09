@@ -25,7 +25,7 @@ import {
 const Personality = ({ route, navigation }) => {
   const { data, categoryData } = route.params;
   const [loading, setLoading] = useState(true)
-  console.log("data", data)
+  // console.log("data", data)
   const getCategoryName = (id) => {
     const category = categoryData.find((item) => item.id === id);
     return category?.name;

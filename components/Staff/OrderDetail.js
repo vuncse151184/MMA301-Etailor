@@ -49,7 +49,7 @@ export default function OrderDetail({ navigation, route }) {
             });
             if (response.ok) {
                 const data = await response.json();
-                console.log("DATA:", data)
+                // // console.log("DATA:", data)
                 setIsLoaded(false);
                 data.products.push(undefined)
                 setOrderDetails(data);

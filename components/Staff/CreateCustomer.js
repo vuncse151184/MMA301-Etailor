@@ -63,11 +63,11 @@ const CreateCustomer = ({ navigation }) => {
                 method: "POST",
                 body: formData,
             });
-            console.log("hi", JSON.stringify(response));
+            // // console.log("hi", JSON.stringify(response));
             if (response.ok) {
                 const data = await response.json();
                 showToastWithGravity()
-                console.log(response);
+                // console.log(response);
 
             }
         } catch (error) {
